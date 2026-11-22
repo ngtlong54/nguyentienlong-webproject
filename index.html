@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Sky Hop – Nhảy lên mây</title>
+<title>Sky NoHope</title>
 <style>
 :root{--bg:#dff1ff;--ink:#16324a;--panel:#fffdf6;--line:#16324a;--acc:#ff7a3d;--acc2:#2f9e6b;--mut:#5b7287;
  box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
@@ -38,9 +38,9 @@ button:focus-visible{outline:3px solid var(--acc);outline-offset:2px}
   <div id="hud"><div><div class="s" id="sc">0</div><div class="b" id="bs">Kỷ lục: 0</div><div class="sp" id="sp"></div></div><button id="pauseBtn" aria-label="Tạm dừng">❚❚</button></div>
   <div id="ui">
     <div class="panel on" id="menu">
-      <h1>Sky Hop</h1>
-      <p>Nhảy lên cao, tránh đá rơi. Mỗi bậc vượt qua được 1 điểm. Đạt 1000 điểm để thắng bản beta!</p>
-      <p style="font-size:12px">⏫ lò xo · 🚀 rocket · 🛡 khiên · ❤ thêm lượt hồi sinh. Yêu quái bắn trúng 5 viên là thua, giẫm lên đầu để diệt. Bậc nâu nhảy 2 lần là gãy.</p>
+      <h1>Sky NoHope</h1>
+      <p>Nhảy lên cao, tránh đá rơi. Mỗi bậc vượt qua được 1 điểm.</p>
+      <p style="font-size:12px">⏫ lò xo · 🚀 rocket · 🛡 khiên · ❤ thêm lượt hồi sinh. Yêu quái bắn trúng 5 viên là thua, giẫm lên đầu để diệt. Bậc nâu nhảy 2 lần là gãy. Dẫm lên đá để bật lên.</p>
       <p class="best" id="menuBest"></p>
       <button class="btn" data-a="play">Chơi</button>
       <p style="font-size:12px">← → hoặc A D để di chuyển · chạm nửa trái/phải màn hình · P/Esc để tạm dừng</p>
@@ -61,7 +61,7 @@ button:focus-visible{outline:3px solid var(--acc);outline-offset:2px}
     </div>
     <div class="panel" id="win">
       <h2>🎉 Chúc mừng!</h2>
-      <p style="color:var(--ink);font-size:16px">Bạn đã đạt 1000 điểm và <b>thắng bản beta</b> của Sky Hop!</p>
+      <p style="color:var(--ink);font-size:16px">Bạn đã đạt 1000 điểm và <b>thắng bản beta</b> của Sky NoHope!</p>
       <button class="btn good" data-a="resume">Chơi tiếp</button>
       <button class="btn alt" data-a="menu">Về menu</button>
     </div>
@@ -100,7 +100,7 @@ function addPlat(){
   if(pid>=35&&pid%40===25)mons.push({x:60+Math.random()*(W-120),y:nextY+gap/2-19,vx:(Math.random()<.5?-1:1)*(.8+Math.random()*.6),t:60});
 }
 function reset(){
-  score=0;speed=1;won=false;inv=0;spawnT=120;camY=0;rocks=[];warns=[];lives=1;sp=0;shT=0;rk=0;rkGoal=0;hits=0;pid=0;lastBrk=false;mons=[];bul=[];fx=[];
+  score=0;speed=1;won=false;inv=0;spawnT=120;camY=0;rocks=[];warns=[];lives=3;sp=0;shT=0;rk=0;rkGoal=0;hits=0;pid=0;lastBrk=false;mons=[];bul=[];fx=[];
   plats=[{x:0,y:H-30,w:W,passed:true,mv:false,vx:0}];nextY=H-30;lastPlat=plats[0];
   while(nextY>-200)addPlat();
   P={x:W/2-17,y:H-30-34,vx:0,vy:-13,w:34,h:34};
@@ -111,8 +111,8 @@ function die(){
   st='over';
   if(score>best){best=score|0;try{localStorage.setItem('skyhop_best',best)}catch(e){}}
   $('overS').textContent=score|0;$('overB').textContent='Kỷ lục: '+best;
-  $('reviveBtn').style.display=lives>0?'block':'none';$('reviveBtn').textContent='Hồi sinh (còn '+lives+')';
-  $('overT').textContent=lives>0?'Ôi, rơi mất rồi!':'Hết lượt!';
+  $('reviveBtn').style.display=lives>0?'block':'none';$('reviveBtn').textContent='Hồi sinh (còn '+lives+' lần đau khổ)';
+  $('overT').textContent=lives>0?'Chỉ có thế thôi à =))':'Hết cứu!';
   refresh();show('over');
 }
 function revive(){
@@ -128,7 +128,9 @@ function resume(){st='play';show(null)}
 function boom(x,y){for(let i=0;i<8;i++)fx.push({x,y,vx:(Math.random()-.5)*6,vy:-Math.random()*4,l:25})}
 function update(dt){
   const d=(keyR-keyL)||touch;
-  P.vx+=((d*5.2)-P.vx)*.25*Math.min(dt,2);
+  if(d){tx=null;P.vx+=((d*6.5)-P.vx)*.6*Math.min(dt,1.6)}
+  else if(tx!==null){P.vx=Math.max(-20,Math.min(20,(tx-(P.x+P.w/2))*.4))}
+  else P.vx*=.7;
   P.x+=P.vx*dt;
   if(P.x>W)P.x=-P.w;if(P.x<-P.w)P.x=W;
   if(rk>0){P.vy=-22;if(score>=rkGoal){rk=0;P.vy=-10;inv=90}}
@@ -157,7 +159,9 @@ function update(dt){
   for(let i=rocks.length-1;i>=0;i--){const r=rocks[i];r.y+=r.vy*dt;r.rot+=.08*dt;
     if(r.y-camY>H+40){rocks.splice(i,1);continue}
     if(inv<=0){const cx=Math.max(P.x,Math.min(r.x,P.x+P.w)),cy=Math.max(P.y,Math.min(r.y,P.y+P.h));
-      if((cx-r.x)**2+(cy-r.y)**2<(r.r-2)**2){if(shT>0||rk>0){boom(r.x,r.y);rocks.splice(i,1);continue}die();return}}}
+      if((cx-r.x)**2+(cy-r.y)**2<(r.r-2)**2){if(shT>0||rk>0){boom(r.x,r.y);rocks.splice(i,1);continue}
+        if(P.vy>0&&prevB<=r.y-r.vy*dt+r.r*.6){boom(r.x,r.y);rocks.splice(i,1);P.vy=sp>0?-18.4:-13;continue}
+        die();return}}}
   // buff + nhặt vật phẩm
   if(sp>0)sp-=dt;if(shT>0)shT-=dt;
   for(const p of plats){if(!p.item)continue;const ix=p.x+p.w/2-12,iy=p.y-30;
@@ -166,7 +170,7 @@ function update(dt){
       p.item=null}}
   // yêu quái
   for(let i=mons.length-1;i>=0;i--){const m=mons[i];m.x+=m.vx*dt;if(m.x<20||m.x>W-58)m.vx*=-1;
-    if(m.y>camY&&m.y<camY+H*.9){m.t-=dt;if(m.t<=0){m.t=130;const dx=P.x+17-(m.x+19),dy=P.y+17-(m.y+19),l=Math.hypot(dx,dy)||1;bul.push({x:m.x+19,y:m.y+19,vx:dx/l*1.3,vy:dy/l*1.3})}}
+    if(m.y>camY&&m.y<camY+H*.9){m.t-=dt;if(m.t<=0){m.t=130;const dx=P.x+17-(m.x+19),dy=P.y+17-(m.y+19),l=Math.hypot(dx,dy)||1;bul.push({x:m.x+19,y:m.y+19,vx:dx/l*.75,vy:dy/l*.75})}}
     if(P.x<m.x+38&&P.x+P.w>m.x&&P.y<m.y+38&&P.y+P.h>m.y&&(rk>0||(P.vy>0&&prevB<=m.y+14))){
       boom(m.x+19,m.y+19);mons.splice(i,1);if(rk<=0)P.vy=sp>0?-18.4:-13}}
   // đạn (bay rất chậm): trúng 5 viên là thua
@@ -244,9 +248,9 @@ addEventListener('keyup',e=>{
   if(e.code==='ArrowLeft'||e.code==='KeyA')keyL=0;
   if(e.code==='ArrowRight'||e.code==='KeyD')keyR=0;
 });
-const setTouch=e=>{const r=cv.getBoundingClientRect();touch=(e.clientX-r.left)<r.width/2?-1:1};
+let tx=null;const setTouch=e=>{const r=cv.getBoundingClientRect();tx=(e.clientX-r.left)/r.width*W};
 cv.addEventListener('pointerdown',e=>{setTouch(e);cv.setPointerCapture(e.pointerId)});
-cv.addEventListener('pointermove',e=>{if(touch)setTouch(e)});
+cv.addEventListener('pointermove',setTouch);
 ['pointerup','pointercancel'].forEach(n=>cv.addEventListener(n,()=>touch=0));
 $('pauseBtn').onclick=pause;
 $('ui').addEventListener('click',e=>{
