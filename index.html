@@ -1,121 +1,265 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vĩnh Long Xa Xôi - Video Của Tôi</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: Arial, sans-serif;
-        }
-        body {
-            background-color: #121212;
-            color: #ffffff;
-        }
-        /* Header */
-        header {
-            background-color: #1f1f1f;
-            padding: 15px 30px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 2px solid #333;
-        }
-        .logo {
-            font-size: 28px;
-            font-weight: bold;
-            color: #ffffff;
-            text-decoration: none;
-        }
-        .logo span {
-            background-color: #ff9900;
-            color: #000000;
-            padding: 2px 8px;
-            border-radius: 4px;
-            margin-left: 2px;
-        }
-        .search-bar {
-            padding: 8px 15px;
-            width: 300px;
-            background-color: #2b2b2b;
-            border: 1px solid #444;
-            border-radius: 20px;
-            color: white;
-            outline: none;
-        }
-        /* Main Container */
-        .container {
-            max-width: 1000px;
-            margin: 30px auto;
-            padding: 0 20px;
-        }
-        .video-title {
-            font-size: 22px;
-            margin-bottom: 15px;
-            font-weight: bold;
-        }
-        /* Video Wrapper */
-        .video-container {
-            position: relative;
-            width: 100%;
-            padding-bottom: 56.25%; /* Tỷ lệ khung hình 16:9 */
-            background-color: #000;
-            border-radius: 8px;
-            overflow: hidden;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
-        }
-        .video-container iframe {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            border: none;
-        }
-        /* Footer info */
-        .video-info {
-            margin-top: 15px;
-            color: #aaa;
-            font-size: 14px;
-            display: flex;
-            justify-content: space-between;
-            border-bottom: 1px solid #333;
-            padding-bottom: 15px;
-        }
-        footer {
-            text-align: center;
-            padding: 30px;
-            color: #666;
-            font-size: 13px;
-        }
-    </style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Sky Hop – Nhảy lên mây</title>
+<style>
+:root{--bg:#dff1ff;--ink:#16324a;--panel:#fffdf6;--line:#16324a;--acc:#ff7a3d;--acc2:#2f9e6b;--mut:#5b7287;
+ box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0d1b2a;--ink:#e8f1f8;--panel:#17283a;--line:#e8f1f8;--acc:#ff8f55;--acc2:#4cc58c;--mut:#9db3c6}}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0}
+body{background:var(--bg);color:var(--ink);font-family:"Baloo 2","Trebuchet MS",system-ui,sans-serif;display:flex;align-items:center;justify-content:center;overflow:hidden;touch-action:none;user-select:none;-webkit-user-select:none}
+#wrap{position:relative;height:min(100%,calc(100vw*1.6));aspect-ratio:5/8;max-width:100%;border:3px solid var(--line);border-radius:16px;overflow:hidden;background:#bfe6ff}
+canvas{width:100%;height:100%;display:block}
+#hud{position:absolute;top:8px;left:10px;right:10px;display:flex;justify-content:space-between;align-items:flex-start;pointer-events:none;color:#16324a;font-weight:800}
+#hud .s{font-size:clamp(26px,7vw,38px);line-height:1}
+#hud .b,#hud .sp{font-size:13px;opacity:.8}
+#pauseBtn{pointer-events:auto;width:42px;height:42px;border-radius:12px;border:3px solid #16324a;background:#fffdf6;color:#16324a;font-size:18px;font-weight:800;cursor:pointer}
+#ui{position:absolute;inset:0;display:none;align-items:center;justify-content:center;background:rgba(10,25,40,.55);padding:14px}
+.panel{display:none;width:100%;max-width:300px;background:var(--panel);border:3px solid var(--line);border-radius:18px;padding:20px 18px;text-align:center;box-shadow:6px 6px 0 var(--line)}
+.panel.on{display:block}
+h1{margin:0 0 4px;font-size:40px;line-height:1;letter-spacing:-.5px}
+h2{margin:0 0 8px;font-size:28px;line-height:1.1}
+p{margin:6px 0;color:var(--mut);font-size:14px;line-height:1.4}
+.big{font-size:44px;font-weight:800;color:var(--ink);line-height:1}
+button.btn{display:block;width:100%;margin-top:10px;padding:11px;border-radius:12px;border:3px solid var(--line);background:var(--acc);color:#1a0e05;font:800 17px inherit;font-family:inherit;cursor:pointer;box-shadow:0 4px 0 var(--line)}
+button.btn:active{transform:translateY(3px);box-shadow:0 1px 0 var(--line)}
+button.btn.alt{background:var(--panel);color:var(--ink)}
+button.btn.good{background:var(--acc2);color:#04180d}
+button:focus-visible{outline:3px solid var(--acc);outline-offset:2px}
+.best{font-weight:800;color:var(--ink)}
+</style>
 </head>
 <body>
-
-    <header>
-        <a href="#" class="logo">Vĩnh Long<span>Xa Xôi</span></a>
-        <input type="text" class="search-bar" placeholder="Tìm kiếm video ngô khác...">
-    </header>
-
-    <div class="container">
-        <div class="video-title">🌽 Ông chú U40 cùng vui vẻ cùng nữ sinh Nhật Bản</div>
-        
-        <div class="video-container">
-            <iframe src="https://drive.google.com/file/d/1t1qZpzQjZsC4HWOeKAFB84_-gNIKrOYC/preview" allow="autoplay" allowfullscreen></iframe>
-        </div>
-
-        <div class="video-info">
-            <span>Lượt xem: 36,024,580 • Tải lên bởi: TienLong</span>
-            <span>👍 Thích &nbsp;&nbsp; 👎 Không thích &nbsp;&nbsp; 📥 Tải xuống</span>
-        </div>
+<div id="wrap">
+  <canvas id="c"></canvas>
+  <div id="hud"><div><div class="s" id="sc">0</div><div class="b" id="bs">Kỷ lục: 0</div><div class="sp" id="sp"></div></div><button id="pauseBtn" aria-label="Tạm dừng">❚❚</button></div>
+  <div id="ui">
+    <div class="panel on" id="menu">
+      <h1>Sky Hop</h1>
+      <p>Nhảy lên cao, tránh đá rơi. Mỗi bậc vượt qua được 1 điểm. Đạt 1000 điểm để thắng bản beta!</p>
+      <p style="font-size:12px">⏫ lò xo · 🚀 rocket · 🛡 khiên · ❤ thêm lượt hồi sinh. Yêu quái bắn trúng 5 viên là thua, giẫm lên đầu để diệt. Bậc nâu nhảy 2 lần là gãy.</p>
+      <p class="best" id="menuBest"></p>
+      <button class="btn" data-a="play">Chơi</button>
+      <p style="font-size:12px">← → hoặc A D để di chuyển · chạm nửa trái/phải màn hình · P/Esc để tạm dừng</p>
     </div>
+    <div class="panel" id="pause">
+      <h2>Tạm dừng</h2>
+      <button class="btn good" data-a="resume">Chơi tiếp</button>
+      <button class="btn alt" data-a="play">Chơi lại</button>
+      <button class="btn alt" data-a="menu">Về menu</button>
+    </div>
+    <div class="panel" id="over">
+      <h2 id="overT">Hết lượt!</h2>
+      <div class="big" id="overS">0</div>
+      <p class="best" id="overB"></p>
+      <button class="btn good" id="reviveBtn" data-a="revive">Hồi sinh</button>
+      <button class="btn" data-a="play">Chơi lại</button>
+      <button class="btn alt" data-a="menu">Về menu</button>
+    </div>
+    <div class="panel" id="win">
+      <h2>🎉 Chúc mừng!</h2>
+      <p style="color:var(--ink);font-size:16px">Bạn đã đạt 1000 điểm và <b>thắng bản beta</b> của Sky Hop!</p>
+      <button class="btn good" data-a="resume">Chơi tiếp</button>
+      <button class="btn alt" data-a="menu">Về menu</button>
+    </div>
+  </div>
+</div>
+<script>
+(()=>{
+const W=400,H=640,GOAL=1000;
+const cv=document.getElementById('c'),ctx=cv.getContext('2d');
+const dpr=Math.min(window.devicePixelRatio||1,2);
+cv.width=W*dpr;cv.height=H*dpr;ctx.scale(dpr,dpr);
+const $=id=>document.getElementById(id);
+let best=0;try{best=+localStorage.getItem('skyhop_best')||0}catch(e){}
+let st='menu',P,plats,rocks,warns,camY,score,speed,revived,won,inv,spawnT,nextY,last,lastPlat,lives,sp,shT,rk,rkGoal,hits,pid,lastBrk,mons,bul,fx,dir=0,keyL=0,keyR=0,touch=0,clouds=[];
+for(let i=0;i<7;i++)clouds.push({x:Math.random()*W,y:Math.random()*H,s:.5+Math.random()});
 
-    <footer>
-        <p>&copy; 2026 Tien Long dep chai</p>
-    </footer>
+function show(p){$('ui').style.display=p?'flex':'none';['menu','pause','over','win'].forEach(k=>$(k).classList.toggle('on',k===p))}
+function hud(){const t='❤ '+lives+(sp>0?'  ⏫'+Math.ceil(sp/60)+'s':'')+(shT>0?'  🛡'+Math.ceil(shT/60)+'s':'')+(rk>0?'  🚀':'')+(hits?'  💥'+hits+'/5':'');const e=$('sp');if(e._t!==t){e._t=t;e.textContent=t}}
+function refresh(){$('sc').textContent=score|0;$('bs').textContent='Kỷ lục: '+best;hud();$('menuBest').textContent='Điểm cao nhất: '+best}
 
+function addPlat(){
+  const w=Math.max(50,72-score*.02),gap=Math.min(125,68+score*.05)+Math.random()*14;
+  nextY-=gap;
+  pid++;
+  const mv=Math.random()<Math.min(.35,score/1500);
+  const brk=!mv&&!lastBrk&&pid>10&&Math.random()<Math.min(.25,.08+score/2500);
+  lastBrk=brk;
+  const p={x:Math.random()*(W-w),y:nextY,w,passed:false,mv,brk,jumps:0,dead:false,item:null,vx:mv?(Math.random()<.5?-1:1)*(1+Math.random()*1.2):0};
+  if(!brk){
+    if(pid%150===90)p.item='life';
+    else if(pid%100===55)p.item='rocket';
+    else if(pid%50===20)p.item='spring';
+    else if(pid%40===10)p.item='shield';
+  }
+  plats.push(p);
+  if(pid>=35&&pid%40===25)mons.push({x:60+Math.random()*(W-120),y:nextY+gap/2-19,vx:(Math.random()<.5?-1:1)*(.8+Math.random()*.6),t:60});
+}
+function reset(){
+  score=0;speed=1;won=false;inv=0;spawnT=120;camY=0;rocks=[];warns=[];lives=1;sp=0;shT=0;rk=0;rkGoal=0;hits=0;pid=0;lastBrk=false;mons=[];bul=[];fx=[];
+  plats=[{x:0,y:H-30,w:W,passed:true,mv:false,vx:0}];nextY=H-30;lastPlat=plats[0];
+  while(nextY>-200)addPlat();
+  P={x:W/2-17,y:H-30-34,vx:0,vy:-13,w:34,h:34};
+  refresh();
+}
+function start(){reset();st='play';show(null);$('pauseBtn').style.visibility='visible'}
+function die(){
+  st='over';
+  if(score>best){best=score|0;try{localStorage.setItem('skyhop_best',best)}catch(e){}}
+  $('overS').textContent=score|0;$('overB').textContent='Kỷ lục: '+best;
+  $('reviveBtn').style.display=lives>0?'block':'none';$('reviveBtn').textContent='Hồi sinh (còn '+lives+')';
+  $('overT').textContent=lives>0?'Ôi, rơi mất rồi!':'Hết lượt!';
+  refresh();show('over');
+}
+function revive(){
+  const p=lastPlat;lives--;speed=1;hits=0;rk=0;bul=[];mons=mons.filter(m=>Math.abs(m.y-p.y)>200);
+  P.x=p.x+p.w/2-P.w/2;P.y=p.y-P.h;P.vy=-13;P.vx=0;
+  camY=Math.min(camY+H*.2,p.y-H*.6);
+  rocks=[];warns=[];inv=150;spawnT=150;
+  st='play';show(null);refresh();
+}
+function pause(){if(st==='play'){st='pause';show('pause')}}
+function resume(){st='play';show(null)}
+
+function boom(x,y){for(let i=0;i<8;i++)fx.push({x,y,vx:(Math.random()-.5)*6,vy:-Math.random()*4,l:25})}
+function update(dt){
+  const d=(keyR-keyL)||touch;
+  P.vx+=((d*5.2)-P.vx)*.25*Math.min(dt,2);
+  P.x+=P.vx*dt;
+  if(P.x>W)P.x=-P.w;if(P.x<-P.w)P.x=W;
+  if(rk>0){P.vy=-22;if(score>=rkGoal){rk=0;P.vy=-10;inv=90}}
+  const prevB=P.y+P.h;
+  P.vy+=.5*dt;P.y+=P.vy*dt;
+  for(const p of plats){
+    if(p.mv){p.x+=p.vx*dt;if(p.x<0||p.x+p.w>W)p.vx*=-1}
+    if(p.dead)p.y+=7*dt;
+    if(!p.dead&&P.vy>0&&prevB<=p.y+6&&P.y+P.h>=p.y&&P.x+P.w>p.x+4&&P.x<p.x+p.w-4){P.y=p.y-P.h;P.vy=sp>0?-18.4:-13;if(!p.brk)lastPlat=p;else{p.jumps++;if(p.jumps>=2){p.dead=true;boom(P.x+17,p.y)}}}
+    if(!p.passed&&p.y>P.y+P.h){p.passed=true;score++;refresh();
+      if(score>=GOAL&&!won){won=true;st='win';if(score>best){best=score;try{localStorage.setItem('skyhop_best',best)}catch(e){}}refresh();show('win');return}}
+  }
+  if(P.y-camY<H*.4)camY=P.y-H*.4;
+  while(nextY>camY-150)addPlat();
+  plats=plats.filter(p=>p.y<camY+H+300);mons=mons.filter(m=>m.y<camY+H+300);
+  if(inv>0)inv-=dt;
+  // chướng ngại vật
+  spawnT-=dt;
+  if(spawnT<=0){
+    spawnT=Math.max(28,95-score*.07)*(.8+Math.random()*.4);
+    const n=1+(score>300&&Math.random()<.4?1:0)+(score>700&&Math.random()<.4?1:0);
+    for(let i=0;i<n;i++)warns.push({x:20+Math.random()*(W-40),t:45});
+  }
+  for(let i=warns.length-1;i>=0;i--){const w=warns[i];w.t-=dt;
+    if(w.t<=0){rocks.push({x:w.x,y:camY-30,vy:3+Math.min(3,score/300)+Math.random(),r:13+Math.random()*5,rot:0});warns.splice(i,1)}}
+  for(let i=rocks.length-1;i>=0;i--){const r=rocks[i];r.y+=r.vy*dt;r.rot+=.08*dt;
+    if(r.y-camY>H+40){rocks.splice(i,1);continue}
+    if(inv<=0){const cx=Math.max(P.x,Math.min(r.x,P.x+P.w)),cy=Math.max(P.y,Math.min(r.y,P.y+P.h));
+      if((cx-r.x)**2+(cy-r.y)**2<(r.r-2)**2){if(shT>0||rk>0){boom(r.x,r.y);rocks.splice(i,1);continue}die();return}}}
+  // buff + nhặt vật phẩm
+  if(sp>0)sp-=dt;if(shT>0)shT-=dt;
+  for(const p of plats){if(!p.item)continue;const ix=p.x+p.w/2-12,iy=p.y-30;
+    if(P.x<ix+24&&P.x+P.w>ix&&P.y<iy+24&&P.y+P.h>iy){
+      if(p.item==='spring')sp=300;else if(p.item==='shield')shT=300;else if(p.item==='rocket'){rk=1;rkGoal=score+100}else lives++;
+      p.item=null}}
+  // yêu quái
+  for(let i=mons.length-1;i>=0;i--){const m=mons[i];m.x+=m.vx*dt;if(m.x<20||m.x>W-58)m.vx*=-1;
+    if(m.y>camY&&m.y<camY+H*.9){m.t-=dt;if(m.t<=0){m.t=130;const dx=P.x+17-(m.x+19),dy=P.y+17-(m.y+19),l=Math.hypot(dx,dy)||1;bul.push({x:m.x+19,y:m.y+19,vx:dx/l*1.3,vy:dy/l*1.3})}}
+    if(P.x<m.x+38&&P.x+P.w>m.x&&P.y<m.y+38&&P.y+P.h>m.y&&(rk>0||(P.vy>0&&prevB<=m.y+14))){
+      boom(m.x+19,m.y+19);mons.splice(i,1);if(rk<=0)P.vy=sp>0?-18.4:-13}}
+  // đạn (bay rất chậm): trúng 5 viên là thua
+  for(let i=bul.length-1;i>=0;i--){const b=bul[i];b.x+=b.vx*dt;b.y+=b.vy*dt;
+    if(b.y-camY>H+40||b.y<camY-200){bul.splice(i,1);continue}
+    if(inv<=0&&Math.abs(b.x-(P.x+17))<20&&Math.abs(b.y-(P.y+17))<20){
+      bul.splice(i,1);boom(b.x,b.y);
+      if(shT<=0&&rk<=0){hits++;if(hits>=5){hud();die();return}}}}
+  for(const f of fx){f.x+=f.vx*dt;f.y+=f.vy*dt;f.vy+=.2*dt;f.l-=dt}
+  fx=fx.filter(f=>f.l>0);
+  hud();
+  if(P.y-camY>H)die();
+}
+
+function rr(x,y,w,h,r){ctx.beginPath();ctx.roundRect(x,y,w,h,r)}
+function draw(){
+  const g=ctx.createLinearGradient(0,0,0,H);
+  const t=Math.min(1,score/GOAL);
+  g.addColorStop(0,`rgb(${120-90*t|0},${190-120*t|0},${255-100*t|0})`);g.addColorStop(1,'#dff1ff');
+  ctx.fillStyle=g;ctx.fillRect(0,0,W,H);
+  ctx.fillStyle='rgba(255,255,255,.7)';
+  for(const c of clouds){const y=((c.y-(camY||0)*.2*c.s)%(H+60)+(H+60))%(H+60)-30;
+    ctx.beginPath();ctx.ellipse(c.x,y,40*c.s,14*c.s,0,0,7);ctx.ellipse(c.x+22*c.s,y-8*c.s,24*c.s,13*c.s,0,0,7);ctx.fill()}
+  if(!plats)return;
+  for(const p of plats){const y=p.y-camY;if(y<-20||y>H+20)continue;
+    ctx.fillStyle=p.brk?(p.jumps?'#a86a35':'#c98d4e'):p.mv?'#3b82d6':'#4cb86f';rr(p.x,y,p.w,12,6);ctx.fill();
+    ctx.strokeStyle='#16324a';ctx.lineWidth=2.5;ctx.stroke();drawPlatExtra(p,y)}
+  drawExtras();
+  for(const w of warns){const a=.5+.5*Math.sin(w.t*.5);ctx.fillStyle=`rgba(230,50,40,${a})`;
+    ctx.beginPath();ctx.moveTo(w.x,62);ctx.lineTo(w.x-11,82);ctx.lineTo(w.x+11,82);ctx.closePath();ctx.fill();
+    ctx.fillStyle='#fff';ctx.font='bold 13px sans-serif';ctx.textAlign='center';ctx.fillText('!',w.x,79)}
+  for(const r of rocks){const y=r.y-camY;ctx.save();ctx.translate(r.x,y);ctx.rotate(r.rot);
+    ctx.fillStyle='#7a7f87';ctx.strokeStyle='#16324a';ctx.lineWidth=2.5;ctx.beginPath();
+    for(let i=0;i<7;i++){const a=i/7*6.283,rad=r.r*(i%2?.85:1.05);ctx[i?'lineTo':'moveTo'](Math.cos(a)*rad,Math.sin(a)*rad)}
+    ctx.closePath();ctx.fill();ctx.stroke();ctx.fillStyle='#a4a9b0';ctx.beginPath();ctx.arc(-r.r*.3,-r.r*.3,r.r*.25,0,7);ctx.fill();ctx.restore()}
+  if(P&&!(inv>0&&Math.floor(inv/6)%2)){
+    const y=P.y-camY;ctx.fillStyle='#ffb43d';ctx.strokeStyle='#16324a';ctx.lineWidth=3;
+    rr(P.x,y,P.w,P.h,12);ctx.fill();ctx.stroke();
+    ctx.fillStyle='#fff';ctx.beginPath();ctx.arc(P.x+11,y+13,5,0,7);ctx.arc(P.x+24,y+13,5,0,7);ctx.fill();
+    ctx.fillStyle='#16324a';const o=P.vx>.5?1.5:P.vx<-.5?-1.5:0;
+    ctx.beginPath();ctx.arc(P.x+11+o,y+14,2.3,0,7);ctx.arc(P.x+24+o,y+14,2.3,0,7);ctx.fill();
+    ctx.fillRect(P.x+12,y+24,10,2.5);
+    if(sp>0){ctx.strokeStyle='#e0402a';ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(P.x+10,y+P.h);for(let i=1;i<=4;i++)ctx.lineTo(P.x+(i%2?24:10),y+P.h+i*3);ctx.stroke()}
+    if(rk>0){ctx.fillStyle='#ff9d2e';ctx.beginPath();ctx.moveTo(P.x+8,y+P.h);ctx.lineTo(P.x+17,y+P.h+28+Math.random()*10);ctx.lineTo(P.x+26,y+P.h);ctx.fill();ctx.font='30px serif';ctx.textAlign='center';ctx.fillText('🚀',P.x+17,y-2)}
+    if(shT>0&&(shT>60||Math.floor(shT/5)%2)){ctx.strokeStyle='rgba(60,200,255,.9)';ctx.fillStyle='rgba(60,200,255,.2)';ctx.lineWidth=3;ctx.beginPath();ctx.arc(P.x+17,y+17,28,0,7);ctx.fill();ctx.stroke()}}
+}
+const ICON={spring:'⏫',rocket:'🚀',shield:'🛡',life:'❤'};
+function drawPlatExtra(p,y){
+  if(p.brk&&p.jumps===1){ctx.strokeStyle='#16324a';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(p.x+p.w*.45,y);ctx.lineTo(p.x+p.w*.5,y+6);ctx.lineTo(p.x+p.w*.42,y+12);ctx.stroke()}
+  if(p.item){ctx.font='22px serif';ctx.textAlign='center';ctx.fillText(ICON[p.item],p.x+p.w/2,y-8)}
+}
+function drawExtras(){
+  for(const m of mons){const y=m.y-camY;if(y<-50||y>H+50)continue;
+    ctx.fillStyle='#8a4fd6';ctx.strokeStyle='#16324a';ctx.lineWidth=3;
+    ctx.beginPath();ctx.arc(m.x+19,y+21,19,0,7);ctx.fill();ctx.stroke();
+    ctx.beginPath();ctx.moveTo(m.x+6,y+8);ctx.lineTo(m.x+3,y-4);ctx.lineTo(m.x+14,y+4);ctx.moveTo(m.x+32,y+8);ctx.lineTo(m.x+35,y-4);ctx.lineTo(m.x+24,y+4);ctx.stroke();
+    ctx.fillStyle='#fff';ctx.beginPath();ctx.arc(m.x+12,y+19,5,0,7);ctx.arc(m.x+26,y+19,5,0,7);ctx.fill();
+    ctx.fillStyle='#c1121f';ctx.beginPath();ctx.arc(m.x+12,y+20,2.5,0,7);ctx.arc(m.x+26,y+20,2.5,0,7);ctx.fill();
+    ctx.fillStyle='#16324a';ctx.fillRect(m.x+12,y+30,14,3)}
+  for(const b of bul){ctx.fillStyle='#ff3b3b';ctx.strokeStyle='#fff';ctx.lineWidth=2;ctx.beginPath();ctx.arc(b.x,b.y-camY,6,0,7);ctx.fill();ctx.stroke()}
+  ctx.fillStyle='#ffd23f';for(const f of fx)ctx.fillRect(f.x-2,f.y-camY-2,4,4);
+}
+function loop(ts){
+  const dt=Math.min(2.5,((ts-(last||ts))/16.667))*speed;last=ts;
+  if(st==='play')update(dt);
+  draw();requestAnimationFrame(loop);
+}
+// điều khiển
+addEventListener('keydown',e=>{
+  if(e.code==='ArrowLeft'||e.code==='KeyA')keyL=1;
+  if(e.code==='ArrowRight'||e.code==='KeyD')keyR=1;
+  if(e.code==='KeyP'||e.code==='Escape'){st==='play'?pause():st==='pause'&&resume()}
+});
+addEventListener('keyup',e=>{
+  if(e.code==='ArrowLeft'||e.code==='KeyA')keyL=0;
+  if(e.code==='ArrowRight'||e.code==='KeyD')keyR=0;
+});
+const setTouch=e=>{const r=cv.getBoundingClientRect();touch=(e.clientX-r.left)<r.width/2?-1:1};
+cv.addEventListener('pointerdown',e=>{setTouch(e);cv.setPointerCapture(e.pointerId)});
+cv.addEventListener('pointermove',e=>{if(touch)setTouch(e)});
+['pointerup','pointercancel'].forEach(n=>cv.addEventListener(n,()=>touch=0));
+$('pauseBtn').onclick=pause;
+$('ui').addEventListener('click',e=>{
+  const a=e.target.dataset&&e.target.dataset.a;if(!a)return;
+  if(a==='play')start();
+  else if(a==='resume')resume();
+  else if(a==='revive')revive();
+  else if(a==='menu'){st='menu';reset();$('pauseBtn').style.visibility='hidden';refresh();show('menu')}
+});
+document.addEventListener('visibilitychange',()=>{if(document.hidden)pause()});
+reset();$('pauseBtn').style.visibility='hidden';show('menu');
+requestAnimationFrame(loop);
+})();
+</script>
 </body>
 </html>
