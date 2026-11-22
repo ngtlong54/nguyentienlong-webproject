@@ -30,6 +30,13 @@ button.btn.alt{background:var(--panel);color:var(--ink)}
 button.btn.good{background:var(--acc2);color:#04180d}
 button:focus-visible{outline:3px solid var(--acc);outline-offset:2px}
 .best{font-weight:800;color:var(--ink)}
+.panel{max-height:100%;overflow:auto}
+.dgrid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:6px}
+.dbtn{padding:9px 4px;border-radius:10px;border:3px solid var(--line);background:var(--panel);color:var(--ink);font:800 14px inherit;font-family:inherit;cursor:pointer}
+.dbtn.sel{background:var(--acc);color:#1a0e05}
+.dgrid.lock{opacity:.45;pointer-events:none}
+input[type=range]{width:100%;accent-color:var(--acc)}
+.row{display:flex;justify-content:space-between;font-weight:800;font-size:14px;margin-top:6px}
 </style>
 </head>
 <body>
@@ -43,11 +50,13 @@ button:focus-visible{outline:3px solid var(--acc);outline-offset:2px}
       <p style="font-size:12px">⏫ lò xo · 🚀 rocket · 🛡 khiên · ❤ thêm lượt hồi sinh. Yêu quái bắn trúng 5 viên là thua, giẫm lên đầu để diệt. Bậc nâu nhảy 2 lần là gãy. Dẫm lên đá để bật lên.</p>
       <p class="best" id="menuBest"></p>
       <button class="btn" data-a="play">Chơi</button>
-      <p style="font-size:12px">← → hoặc A D để di chuyển · chạm nửa trái/phải màn hình · P/Esc để tạm dừng</p>
+      <button class="btn alt" data-a="settings">Cài đặt</button>
+      <p style="font-size:12px">← → hoặc A D để di chuyển · giữ chuột trái/ngón tay rồi kéo · P/Esc để tạm dừng</p>
     </div>
     <div class="panel" id="pause">
       <h2>Tạm dừng</h2>
       <button class="btn good" data-a="resume">Chơi tiếp</button>
+      <button class="btn alt" data-a="settings">Cài đặt</button>
       <button class="btn alt" data-a="play">Chơi lại</button>
       <button class="btn alt" data-a="menu">Về menu</button>
     </div>
@@ -58,6 +67,16 @@ button:focus-visible{outline:3px solid var(--acc);outline-offset:2px}
       <button class="btn good" id="reviveBtn" data-a="revive">Hồi sinh</button>
       <button class="btn" data-a="play">Chơi lại</button>
       <button class="btn alt" data-a="menu">Về menu</button>
+    </div>
+    <div class="panel" id="settings">
+      <h2>Cài đặt</h2>
+      <div class="row"><span>Độ nhạy kéo</span><b id="sensV">1.4</b></div>
+      <input type="range" id="sens" min="0.5" max="3" step="0.1" value="1.4">
+      <div class="row" style="margin-top:14px"><span>Độ khó</span></div>
+      <div class="dgrid" id="diffs"></div>
+      <p id="diffDesc" style="min-height:0"></p>
+      <p id="lockNote" style="display:none;font-size:12px">Muốn đổi độ khó, hãy về menu chính.</p>
+      <button class="btn" data-a="back">Xong</button>
     </div>
     <div class="panel" id="win">
       <h2>🎉 Chúc mừng!</h2>
@@ -74,33 +93,46 @@ const cv=document.getElementById('c'),ctx=cv.getContext('2d');
 const dpr=Math.min(window.devicePixelRatio||1,2);
 cv.width=W*dpr;cv.height=H*dpr;ctx.scale(dpr,dpr);
 const $=id=>document.getElementById(id);
-let best=0;try{best=+localStorage.getItem('skyhop_best')||0}catch(e){}
+const D=o=>Object.assign({obs:true,lives:3,mv:1,brk:1,mvSpd:1,rockInt:1,rockSpd:1,monEvery:40,shoot:1,gap:1,allBrk:false,desc:''},o);
+const DIFF={
+  sd:D({name:'Siêu dễ',desc:'Không có chướng ngại vật, vô hạn mạng, không có bậc di chuyển hoặc bậc vỡ.',obs:false,lives:Infinity,mv:0,brk:0}),
+  de:D({name:'Dễ',desc:'Ít chướng ngại vật, ít bậc vỡ, ít bậc di chuyển và di chuyển chậm.',mv:.5,brk:.4,mvSpd:.6,rockInt:1.7,rockSpd:.9,monEvery:60}),
+  bt:D({name:'Bình thường',desc:'Độ khó cân bằng như bản gốc.'}),
+  kho:D({name:'Khó',desc:'Đá rơi nhanh hơn 5%, nhiều bậc vỡ hơn 10%, quái bắn nhanh hơn 5%.',rockSpd:1.05,brk:1.1,shoot:1.05}),
+  hell:D({name:'=))))))',desc:'',lives:2,rockSpd:1.1,shoot:1.1,gap:.92,allBrk:true})
+};
+let sens=1.4,dk='bt',cfg;
+try{const S=JSON.parse(localStorage.getItem('skyhop_set')||'{}');if(S.sens)sens=S.sens;if(DIFF[S.dk])dk=S.dk}catch(e){}
+cfg=DIFF[dk];
+function saveSet(){try{localStorage.setItem('skyhop_set',JSON.stringify({sens,dk}))}catch(e){}}
+let best=0;function loadBest(){best=0;try{best=+localStorage.getItem('skyhop_best_'+dk)||0}catch(e){}}loadBest();
 let st='menu',P,plats,rocks,warns,camY,score,speed,revived,won,inv,spawnT,nextY,last,lastPlat,lives,sp,shT,rk,rkGoal,hits,pid,lastBrk,mons,bul,fx,dir=0,keyL=0,keyR=0,touch=0,clouds=[];
 for(let i=0;i<7;i++)clouds.push({x:Math.random()*W,y:Math.random()*H,s:.5+Math.random()});
 
-function show(p){$('ui').style.display=p?'flex':'none';['menu','pause','over','win'].forEach(k=>$(k).classList.toggle('on',k===p))}
-function hud(){const t='❤ '+lives+(sp>0?'  ⏫'+Math.ceil(sp/60)+'s':'')+(shT>0?'  🛡'+Math.ceil(shT/60)+'s':'')+(rk>0?'  🚀':'')+(hits?'  💥'+hits+'/5':'');const e=$('sp');if(e._t!==t){e._t=t;e.textContent=t}}
-function refresh(){$('sc').textContent=score|0;$('bs').textContent='Kỷ lục: '+best;hud();$('menuBest').textContent='Điểm cao nhất: '+best}
+function show(p){$('ui').style.display=p?'flex':'none';['menu','pause','over','win','settings'].forEach(k=>$(k).classList.toggle('on',k===p))}
+const LV=n=>n===Infinity?'∞':n;
+function hud(){const t='❤ '+LV(lives)+(sp>0?'  ⏫'+Math.ceil(sp/60)+'s':'')+(shT>0?'  🛡'+Math.ceil(shT/60)+'s':'')+(rk>0?'  🚀':'')+(hits?'  💥'+hits+'/5':'');const e=$('sp');if(e._t!==t){e._t=t;e.textContent=t}}
+function refresh(){$('sc').textContent=score|0;$('bs').textContent='Kỷ lục: '+best;hud();$('menuBest').textContent='Điểm cao nhất ('+cfg.name+'): '+best}
 
 function addPlat(){
-  const w=Math.max(50,72-score*.02),gap=Math.min(125,68+score*.05)+Math.random()*14;
+  const w=Math.max(50,72-score*.02),gap=(Math.min(125,68+score*.05)+Math.random()*14)*cfg.gap;
   nextY-=gap;
   pid++;
-  const mv=Math.random()<Math.min(.35,score/1500);
-  const brk=!mv&&!lastBrk&&pid>10&&Math.random()<Math.min(.25,.08+score/2500);
+  const mv=Math.random()<Math.min(.35,score/1500)*cfg.mv;
+  const brk=cfg.allBrk||(cfg.brk>0&&!mv&&!lastBrk&&pid>10&&Math.random()<Math.min(.25,.08+score/2500)*cfg.brk);
   lastBrk=brk;
-  const p={x:Math.random()*(W-w),y:nextY,w,passed:false,mv,brk,jumps:0,dead:false,item:null,vx:mv?(Math.random()<.5?-1:1)*(1+Math.random()*1.2):0};
-  if(!brk){
+  const p={x:Math.random()*(W-w),y:nextY,oy:nextY,w,passed:false,mv,brk,jumps:0,dead:false,item:null,vx:mv?(Math.random()<.5?-1:1)*(1+Math.random()*1.2)*cfg.mvSpd:0};
+  if(!brk||cfg.allBrk){
     if(pid%150===90)p.item='life';
     else if(pid%100===55)p.item='rocket';
     else if(pid%50===20)p.item='spring';
     else if(pid%40===10)p.item='shield';
   }
   plats.push(p);
-  if(pid>=35&&pid%40===25)mons.push({x:60+Math.random()*(W-120),y:nextY+gap/2-19,vx:(Math.random()<.5?-1:1)*(.8+Math.random()*.6),t:60});
+  if(cfg.obs&&pid>=35&&pid%cfg.monEvery===25)mons.push({x:60+Math.random()*(W-120),y:nextY+gap/2-19,vx:(Math.random()<.5?-1:1)*(.8+Math.random()*.6),t:60});
 }
 function reset(){
-  score=0;speed=1;won=false;inv=0;spawnT=120;camY=0;rocks=[];warns=[];lives=3;sp=0;shT=0;rk=0;rkGoal=0;hits=0;pid=0;lastBrk=false;mons=[];bul=[];fx=[];
+  score=0;speed=1;won=false;inv=0;spawnT=120;camY=0;rocks=[];warns=[];lives=cfg.lives;sp=0;shT=0;rk=0;rkGoal=0;hits=0;pid=0;lastBrk=false;mons=[];bul=[];fx=[];
   plats=[{x:0,y:H-30,w:W,passed:true,mv:false,vx:0}];nextY=H-30;lastPlat=plats[0];
   while(nextY>-200)addPlat();
   P={x:W/2-17,y:H-30-34,vx:0,vy:-13,w:34,h:34};
@@ -109,14 +141,14 @@ function reset(){
 function start(){reset();st='play';show(null);$('pauseBtn').style.visibility='visible'}
 function die(){
   st='over';
-  if(score>best){best=score|0;try{localStorage.setItem('skyhop_best',best)}catch(e){}}
+  if(score>best){best=score|0;try{localStorage.setItem('skyhop_best_'+dk,best)}catch(e){}}
   $('overS').textContent=score|0;$('overB').textContent='Kỷ lục: '+best;
-  $('reviveBtn').style.display=lives>0?'block':'none';$('reviveBtn').textContent='Hồi sinh (còn '+lives+' lần đau khổ)';
+  $('reviveBtn').style.display=lives>0?'block':'none';$('reviveBtn').textContent='Hồi sinh (còn '+LV(lives)+' lần đau khổ)';
   $('overT').textContent=lives>0?'Chỉ có thế thôi à =))':'Hết cứu!';
   refresh();show('over');
 }
 function revive(){
-  const p=lastPlat;lives--;speed=1;hits=0;rk=0;bul=[];mons=mons.filter(m=>Math.abs(m.y-p.y)>200);
+  const p=lastPlat;if(p.dead){p.dead=false;p.y=p.oy}p.jumps=0;if(!plats.includes(p))plats.push(p);lives--;speed=1;hits=0;rk=0;bul=[];mons=mons.filter(m=>Math.abs(m.y-p.y)>200);
   P.x=p.x+p.w/2-P.w/2;P.y=p.y-P.h;P.vy=-13;P.vx=0;
   camY=Math.min(camY+H*.2,p.y-H*.6);
   rocks=[];warns=[];inv=150;spawnT=150;
@@ -132,16 +164,16 @@ function update(dt){
   else if(tx!==null){P.vx=Math.max(-20,Math.min(20,(tx-(P.x+P.w/2))*.4))}
   else P.vx*=.7;
   P.x+=P.vx*dt;
-  if(P.x>W)P.x=-P.w;if(P.x<-P.w)P.x=W;
+  if(P.x>W){P.x=-P.w;if(tx!==null)tx-=W+P.w}if(P.x<-P.w){P.x=W;if(tx!==null)tx+=W+P.w}
   if(rk>0){P.vy=-22;if(score>=rkGoal){rk=0;P.vy=-10;inv=90}}
   const prevB=P.y+P.h;
   P.vy+=.5*dt;P.y+=P.vy*dt;
   for(const p of plats){
     if(p.mv){p.x+=p.vx*dt;if(p.x<0||p.x+p.w>W)p.vx*=-1}
     if(p.dead)p.y+=7*dt;
-    if(!p.dead&&P.vy>0&&prevB<=p.y+6&&P.y+P.h>=p.y&&P.x+P.w>p.x+4&&P.x<p.x+p.w-4){P.y=p.y-P.h;P.vy=sp>0?-18.4:-13;if(!p.brk)lastPlat=p;else{p.jumps++;if(p.jumps>=2){p.dead=true;boom(P.x+17,p.y)}}}
+    if(!p.dead&&P.vy>0&&prevB<=p.y+6&&P.y+P.h>=p.y&&P.x+P.w>p.x+4&&P.x<p.x+p.w-4){P.y=p.y-P.h;P.vy=sp>0?-18.4:-13;lastPlat=p;if(p.brk){p.jumps++;if(p.jumps>=2){p.dead=true;boom(P.x+17,p.y)}}}
     if(!p.passed&&p.y>P.y+P.h){p.passed=true;score++;refresh();
-      if(score>=GOAL&&!won){won=true;st='win';if(score>best){best=score;try{localStorage.setItem('skyhop_best',best)}catch(e){}}refresh();show('win');return}}
+      if(score>=GOAL&&!won){won=true;st='win';if(score>best){best=score;try{localStorage.setItem('skyhop_best_'+dk,best)}catch(e){}}refresh();show('win');return}}
   }
   if(P.y-camY<H*.4)camY=P.y-H*.4;
   while(nextY>camY-150)addPlat();
@@ -149,13 +181,13 @@ function update(dt){
   if(inv>0)inv-=dt;
   // chướng ngại vật
   spawnT-=dt;
-  if(spawnT<=0){
-    spawnT=Math.max(28,95-score*.07)*(.8+Math.random()*.4);
+  if(spawnT<=0&&cfg.obs){
+    spawnT=Math.max(28,95-score*.07)*(.8+Math.random()*.4)*cfg.rockInt;
     const n=1+(score>300&&Math.random()<.4?1:0)+(score>700&&Math.random()<.4?1:0);
     for(let i=0;i<n;i++)warns.push({x:20+Math.random()*(W-40),t:45});
   }
   for(let i=warns.length-1;i>=0;i--){const w=warns[i];w.t-=dt;
-    if(w.t<=0){rocks.push({x:w.x,y:camY-30,vy:3+Math.min(3,score/300)+Math.random(),r:13+Math.random()*5,rot:0});warns.splice(i,1)}}
+    if(w.t<=0){rocks.push({x:w.x,y:camY-30,vy:(3+Math.min(3,score/300)+Math.random())*cfg.rockSpd,r:13+Math.random()*5,rot:0});warns.splice(i,1)}}
   for(let i=rocks.length-1;i>=0;i--){const r=rocks[i];r.y+=r.vy*dt;r.rot+=.08*dt;
     if(r.y-camY>H+40){rocks.splice(i,1);continue}
     if(inv<=0){const cx=Math.max(P.x,Math.min(r.x,P.x+P.w)),cy=Math.max(P.y,Math.min(r.y,P.y+P.h));
@@ -170,7 +202,7 @@ function update(dt){
       p.item=null}}
   // yêu quái
   for(let i=mons.length-1;i>=0;i--){const m=mons[i];m.x+=m.vx*dt;if(m.x<20||m.x>W-58)m.vx*=-1;
-    if(m.y>camY&&m.y<camY+H*.9){m.t-=dt;if(m.t<=0){m.t=130;const dx=P.x+17-(m.x+19),dy=P.y+17-(m.y+19),l=Math.hypot(dx,dy)||1;bul.push({x:m.x+19,y:m.y+19,vx:dx/l*.75,vy:dy/l*.75})}}
+    if(m.y>camY&&m.y<camY+H*.9){m.t-=dt;if(m.t<=0){m.t=130/cfg.shoot;const dx=P.x+17-(m.x+19),dy=P.y+17-(m.y+19),l=Math.hypot(dx,dy)||1;bul.push({x:m.x+19,y:m.y+19,vx:dx/l*.75*cfg.shoot,vy:dy/l*.75*cfg.shoot})}}
     if(P.x<m.x+38&&P.x+P.w>m.x&&P.y<m.y+38&&P.y+P.h>m.y&&(rk>0||(P.vy>0&&prevB<=m.y+14))){
       boom(m.x+19,m.y+19);mons.splice(i,1);if(rk<=0)P.vy=sp>0?-18.4:-13}}
   // đạn (bay rất chậm): trúng 5 viên là thua
@@ -190,14 +222,16 @@ function draw(){
   const g=ctx.createLinearGradient(0,0,0,H);
   const t=Math.min(1,score/GOAL);
   g.addColorStop(0,`rgb(${120-90*t|0},${190-120*t|0},${255-100*t|0})`);g.addColorStop(1,'#dff1ff');
-  ctx.fillStyle=g;ctx.fillRect(0,0,W,H);
-  ctx.fillStyle='rgba(255,255,255,.7)';
+  if(dk==='hell'){const h=ctx.createLinearGradient(0,0,0,H);h.addColorStop(0,'#12020a');h.addColorStop(.6,'#4a0a0a');h.addColorStop(1,'#b3200a');ctx.fillStyle=h}else ctx.fillStyle=g;
+  ctx.fillRect(0,0,W,H);
+  ctx.fillStyle=dk==='hell'?'rgba(255,90,20,.3)':'rgba(255,255,255,.7)';
   for(const c of clouds){const y=((c.y-(camY||0)*.2*c.s)%(H+60)+(H+60))%(H+60)-30;
     ctx.beginPath();ctx.ellipse(c.x,y,40*c.s,14*c.s,0,0,7);ctx.ellipse(c.x+22*c.s,y-8*c.s,24*c.s,13*c.s,0,0,7);ctx.fill()}
+  if(dk==='hell')lava();
   if(!plats)return;
   for(const p of plats){const y=p.y-camY;if(y<-20||y>H+20)continue;
-    ctx.fillStyle=p.brk?(p.jumps?'#a86a35':'#c98d4e'):p.mv?'#3b82d6':'#4cb86f';rr(p.x,y,p.w,12,6);ctx.fill();
-    ctx.strokeStyle='#16324a';ctx.lineWidth=2.5;ctx.stroke();drawPlatExtra(p,y)}
+    ctx.fillStyle=dk==='hell'?(p.mv?(p.jumps?'#7a1d12':'#a3281c'):(p.jumps?'#4a2418':'#6b3a26')):p.brk?(p.jumps?'#a86a35':'#c98d4e'):p.mv?'#3b82d6':'#4cb86f';rr(p.x,y,p.w,12,6);ctx.fill();
+    ctx.strokeStyle=dk==='hell'?'#ff7a2a':'#16324a';ctx.lineWidth=2.5;ctx.stroke();drawPlatExtra(p,y)}
   drawExtras();
   for(const w of warns){const a=.5+.5*Math.sin(w.t*.5);ctx.fillStyle=`rgba(230,50,40,${a})`;
     ctx.beginPath();ctx.moveTo(w.x,62);ctx.lineTo(w.x-11,82);ctx.lineTo(w.x+11,82);ctx.closePath();ctx.fill();
@@ -217,6 +251,15 @@ function draw(){
     if(rk>0){ctx.fillStyle='#ff9d2e';ctx.beginPath();ctx.moveTo(P.x+8,y+P.h);ctx.lineTo(P.x+17,y+P.h+28+Math.random()*10);ctx.lineTo(P.x+26,y+P.h);ctx.fill();ctx.font='30px serif';ctx.textAlign='center';ctx.fillText('🚀',P.x+17,y-2)}
     if(shT>0&&(shT>60||Math.floor(shT/5)%2)){ctx.strokeStyle='rgba(60,200,255,.9)';ctx.fillStyle='rgba(60,200,255,.2)';ctx.lineWidth=3;ctx.beginPath();ctx.arc(P.x+17,y+17,28,0,7);ctx.fill();ctx.stroke()}}
 }
+function lava(){const t=performance.now()/500;
+  ctx.fillStyle='#ffb02e';
+  for(let i=0;i<22;i++){const x=(i*53+Math.sin(t+i)*14+400)%W,y=H-((t*45*(.6+i%4*.3)+i*67)%H);ctx.fillRect(x,y,2.5,2.5)}
+  ctx.fillStyle='#d62a0b';ctx.beginPath();ctx.moveTo(0,H);
+  for(let x=0;x<=W;x+=16)ctx.lineTo(x,H-30+Math.sin(x/28+t*2)*7);
+  ctx.lineTo(W,H);ctx.fill();
+  ctx.fillStyle='#ff9a2e';ctx.beginPath();ctx.moveTo(0,H);
+  for(let x=0;x<=W;x+=16)ctx.lineTo(x,H-14+Math.sin(x/20-t*2.4)*5);
+  ctx.lineTo(W,H);ctx.fill()}
 const ICON={spring:'⏫',rocket:'🚀',shield:'🛡',life:'❤'};
 function drawPlatExtra(p,y){
   if(p.brk&&p.jumps===1){ctx.strokeStyle='#16324a';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(p.x+p.w*.45,y);ctx.lineTo(p.x+p.w*.5,y+6);ctx.lineTo(p.x+p.w*.42,y+12);ctx.stroke()}
@@ -248,19 +291,32 @@ addEventListener('keyup',e=>{
   if(e.code==='ArrowLeft'||e.code==='KeyA')keyL=0;
   if(e.code==='ArrowRight'||e.code==='KeyD')keyR=0;
 });
-let tx=null;const setTouch=e=>{const r=cv.getBoundingClientRect();tx=(e.clientX-r.left)/r.width*W};
-cv.addEventListener('pointerdown',e=>{setTouch(e);cv.setPointerCapture(e.pointerId)});
+let tx=null,lx=null;const setTouch=e=>{if(lx===null)return;const r=cv.getBoundingClientRect();tx+=(e.clientX-lx)*W/r.width*sens;lx=e.clientX};
+cv.addEventListener('pointerdown',e=>{if(e.button!==0)return;lx=e.clientX;tx=P?P.x+P.w/2:W/2;cv.setPointerCapture(e.pointerId)});
 cv.addEventListener('pointermove',setTouch);
-['pointerup','pointercancel'].forEach(n=>cv.addEventListener(n,()=>touch=0));
+['pointerup','pointercancel'].forEach(n=>cv.addEventListener(n,()=>{touch=0;lx=null;tx=null}));
 $('pauseBtn').onclick=pause;
 $('ui').addEventListener('click',e=>{
   const a=e.target.dataset&&e.target.dataset.a;if(!a)return;
   if(a==='play')start();
   else if(a==='resume')resume();
-  else if(a==='revive')revive();
+  else if(a==='revive')revive();else if(a==='settings')openSet();else if(a==='back')closeSet();
   else if(a==='menu'){st='menu';reset();$('pauseBtn').style.visibility='hidden';refresh();show('menu')}
 });
 document.addEventListener('visibilitychange',()=>{if(document.hidden)pause()});
+let setFrom='menu';
+const dgrid=$('diffs');
+function paintSet(){
+  dgrid.querySelectorAll('.dbtn').forEach(b=>b.classList.toggle('sel',b.dataset.k===dk));
+  $('diffDesc').textContent=cfg.desc;$('diffDesc').style.display=cfg.desc?'block':'none';
+  $('sens').value=sens;$('sensV').textContent=(+sens).toFixed(1);
+  const lock=setFrom==='pause';dgrid.classList.toggle('lock',lock);$('lockNote').style.display=lock?'block':'none';
+}
+for(const k in DIFF){const b=document.createElement('button');b.className='dbtn';b.dataset.k=k;b.textContent=DIFF[k].name;
+  b.onclick=()=>{if(setFrom==='pause')return;dk=k;cfg=DIFF[k];saveSet();loadBest();reset();paintSet()};dgrid.appendChild(b)}
+$('sens').addEventListener('input',e=>{sens=+e.target.value;saveSet();paintSet()});
+function openSet(){setFrom=st==='pause'?'pause':'menu';paintSet();show('settings')}
+function closeSet(){show(setFrom)}
 reset();$('pauseBtn').style.visibility='hidden';show('menu');
 requestAnimationFrame(loop);
 })();
