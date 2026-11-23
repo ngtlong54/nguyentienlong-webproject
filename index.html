@@ -160,7 +160,7 @@ input,select,textarea{user-select:text;-webkit-user-select:text;touch-action:aut
         <div class="it"><span>🚀</span><p><b>Rocket:</b> bay vút lên 100 bậc, miễn nhiễm mọi thứ.</p></div>
         <div class="it"><span>❤</span><p><b>Tim:</b> thêm 1 lượt hồi sinh.</p></div>
       </div>
-      <button class="ver" id="verBtn" title="Quản trị">🔧 Phiên bản 2026.11.23-v2</button>
+      <button class="ver" id="verBtn" title="Quản trị">🔧 Phiên bản 2026.11.23-v3</button>
       <button class="btn alt" data-b="back">← Quay lại</button>
     </div>
 
@@ -488,12 +488,46 @@ function setAt(s,path,val){
   let o=s.v;for(let i=0;i<p.length-1;i++){if(!o[p[i]]||typeof o[p[i]]!=='object')o[p[i]]={};o=o[p[i]]}
   if(val===null||val===undefined)delete o[p[p.length-1]];else o[p[p.length-1]]=val;
 }
-function stream(path,s,cb){
-  if(!FBOK||!window.EventSource)return;
-  const es=new EventSource(FB.db+'/'+path+'.json');
-  es.addEventListener('put',e=>{try{const d=JSON.parse(e.data);setAt(s,d.path,d.data)}catch(x){}cb()});
-  es.addEventListener('patch',e=>{try{const d=JSON.parse(e.data);for(const k in d.data)setAt(s,d.path+'/'+k,d.data[k])}catch(x){}cb()});
-  es.onerror=()=>{if(es.readyState===2)setTimeout(()=>stream(path,s,cb),5000)};
+function stream(path,s,cb){/*LBLIVE*/
+  if(!FBOK)return function(){};
+  const url=FB.db+'/'+path+'.json';
+  let es=null,seen=Date.now(),busy=0,init=1;
+  const J=v=>{try{return JSON.stringify(v)}catch(e){return ''}};
+  const full=()=>{
+    if(busy)return;busy=1;
+    return fetch(url+'?_='+Date.now(),{cache:'no-store'})
+      .then(r=>r.ok?r.json():Promise.reject())
+      .then(v=>{if(J(v)!==J(s.v)){s.v=v;cb()}})
+      .catch(()=>{}).then(()=>{busy=0});
+  };
+  const apply=(e,patch)=>{
+    seen=Date.now();const b=J(s.v);
+    try{const d=JSON.parse(e.data);
+      if(patch){for(const k in d.data)setAt(s,d.path+'/'+k,d.data[k])}
+      else setAt(s,d.path,d.data)}catch(x){}
+    if(init||J(s.v)!==b){init=0;cb()}
+  };
+  const open=()=>{
+    if(!window.EventSource)return;
+    try{if(es)es.close()}catch(e){}
+    seen=Date.now();
+    try{es=new EventSource(url)}catch(e){return}
+    const me=es;
+    me.addEventListener('open',()=>{seen=Date.now()});
+    me.addEventListener('keep-alive',()=>{seen=Date.now()});
+    me.addEventListener('put',e=>apply(e,0));
+    me.addEventListener('patch',e=>apply(e,1));
+    ['cancel','auth_revoked'].forEach(n=>me.addEventListener(n,()=>{if(es===me)setTimeout(open,3000)}));
+    me.onerror=()=>{if(me.readyState===2&&es===me)setTimeout(open,3000)};
+  };
+  const wake=()=>{if(!document.hidden){open();full()}};
+  open();
+  setInterval(()=>{if(!document.hidden&&Date.now()-seen>50000){open();full()}},10000);
+  if(path==='lb')setInterval(()=>{if(!document.hidden)full()},15000);
+  document.addEventListener('visibilitychange',wake);
+  addEventListener('online',wake);
+  addEventListener('focus',wake);
+  return full;
 }
 
 // ---- Cấu hình chế độ (do admin chỉnh) ----
@@ -684,7 +718,7 @@ function onShow(p){wr.style.display=p==='admin'?'none':''}
 function openP(id){
   if(st==='play')pause();
   ret=st==='pause'?'pause':st==='over'?'over':st==='win'?'win':'menu';
-  if(id==='lb'){lbM=dk;fillModes();renderLB()}
+  if(id==='lb'){lbM=dk;fillModes();renderLB();window.__lbFull&&window.__lbFull()}
   if(id==='admin')renderAdmin();if(id==='modes')buildModes();
   show(id);
 }
@@ -812,7 +846,7 @@ function renderAdmin(){
   B.replaceChildren(...out);
 }
 
-stream('lb',LB,onLB);stream('config',CF,onCF);
+window.__lbFull=stream('lb',LB,onLB);stream('config',CF,onCF);
 updNameBtn();
 
 reset();$('pauseBtn').style.visibility='hidden';show('menu');
