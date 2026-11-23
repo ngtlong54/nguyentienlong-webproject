@@ -121,6 +121,7 @@ input,select,textarea{user-select:text;-webkit-user-select:text;touch-action:aut
 .rw label{flex:1 1 60%;font-weight:700;font-size:13px}
 @media (max-width:420px){#wrap{border-radius:0;box-shadow:none}}
 </style>
+<style>/*DEEPCFG-CSS*/.gh{margin:16px 0 2px;padding-top:10px;border-top:1px solid var(--line);font-size:14px;font-weight:800;color:var(--acc);text-align:left}.hp{margin:0 0 10px;font-size:11.5px;line-height:1.45;text-align:left;color:var(--mut)}body.nohp .hp{display:none}</style>
 </head>
 <body>
 <div id="wrap">
@@ -155,12 +156,12 @@ input,select,textarea{user-select:text;-webkit-user-select:text;touch-action:aut
         <div class="it"><span>🟫</span><p><b>Bậc nâu</b> nhảy 2 lần là gãy. <b>Bậc xanh dương</b> di chuyển ngang.</p></div>
         <div class="it"><span>🪨</span><p><b>Đá rơi</b> có dấu ! cảnh báo trước. Dẫm lên đá để bật lên.</p></div>
         <div class="it"><span>👾</span><p><b>Yêu quái</b> bắn trúng <span id="hitTxt">5</span> viên là thua (tuỳ chế độ). Giẫm lên đầu để diệt.</p></div>
-        <div class="it"><span>⏫</span><p><b>Lò xo:</b> nhảy cao hơn trong 5 giây.</p></div>
-        <div class="it"><span>🛡</span><p><b>Khiên:</b> chặn đá và đạn trong 5 giây.</p></div>
-        <div class="it"><span>🚀</span><p><b>Rocket:</b> bay vút lên 100 bậc, miễn nhiễm mọi thứ.</p></div>
+        <div class="it"><span>⏫</span><p><b>Lò xo:</b> nhảy cao hơn trong <span id="sprTxt">5</span> giây.</p></div>
+        <div class="it"><span>🛡</span><p><b>Khiên:</b> chặn đá và đạn trong <span id="shTxt">5</span> giây.</p></div>
+        <div class="it"><span>🚀</span><p><b>Rocket:</b> bay vút lên <span id="rkTxt">100</span> bậc, miễn nhiễm mọi thứ.</p></div>
         <div class="it"><span>❤</span><p><b>Tim:</b> thêm 1 lượt hồi sinh.</p></div>
       </div>
-      <button class="ver" id="verBtn" title="Quản trị">🔧 Phiên bản 2026.11.23-v3</button>
+      <button class="ver" id="verBtn" title="Quản trị">🔧 Phiên bản 2026.11.23-v4</button>
       <button class="btn alt" data-b="back">← Quay lại</button>
     </div>
 
@@ -218,7 +219,7 @@ const cv=document.getElementById('c'),ctx=cv.getContext('2d');
 const dpr=Math.min(window.devicePixelRatio||1,2);
 cv.width=W*dpr;cv.height=H*dpr;ctx.scale(dpr,dpr);
 const $=id=>document.getElementById(id);
-const D=o=>Object.assign({obs:true,lives:3,mv:1,brk:1,mvSpd:1,rockInt:1,rockSpd:1,monEvery:40,shoot:1,gap:1,allBrk:false,hitMax:5,goal:1000,jump:1,grav:1,bg:'',desc:''},o);
+const D=o=>Object.assign({obs:true,lives:3,mv:1,brk:1,mvSpd:1,rockInt:1,rockSpd:1,monEvery:40,shoot:1,gap:1,allBrk:false,hitMax:5,goal:1000,jump:1,grav:1,bg:'',desc:'',monStart:35,monChance:1,monSpd:1,bulSpd:1,lifeEvery:150,rocketEvery:100,springEvery:50,shieldEvery:40,springSec:5,shieldSec:5,springPow:18.4,rocketSteps:100,lifeGain:1,itemLife:0,brkJumps:2,platW:1,rockStart:0},o);
 const DIFF={
   sd:D({name:'Siêu dễ',desc:'Không có chướng ngại vật, vô hạn mạng, không có bậc di chuyển hoặc bậc vỡ.',obs:false,lives:Infinity,mv:0,brk:0}),
   de:D({name:'Dễ',desc:'Ít chướng ngại vật, ít bậc vỡ, ít bậc di chuyển và di chuyển chậm.',mv:.5,brk:.4,mvSpd:.6,rockInt:1.7,rockSpd:.9,monEvery:60}),
@@ -237,10 +238,10 @@ for(let i=0;i<7;i++)clouds.push({x:Math.random()*W,y:Math.random()*H,s:.5+Math.r
 function show(p){$('ui').style.display=p?'flex':'none';onShow(p);['menu','pause','over','win','settings','name','lb','admin','modes','help'].forEach(k=>$(k).classList.toggle('on',k===p))}
 const LV=n=>n===Infinity?'∞':n;
 function hud(){const t=(TEST?'🧪TEST  ':'')+'❤ '+LV(lives)+(sp>0?'  ⏫'+Math.ceil(sp/60)+'s':'')+(shT>0?'  🛡'+Math.ceil(shT/60)+'s':'')+(rk>0?'  🚀':'')+(hits?'  💥'+hits+'/'+cfg.hitMax:'');const e=$('sp');if(e._t!==t){e._t=t;e.textContent=t}}
-function refresh(){const _g=$('goalTxt');if(_g&&cfg)_g.textContent=cfg.goal;const _e=$('hitTxt');if(_e&&cfg)_e.textContent=cfg.hitMax;$('sc').textContent=score|0;$('bs').textContent='Kỷ lục: '+best;hud();$('menuBest').textContent='Điểm cao nhất ('+cfg.name+'): '+best+(bestT(dk)?' · '+fmtS(bestT(dk)):'')}
+function refresh(){[['sprTxt','springSec'],['shTxt','shieldSec'],['rkTxt','rocketSteps']].forEach(([i,k])=>{const e=$(i);if(e&&cfg)e.textContent=cfg[k]});const _g=$('goalTxt');if(_g&&cfg)_g.textContent=cfg.goal;const _e=$('hitTxt');if(_e&&cfg)_e.textContent=cfg.hitMax;$('sc').textContent=score|0;$('bs').textContent='Kỷ lục: '+best;hud();$('menuBest').textContent='Điểm cao nhất ('+cfg.name+'): '+best+(bestT(dk)?' · '+fmtS(bestT(dk)):'')}
 
 function addPlat(){
-  const w=Math.max(50,72-score*.02),gap=(Math.min(125,68+score*.05)+Math.random()*14)*cfg.gap;
+  const w=Math.max(50,72-score*.02)*cfg.platW,gap=(Math.min(125,68+score*.05)+Math.random()*14)*cfg.gap;
   nextY-=gap;
   pid++;
   const mv=Math.random()<Math.min(.35,score/1500)*cfg.mv;
@@ -248,13 +249,13 @@ function addPlat(){
   lastBrk=brk;
   const p={x:Math.random()*(W-w),y:nextY,oy:nextY,w,passed:false,mv,brk,jumps:0,dead:false,item:null,vx:mv?(Math.random()<.5?-1:1)*(1+Math.random()*1.2)*cfg.mvSpd:0};
   if(!brk||cfg.allBrk){
-    if(pid%150===90)p.item='life';
-    else if(pid%100===55)p.item='rocket';
-    else if(pid%50===20)p.item='spring';
-    else if(pid%40===10)p.item='shield';
+    const hit=(n,o)=>n>0&&pid%n===o%n;if(hit(cfg.lifeEvery,90))p.item='life';
+    else if(hit(cfg.rocketEvery,55))p.item='rocket';
+    else if(hit(cfg.springEvery,20))p.item='spring';
+    else if(hit(cfg.shieldEvery,10))p.item='shield';
   }
   plats.push(p);
-  if(cfg.obs&&pid>=35&&pid%cfg.monEvery===25)mons.push({x:60+Math.random()*(W-120),y:nextY+gap/2-19,vx:(Math.random()<.5?-1:1)*(.8+Math.random()*.6),t:60});
+  if(cfg.obs&&cfg.monEvery>0&&pid>=cfg.monStart&&pid%cfg.monEvery===25%cfg.monEvery&&Math.random()<cfg.monChance)mons.push({x:60+Math.random()*(W-120),y:nextY+gap/2-19,vx:(Math.random()<.5?-1:1)*(.8+Math.random()*.6)*cfg.monSpd,t:60});
 }
 function reset(){playT=0;scoreT=0;
   score=0;speed=1;won=false;inv=0;spawnT=120;camY=0;rocks=[];warns=[];lives=cfg.lives;sp=0;shT=0;rk=0;rkGoal=0;hits=0;pid=0;lastBrk=false;mons=[];bul=[];fx=[];
@@ -296,7 +297,7 @@ function update(dt){playT+=RT;
   for(const p of plats){
     if(p.mv){p.x+=p.vx*dt;if(p.x<0){p.x=0;p.vx=Math.abs(p.vx)}else if(p.x+p.w>W){p.x=W-p.w;p.vx=-Math.abs(p.vx)}}
     if(p.dead)p.y+=7*dt;
-    if(!p.dead&&P.vy>0&&prevB<=p.y+6&&P.y+P.h>=p.y&&P.x+P.w>p.x+4&&P.x<p.x+p.w-4){P.y=p.y-P.h;P.vy=(sp>0?-18.4:-13)*cfg.jump;lastPlat=p;if(p.brk){p.jumps++;if(p.jumps>=2){p.dead=true;boom(P.x+17,p.y)}}}
+    if(!p.dead&&P.vy>0&&prevB<=p.y+6&&P.y+P.h>=p.y&&P.x+P.w>p.x+4&&P.x<p.x+p.w-4){P.y=p.y-P.h;P.vy=(sp>0?-cfg.springPow:-13)*cfg.jump;lastPlat=p;if(p.brk){p.jumps++;if(p.jumps>=cfg.brkJumps){p.dead=true;boom(P.x+17,p.y)}}}
     if(!p.passed&&p.y>P.y+P.h){p.passed=true;score++;scoreT=playT;refresh();
       if(score>=cfg.goal&&!won){won=true;st='win';try{submitScore()}catch(e){}recT();if(score>best){best=score;try{(TEST||localStorage.setItem('skyhop_best_'+dk,best))}catch(e){}}refresh();$('winTm').textContent='Thời gian: '+fmtS(scoreT);winBox();show('win');return}}
   }
@@ -306,7 +307,7 @@ function update(dt){playT+=RT;
   if(inv>0)inv-=dt;
   // chướng ngại vật
   spawnT-=dt;
-  if(spawnT<=0&&cfg.obs){
+  if(spawnT<=0&&cfg.obs&&score>=cfg.rockStart){
     spawnT=Math.max(28,95-score*.07)*(.8+Math.random()*.4)*cfg.rockInt;
     const n=1+(score>300&&Math.random()<.4?1:0)+(score>700&&Math.random()<.4?1:0);
     for(let i=0;i<n;i++)warns.push({x:20+Math.random()*(W-40),t:45});
@@ -317,19 +318,19 @@ function update(dt){playT+=RT;
     if(r.y-camY>H+40){rocks.splice(i,1);continue}
     if(inv<=0){const cx=Math.max(P.x,Math.min(r.x,P.x+P.w)),cy=Math.max(P.y,Math.min(r.y,P.y+P.h));
       if((cx-r.x)**2+(cy-r.y)**2<(r.r-2)**2){if(shT>0||rk>0){boom(r.x,r.y);rocks.splice(i,1);continue}
-        if(P.vy>0&&prevB<=r.y-r.vy*dt+r.r*.6){boom(r.x,r.y);rocks.splice(i,1);P.vy=(sp>0?-18.4:-13)*cfg.jump;continue}
+        if(P.vy>0&&prevB<=r.y-r.vy*dt+r.r*.6){boom(r.x,r.y);rocks.splice(i,1);P.vy=(sp>0?-cfg.springPow:-13)*cfg.jump;continue}
         die();return}}}
   // buff + nhặt vật phẩm
   if(sp>0)sp-=dt;if(shT>0)shT-=dt;
-  for(const p of plats){if(!p.item)continue;const ix=p.x+p.w/2-12,iy=p.y-30;
+  for(const p of plats){if(!p.item)continue;if(cfg.itemLife>0){if(p.itemT===undefined){if(p.y-camY>-10)p.itemT=cfg.itemLife*60}else{p.itemT-=dt;if(p.itemT<=0){p.item=null;continue}}}const ix=p.x+p.w/2-12,iy=p.y-30;
     if(P.x<ix+24&&P.x+P.w>ix&&P.y<iy+24&&P.y+P.h>iy){
-      if(p.item==='spring')sp=300;else if(p.item==='shield')shT=300;else if(p.item==='rocket'){rk=1;rkGoal=score+100}else lives++;
+      if(p.item==='spring')sp=cfg.springSec*60;else if(p.item==='shield')shT=cfg.shieldSec*60;else if(p.item==='rocket'){rk=1;rkGoal=score+cfg.rocketSteps}else lives+=cfg.lifeGain;
       p.item=null}}
   // yêu quái
   for(let i=mons.length-1;i>=0;i--){const m=mons[i];m.x+=m.vx*dt;if(m.x<20||m.x>W-58)m.vx*=-1;
-    if(m.y>camY&&m.y<camY+H*.9){m.t-=dt;if(m.t<=0){m.t=130/cfg.shoot;const dx=P.x+17-(m.x+19),dy=P.y+17-(m.y+19),l=Math.hypot(dx,dy)||1;bul.push({x:m.x+19,y:m.y+19,vx:dx/l*.75*cfg.shoot,vy:dy/l*.75*cfg.shoot})}}
+    if(m.y>camY&&m.y<camY+H*.9){m.t-=dt;if(m.t<=0){m.t=130/cfg.shoot;const dx=P.x+17-(m.x+19),dy=P.y+17-(m.y+19),l=Math.hypot(dx,dy)||1;bul.push({x:m.x+19,y:m.y+19,vx:dx/l*.75*cfg.shoot*cfg.bulSpd,vy:dy/l*.75*cfg.shoot*cfg.bulSpd})}}
     if(P.x<m.x+38&&P.x+P.w>m.x&&P.y<m.y+38&&P.y+P.h>m.y&&(rk>0||(P.vy>0&&prevB<=m.y+14))){
-      boom(m.x+19,m.y+19);mons.splice(i,1);if(rk<=0)P.vy=(sp>0?-18.4:-13)*cfg.jump}}
+      boom(m.x+19,m.y+19);mons.splice(i,1);if(rk<=0)P.vy=(sp>0?-cfg.springPow:-13)*cfg.jump}}
   // đạn (bay rất chậm): trúng 5 viên là thua
   for(let i=bul.length-1;i>=0;i--){const b=bul[i];b.x+=b.vx*dt;b.y+=b.vy*dt;
     if(b.y-camY>H+40||b.y<camY-200){bul.splice(i,1);continue}
@@ -388,7 +389,7 @@ function lava(){const t=performance.now()/500;
 const ICON={spring:'⏫',rocket:'🚀',shield:'🛡',life:'❤'};
 function drawPlatExtra(p,y){
   if(p.brk&&p.jumps===1){ctx.strokeStyle='#16324a';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(p.x+p.w*.45,y);ctx.lineTo(p.x+p.w*.5,y+6);ctx.lineTo(p.x+p.w*.42,y+12);ctx.stroke()}
-  if(p.item){ctx.font='22px serif';ctx.textAlign='center';ctx.fillText(ICON[p.item],p.x+p.w/2,y-8)}
+  if(p.item&&!(p.itemT<90&&Math.floor(p.itemT/6)%2)){ctx.font='22px serif';ctx.textAlign='center';ctx.fillText(ICON[p.item],p.x+p.w/2,y-8)}
 }
 function drawExtras(){
   for(const m of mons){const y=m.y-camY;if(y<-50||y>H+50)continue;
@@ -459,7 +460,7 @@ const btn=(t,fn,c)=>h('button',{className:c||'btn',textContent:t,onclick:fn});
 const isOn=id=>$(id).classList.contains('on');
 const err=e=>alert('Lỗi: '+(e&&e.message||e));
 const fmtT=t=>Math.floor(t/60)+':'+String(Math.floor(t%60)).padStart(2,'0');
-const PF=[['obs','Có chướng ngại (đá/quái)','b'],['lives','Số lần hồi sinh (999 = ∞)','n',1],['mv','Tỉ lệ bậc di chuyển ×','n',.1],['brk','Tỉ lệ bậc vỡ ×','n',.1],['mvSpd','Tốc độ bậc di chuyển ×','n',.1],['rockInt','Giãn cách đá rơi × (lớn = ít đá)','n',.1],['rockSpd','Tốc độ đá ×','n',.05],['monEvery','Quái mỗi N bậc (phải >25)','n',1],['shoot','Tốc độ quái bắn ×','n',.05],['gap','Khoảng cách bậc ×','n',.01],['allBrk','Mọi bậc đều vỡ','b'],['hitMax','Số đạn trúng thì thua','n',1],['goal','Điểm tối đa của màn (10–50000) · đạt là hiện thông báo','n',10],['jump','Sức nhảy × (0.6–1.8, quá thấp sẽ không nhảy tới bậc)','n',.05],['grav','Trọng lực × (0.4–1.8)','n',.05]];
+const PF=[["obs", "Có chướng ngại (đá/quái)", "b", null, null, null, "Bật: đá rơi và yêu quái hoạt động theo các mục bên dưới. Tắt: không có đá và quái nào (các thông số đá/quái bị bỏ qua); vật phẩm và bậc đặc biệt vẫn có.", "1. Luật chơi chung", "Bật"], ["lives", "Số lần hồi sinh (999 = ∞)", "n", 1, 0, 999, "Số lần bấm Hồi sinh sau khi chết (mỗi lần trừ 1; hồi sinh trên bậc gần nhất, bất tử 2,5 giây). 0 = chết là hết. Nhập 999 trở lên = vô hạn (hiện ∞). Giá trị 100–998 bị ép về 99.", "1. Luật chơi chung", 3], ["goal", "Điểm tối đa của màn", "n", 10, 10, 50000, "Đạt đủ số điểm này (1 điểm = vượt qua 1 bậc) thì hiện thông báo thắng đúng 1 lần mỗi ván và ghi điểm lên bảng. Màu nền trời đậm dần theo điểm ÷ giá trị này. Nếu không bật 'Dừng hẳn' người chơi có thể bấm Chơi tiếp.", "1. Luật chơi chung", 1000], ["jump", "Sức nhảy ×", "n", 0.05, 0.6, 1.8, "Vận tốc bật lên = 13 × giá trị này (khi có lò xo: Lực nảy lò xo × giá trị này). Độ cao nhảy ≈ 169 × jump² ÷ trọng lực (px). Quá thấp thì không với tới bậc kế tiếp (khoảng cách bậc tối đa ≈ 139 × 'Khoảng cách bậc').", "1. Luật chơi chung", 1], ["grav", "Trọng lực ×", "n", 0.05, 0.4, 1.8, "Gia tốc rơi = 0,5 × giá trị này mỗi khung hình. Cao: rơi nhanh, nhảy thấp và ngắn. Thấp: lơ lửng, nhảy cao và lâu. Độ cao nhảy tỉ lệ nghịch với giá trị này.", "1. Luật chơi chung", 1], ["gap", "Khoảng cách bậc ×", "n", 0.01, 0.5, 1.1, "Khoảng cách dọc giữa 2 bậc = (68 + điểm×0,05, tối đa 125, cộng ngẫu nhiên 0–14) × giá trị này (px). Nhỏ = bậc dày, dễ. Lớn = bậc thưa, khó. Tối đa 1,1 vì xa hơn thì với sức nhảy/trọng lực gốc sẽ không nhảy tới.", "2. Bậc đứng", 1], ["platW", "Độ rộng bậc ×", "n", 0.05, 0.5, 2, "Chiều rộng bậc = max(50, 72 − điểm×0,02) px × giá trị này (bậc hẹp dần theo điểm). 0,5 = rất hẹp, 2 = rất rộng.", "2. Bậc đứng", 1], ["mv", "Tỉ lệ bậc di chuyển ×", "n", 0.1, 0, 3, "Hệ số nhân xác suất bậc xanh dương (trượt ngang). Xác suất mỗi bậc = min(35%, điểm÷1500) × giá trị này: ở ×1 bậc di chuyển xuất hiện dần và đạt tối đa 35% sau ~525 điểm; ×3 có thể lên tới 100%. 0 = không có bậc di chuyển.", "2. Bậc đứng", 1], ["mvSpd", "Tốc độ bậc di chuyển ×", "n", 0.1, 0, 3, "Tốc độ trượt ngang = (ngẫu nhiên 1–2,2 px/khung) × giá trị này. Bậc bật vào mép sẽ quay đầu. 0 = đứng yên (vẫn là bậc xanh dương).", "2. Bậc đứng", 1], ["brk", "Tỉ lệ bậc vỡ ×", "n", 0.1, 0, 3, "Hệ số nhân xác suất bậc nâu (vỡ). Xác suất mỗi bậc = min(25%, 8% + điểm÷2500) × giá trị này. Chỉ xét từ bậc thứ 10, không có 2 bậc vỡ liền nhau và không trùng bậc di chuyển. 0 = không có.", "2. Bậc đứng", 1], ["brkJumps", "Số lần nhảy thì bậc vỡ gãy", "n", 1, 1, 10, "Bậc nâu gãy (rơi xuống) sau đúng N lần người chơi nhảy lên nó. Vết nứt hiện sau lần nhảy đầu tiên. 1 = vừa chạm là gãy.", "2. Bậc đứng", 2], ["allBrk", "Mọi bậc đều vỡ", "b", null, null, null, "Bật: mọi bậc sinh ra đều là bậc vỡ (có thể vừa di chuyển vừa vỡ), 'Tỉ lệ bậc vỡ' bị bỏ qua. Bậc dưới chân lúc bắt đầu vẫn an toàn. Vật phẩm vẫn xuất hiện trên các bậc này.", "2. Bậc đứng", "Tắt"], ["rockStart", "Đá rơi bắt đầu từ điểm", "n", 10, 0, 50000, "Chỉ bắt đầu có đá rơi khi điểm >= giá trị này. 0 = có ngay từ đầu (đợt đầu sau ~2 giây).", "3. Đá rơi (cần bật chướng ngại)", 0], ["rockInt", "Giãn cách đá rơi × (lớn = ít đá)", "n", 0.1, 0.3, 5, "Giãn cách giữa 2 đợt đá = max(28, 95 − điểm×0,07) khung (±20% ngẫu nhiên; 60 khung = 1 giây) × giá trị này. Lớn = thưa đá, 0,3 = dồn dập. Mỗi đợt 1 viên; từ 300 điểm có thể thêm 1 viên, từ 700 điểm thêm tiếp (40% mỗi viên thêm).", "3. Đá rơi (cần bật chướng ngại)", 1], ["rockSpd", "Tốc độ đá ×", "n", 0.05, 0.2, 3, "Tốc độ rơi = (3 + min(3, điểm÷300) + ngẫu nhiên 0–1) px/khung × giá trị này. Dấu '!' cảnh báo hiện 0,75 giây trước khi đá rơi. Giẫm lên đá từ trên xuống để bật lên; khiên và rocket phá đá.", "3. Đá rơi (cần bật chướng ngại)", 1], ["monStart", "Quái bắt đầu từ bậc thứ", "n", 1, 0, 5000, "Quái chỉ được sinh ra từ bậc thứ N trở đi (số thứ tự bậc ≈ điểm + 8). Dùng để chừa đoạn đầu êm ả.", "4. Yêu quái (cần bật chướng ngại)", 35], ["monEvery", "Quái mỗi N bậc (0 = tắt quái)", "n", 1, 0, 500, "Cứ N bậc có 1 mốc sinh quái (quái đặt giữa 2 bậc). Càng nhỏ càng nhiều quái. 0 = không có quái. Nếu > 0 thì tối thiểu 5 (giá trị 1–4 bị nâng lên 5). Mốc cố định: bậc chia N dư (25 mod N), ví dụ N=40 → bậc 25, 65, 105… (mốc dưới 'Quái bắt đầu từ bậc' bị bỏ qua).", "4. Yêu quái (cần bật chướng ngại)", 40], ["monChance", "Xác suất sinh quái tại mỗi mốc", "n", 0.05, 0, 1, "Xác suất thật sự sinh quái ở mỗi mốc trên (0,5 = 50%, 1 = luôn sinh, 0 = không bao giờ). Kết hợp với 'Quái mỗi N bậc' để chỉnh mật độ, ví dụ N=10 và 0,3 ≈ trung bình 33 bậc mới có 1 quái.", "4. Yêu quái (cần bật chướng ngại)", 1], ["monSpd", "Tốc độ đi ngang của quái ×", "n", 0.05, 0, 3, "Tốc độ đi ngang = (ngẫu nhiên 0,8–1,4 px/khung) × giá trị này, quay đầu khi chạm mép. 0 = đứng yên. Chỉ áp dụng cho quái sinh ra sau khi lưu.", "4. Yêu quái (cần bật chướng ngại)", 1], ["shoot", "Tốc độ quái bắn ×", "n", 0.05, 0.2, 3, "Quái bắn mỗi 130 ÷ giá trị này khung (gốc ≈ 2,2 giây/viên), chỉ bắn khi đang trong màn hình và nhắm vào người chơi. Giá trị này cũng nhân vào tốc độ đạn (xem dòng dưới).", "4. Yêu quái (cần bật chướng ngại)", 1], ["bulSpd", "Tốc độ đạn ×", "n", 0.05, 0.2, 3, "Hệ số riêng cho tốc độ đạn. Tốc độ đạn = 0,75 × 'Tốc độ quái bắn' × giá trị này (px/khung). Đạn bay thẳng theo hướng đã nhắm, không đuổi theo.", "4. Yêu quái (cần bật chướng ngại)", 1], ["hitMax", "Số đạn trúng thì thua", "n", 1, 1, 50, "Trúng đủ số đạn này là thua. Đạn trúng lúc đang có khiên, đang bay rocket hoặc vừa hồi sinh không tính. Số đạn đã trúng hiện trên HUD. Giẫm lên đầu quái từ trên xuống để diệt.", "4. Yêu quái (cần bật chướng ngại)", 5], ["springEvery", "Lò xo: cứ N bậc có 1 cái (0 = tắt)", "n", 1, 0, 1000, "Mỗi N bậc có 1 lò xo (mốc: bậc chia N dư 20 mod N). 0 = tắt; nếu > 0 thì tối thiểu 5. Vật phẩm chỉ nằm trên bậc đứng thường (không có trên bậc vỡ, trừ khi bật 'Mọi bậc đều vỡ'). Nếu nhiều vật phẩm trùng bậc, thứ tự ưu tiên: Tim > Rocket > Lò xo > Khiên.", "5. Vật phẩm", 50], ["shieldEvery", "Khiên: cứ N bậc có 1 cái (0 = tắt)", "n", 1, 0, 1000, "Mỗi N bậc có 1 khiên (mốc: bậc chia N dư 10 mod N). 0 = tắt; nếu > 0 thì tối thiểu 5.", "5. Vật phẩm", 40], ["rocketEvery", "Rocket: cứ N bậc có 1 cái (0 = tắt)", "n", 1, 0, 1000, "Mỗi N bậc có 1 rocket (mốc: bậc chia N dư 55 mod N). 0 = tắt; nếu > 0 thì tối thiểu 5.", "5. Vật phẩm", 100], ["lifeEvery", "Tim: cứ N bậc có 1 cái (0 = tắt)", "n", 1, 0, 1000, "Mỗi N bậc có 1 tim (mốc: bậc chia N dư 90 mod N). 0 = tắt; nếu > 0 thì tối thiểu 5.", "5. Vật phẩm", 150], ["springSec", "Lò xo: hiệu lực (giây)", "n", 0.5, 0.5, 60, "Thời gian hiệu ứng nhảy cao kéo dài sau khi nhặt lò xo. Nhặt thêm lò xo khi đang có hiệu ứng thì đặt lại về đủ thời gian (không cộng dồn).", "5. Vật phẩm", 5], ["springPow", "Lò xo: lực nảy", "n", 0.5, 13.5, 30, "Vận tốc bật lên khi có lò xo (bình thường là 13). Độ cao nhảy ≈ (giá trị × sức nhảy)² ÷ trọng lực — gốc 18,4 nhảy cao gấp ~2 lần bình thường. Cũng áp dụng khi giẫm quái hoặc đá lúc có lò xo.", "5. Vật phẩm", 18.4], ["shieldSec", "Khiên: hiệu lực (giây)", "n", 0.5, 0.5, 60, "Thời gian khiên chặn đá và đạn (chạm đá thì đá vỡ, đạn bị hủy mà không tính trúng). Nhấp nháy ở 1 giây cuối. Nhặt thêm khiên thì đặt lại về đủ thời gian.", "5. Vật phẩm", 5], ["rocketSteps", "Rocket: số bậc bay lên", "n", 10, 10, 1000, "Rocket bay vút lên tốc độ cố định 22 px/khung, miễn nhiễm đá, đạn, quái, cho tới khi điểm tăng thêm đúng N bậc; rồi hạ cánh nhẹ và bất tử thêm 1,5 giây. Nhiều bậc = bay lâu hơn.", "5. Vật phẩm", 100], ["lifeGain", "Tim: số lần hồi sinh cộng thêm", "n", 1, 1, 10, "Số lần hồi sinh được cộng khi nhặt tim. Không có tác dụng nếu chế độ đang vô hạn lần hồi sinh.", "5. Vật phẩm", 1], ["itemLife", "Vật phẩm tự biến mất sau (giây, 0 = không)", "n", 0.5, 0, 120, "Thời gian vật phẩm tồn tại trên bậc nếu không ai nhặt. Bắt đầu đếm từ lúc bậc chứa nó lộ ra ở mép trên màn hình; 1,5 giây cuối nhấp nháy rồi biến mất. 0 = nằm đó cho tới khi rơi khỏi màn hình. Khác với 'hiệu lực' của lò xo/khiên (thời gian hiệu ứng sau khi nhặt).", "5. Vật phẩm", 0]];
 
 // ---- Firebase REST ----
 async function login(pw,em){
@@ -531,6 +532,24 @@ function stream(path,s,cb){/*LBLIVE*/
 }
 
 // ---- Cấu hình chế độ (do admin chỉnh) ----
+function clampX(c){/*DEEPCFG*/
+  const cl=(v,a,b,d)=>Number.isFinite(+v)?Math.min(b,Math.max(a,+v)):d;
+  c.monStart=Math.round(cl(c.monStart,0,5000,35));
+  c.monChance=cl(c.monChance,0,1,1);
+  c.monSpd=cl(c.monSpd,0,3,1);
+  c.bulSpd=cl(c.bulSpd,.2,3,1);
+  [['lifeEvery',150],['rocketEvery',100],['springEvery',50],['shieldEvery',40]].forEach(([k,d])=>{
+    const v=+c[k];c[k]=!Number.isFinite(v)?d:v<=0?0:Math.round(cl(v,5,1000,d))});
+  c.springSec=cl(c.springSec,.5,60,5);
+  c.shieldSec=cl(c.shieldSec,.5,60,5);
+  c.springPow=cl(c.springPow,13.5,30,18.4);
+  c.rocketSteps=Math.round(cl(c.rocketSteps,10,1000,100));
+  c.lifeGain=Math.round(cl(c.lifeGain,1,10,1));
+  c.itemLife=cl(c.itemLife,0,120,0);
+  c.brkJumps=Math.round(cl(c.brkJumps,1,10,2));
+  c.platW=cl(c.platW,.5,2,1);
+  c.rockStart=Math.round(cl(c.rockStart,0,50000,0));
+}
 function applyConfig(){DRAFT=null;
   const mods=(CF.v&&CF.v.modes)||{};
   for(const k of Object.keys(DIFF))if(!BASE[k]&&!mods[k])delete DIFF[k];
@@ -539,7 +558,7 @@ function applyConfig(){DRAFT=null;
   const cl=(v,a,b,d)=>Number.isFinite(+v)?Math.min(b,Math.max(a,+v)):d;
   for(const k in DIFF){const c=DIFF[k];
     c.gap=cl(c.gap,.5,1.1,1);c.rockInt=cl(c.rockInt,.3,5,1);c.rockSpd=cl(c.rockSpd,.2,3,1);
-    c.shoot=cl(c.shoot,.2,3,1);c.mvSpd=cl(c.mvSpd,0,3,1);c.monEvery=Math.round(cl(c.monEvery,26,500,40));
+    c.shoot=cl(c.shoot,.2,3,1);c.mvSpd=cl(c.mvSpd,0,3,1);c.monEvery=+c.monEvery<=0?0:Math.round(cl(c.monEvery,5,500,40));clampX(c);
     c.hitMax=Math.round(cl(c.hitMax,1,50,5));c.goal=Math.round(cl(c.goal,10,50000,1000));c.jump=cl(c.jump,.6,1.8,1);c.grav=cl(c.grav,.4,1.8,1);c.mv=cl(c.mv,0,3,1);c.brk=cl(c.brk,0,3,1);
     c.lives=c.lives>=999?Infinity:Math.round(cl(c.lives,0,99,3));c.obs=!!c.obs;c.allBrk=!!c.allBrk}
   for(const k in DIFF)if(DIFF[k].lives>=999)DIFF[k].lives=Infinity;
@@ -644,7 +663,7 @@ var TEST=null,DRAFT=null;
 function clampCfg(c){
   const cl=(v,a,b,d)=>Number.isFinite(+v)?Math.min(b,Math.max(a,+v)):d;
   c.gap=cl(c.gap,.5,1.1,1);c.rockInt=cl(c.rockInt,.3,5,1);c.rockSpd=cl(c.rockSpd,.2,3,1);
-  c.shoot=cl(c.shoot,.2,3,1);c.mvSpd=cl(c.mvSpd,0,3,1);c.monEvery=Math.round(cl(c.monEvery,26,500,40));
+  c.shoot=cl(c.shoot,.2,3,1);c.mvSpd=cl(c.mvSpd,0,3,1);c.monEvery=+c.monEvery<=0?0:Math.round(cl(c.monEvery,5,500,40));clampX(c);
   c.hitMax=Math.round(cl(c.hitMax,1,50,5));c.goal=Math.round(cl(c.goal,10,50000,1000));
   c.jump=cl(c.jump,.6,1.8,1);c.grav=cl(c.grav,.4,1.8,1);c.mv=cl(c.mv,0,3,1);c.brk=cl(c.brk,0,3,1);
   c.lives=c.lives>=999?Infinity:Math.round(cl(c.lives,0,99,3));c.obs=!!c.obs;c.allBrk=!!c.allBrk;c.stop=!!c.stop;
@@ -802,9 +821,14 @@ function renderAdmin(){
     out.push(h('div',{className:'rw'},nm),h('div',{className:'rw'},ds),h('div',{className:'rw'},bg),
       h('div',{className:'rw'},h('label',{textContent:'Hoặc tải ảnh nền từ máy (tự nén, nên dùng ảnh nhỏ)'}),fi));
     const ins={};
-    PF.forEach(([k,l,ty,stp])=>{
-      const i=ty==='b'?h('input',{type:'checkbox',checked:!!c[k]}):h('input',{className:'in',type:'number',step:stp,value:c[k]===Infinity?999:c[k]});
+    out.push(h('p',{textContent:'Mỗi chế độ là một bộ thông số. Thông số dạng "×" là hệ số nhân lên giá trị gốc của game (×1 = như chế độ Bình thường). Thời gian "khung" = 1/60 giây. Giá trị ngoài khoảng Min–Max sẽ tự bị ép về trong khoảng khi lưu/chơi thử. "Bậc" = 1 điểm. Quái, đá và vật phẩm được tính theo số thứ tự bậc.'}));
+    out.push(btn('Ẩn / hiện mô tả chi tiết',()=>document.body.classList.toggle('nohp'),'btn alt'));
+    let lastG='';
+    PF.forEach(([k,l,ty,stp,mn,mx,ds,gr,df])=>{
+      if(gr&&gr!==lastG){lastG=gr;out.push(h('h3',{className:'gh',textContent:gr}))}
+      const i=ty==='b'?h('input',{type:'checkbox',checked:!!c[k]}):h('input',{className:'in',type:'number',step:stp,min:mn,max:mx,value:c[k]===Infinity?999:c[k]});
       ins[k]=i;out.push(h('div',{className:'rw'},h('label',{textContent:l}),i));
+      if(ds)out.push(h('p',{className:'hp',textContent:(ty==='b'?'Công tắc':'Min '+mn+' · Max '+mx)+' · Gốc '+df+' — '+ds}));
     });
     const wt=h('input',{className:'in',value:c.winTitle||'',maxLength:40,placeholder:'Tiêu đề thông báo (vd: 🎉 Chúc mừng!)'}),
       wm=h('textarea',{className:'in',rows:3,value:c.winMsg||'',maxLength:500,placeholder:'Nội dung thông báo khi đạt điểm tối đa (để trống = mặc định)'}),
