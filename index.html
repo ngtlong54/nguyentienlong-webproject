@@ -162,6 +162,29 @@ html,body{margin:0;overflow:hidden;overscroll-behavior:none}
 #lb{max-width:min(96%,1100px)}
 #lb .lbw{max-height:70dvh}
 </style>
+<style>/*PATCH_LBSCROLL*/
+/* tên: xuống dòng, không cắt */
+.lbt td.c2,.lbt td.c2 *{white-space:normal!important;overflow:visible!important;text-overflow:clip!important;word-break:break-word;overflow-wrap:anywhere;line-height:1.25}
+.lbt td.c2{text-align:left}
+/* thanh kéo ngang + dọc của bảng xếp hạng */
+.lbw{overflow:auto!important;scrollbar-width:auto!important;scrollbar-color:var(--acc) var(--soft)}
+.lbw::-webkit-scrollbar{display:block!important;width:12px!important;height:12px!important}
+.lbw::-webkit-scrollbar-track{background:var(--soft);border-radius:8px}
+.lbw::-webkit-scrollbar-thumb{background:var(--acc);border-radius:8px;border:2px solid var(--soft)}
+.lbw::-webkit-scrollbar-corner{background:var(--soft)}
+/* khung bảng co theo màn hình để panel không cuộn lồng */
+#lb .lbw{max-height:max(160px,calc(100dvh - 290px))!important}
+</style>
+<style>/*PATCH_FSKY-CSS*/
+.gt{display:flex;gap:8px;margin-top:10px}
+.gt button{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;padding:9px 4px;border:2px solid transparent;border-radius:14px;background:var(--soft);color:var(--ink);font-family:inherit;font-weight:800;font-size:13px;cursor:pointer;transition:transform .12s,border-color .15s}
+.gt button:active{transform:scale(.96)}
+.gt button.sel{border-color:var(--acc);background:var(--me)}
+#gtDesc{margin:6px 0 2px;min-height:18px}
+</style>
+<style>/*PATCH_V2_FS*/#lbGt{margin:6px 0 8px}#lbGt button{padding:7px 4px;flex-direction:row;justify-content:center}</style>
+<style>/*PATCH_V3_HELP*/#helpM{margin:-6px 0 8px}</style>
+<style>/*PATCH_V4*/.icp{display:inline-block;width:30px;height:30px}.icp svg,.icp img{width:30px;height:30px;display:block;object-fit:contain}.texr{flex-wrap:nowrap}.texr label{flex:1 1 auto}.texp{width:34px;height:34px;object-fit:contain;border-radius:8px;background:var(--soft);flex:none}.texs{font-size:11px;color:var(--mut);min-width:54px;text-align:center}</style>
 </head>
 <body>
 <div id="wrap">
@@ -173,7 +196,7 @@ html,body{margin:0;overflow:hidden;overscroll-behavior:none}
       <h1>Sky NoHope</h1>
       <p class="sub">Nhảy lên cao, tránh đá rơi.</p>
       <p class="best" id="menuBest"></p>
-      <button class="btn big-btn" data-a="pick">▶ Chơi</button>
+      <button class="btn big-btn" data-a="pick">▶ Chơi</button><div class="gt" id="gtype"><button data-g="classic"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><rect x="3" y="17" width="9" height="3" rx="1.5" fill="#4cb86f"/><rect x="12" y="10" width="9" height="3" rx="1.5" fill="#3b82d6"/><path d="M12 8V3m0 0L9.5 5.5M12 3l2.5 2.5" stroke="#f59e0b" stroke-width="2" fill="none" stroke-linecap="round"/></svg><span>Sky Jump</span></button><button data-g="sky"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><ellipse cx="12" cy="3.6" rx="4.2" ry="1.4" fill="none" stroke="#fbbf24" stroke-width="1.6"/><path d="M6 18a4 4 0 0 1 .5-8 5.5 5.5 0 0 1 10.6 1.5A3.4 3.4 0 0 1 17 18z" fill="#bae6fd" stroke="#0ea5e9" stroke-width="1.3" stroke-linejoin="round"/><circle cx="9" cy="21.2" r="1" fill="#fbbf24"/><circle cx="15" cy="21.2" r="1" fill="#fbbf24"/></svg><span>Falling sky</span></button></div><p class="hint" id="gtDesc"></p>
       <div class="icons">
         <button class="ibtn" data-b="lb" title="Bảng xếp hạng" aria-label="Bảng xếp hạng">🏆</button>
         <button class="ibtn" data-a="help" title="Hướng dẫn" aria-label="Hướng dẫn">❓</button>
@@ -189,19 +212,32 @@ html,body{margin:0;overflow:hidden;overscroll-behavior:none}
     </div>
 
     <div class="panel" id="help">
-      <h2>❓ Hướng dẫn</h2>
-      <div class="its">
-        <div class="it"><span>🎯</span><p><b>Mục tiêu.</b> Nhảy lên cao, tránh đá rơi. Mỗi bậc vượt qua được 1 điểm; đạt 1000 điểm là thắng bản beta.</p></div>
-        <div class="it"><span>🕹️</span><p><b>Điều khiển.</b> ← → hoặc A D để di chuyển. Giữ chuột trái hoặc ngón tay rồi kéo. P / Esc để tạm dừng.</p></div>
-        <div class="it"><span>🟫</span><p><b>Bậc nâu</b> nhảy 2 lần là gãy. <b>Bậc xanh dương</b> di chuyển ngang.</p></div>
-        <div class="it"><span>🪨</span><p><b>Đá rơi</b> có dấu ! cảnh báo trước. Dẫm lên đá để bật lên.</p></div>
-        <div class="it"><span>👾</span><p><b>Yêu quái</b> bắn trúng <span id="hitTxt">5</span> viên là thua (tuỳ chế độ). Giẫm lên đầu để diệt.</p></div>
-        <div class="it"><span>⏫</span><p><b>Lò xo:</b> nhảy cao hơn trong <span id="sprTxt">5</span> giây.</p></div>
-        <div class="it"><span>🛡</span><p><b>Khiên:</b> chặn đá và đạn trong <span id="shTxt">5</span> giây.</p></div>
-        <div class="it"><span>🚀</span><p><b>Rocket:</b> bay vút lên <span id="rkTxt">100</span> bậc, miễn nhiễm mọi thứ.</p></div>
-        <div class="it"><span>❤</span><p><b>Tim:</b> thêm 1 lượt hồi sinh.</p></div>
+      <h2 id="helpT">❓ Hướng dẫn</h2><p class="hint" id="helpM" style="text-align:center"></p>
+      <div class="its" id="helpJ">
+        <div class="it"><span>🎯</span><p><b>Mục tiêu.</b> Nhảy lên cao nhất có thể. Mỗi bậc vượt qua được 1 điểm; đạt điểm mục tiêu của chế độ là thắng.</p></div>
+        <div class="it"><span>🕹️</span><p><b>Điều khiển.</b> ← → hoặc A D để di chuyển, hoặc giữ chuột / ngón tay rồi kéo. P / Esc để tạm dừng. Nhân vật tự nhảy mỗi khi chạm bậc.</p></div>
+        <div class="it"><span>🟫</span><p><b>Các loại bậc.</b> Bậc xanh lá đứng yên, bậc xanh dương trượt ngang, bậc nâu sẽ gãy sau một số lần nhảy lên.</p></div>
+        <div class="it"><span>🪨</span><p><b>Đá rơi</b> có dấu ! cảnh báo trước. Trúng đá là thua một lượt; giẫm lên đá từ trên xuống thì bật lên.</p></div>
+        <div class="it"><span>👾</span><p><b>Yêu quái</b> bắn đạn về phía bạn; trúng đủ số đạn thì thua. Giẫm lên đầu quái để diệt.</p></div>
+        <div class="it"><span>⏫</span><p><b>Lò xo:</b> nhảy cao hơn trong một khoảng thời gian.</p></div>
+        <div class="it"><span>🛡</span><p><b>Khiên:</b> chặn đá và đạn trong một khoảng thời gian.</p></div>
+        <div class="it"><span>🚀</span><p><b>Rocket:</b> bay vút lên nhiều bậc, miễn nhiễm mọi thứ trên đường.</p></div>
+        <div class="it"><span>❤</span><p><b>Tim:</b> thêm một lượt hồi sinh.</p></div>
+        <div class="it"><span>🎮</span><p><b>Chế độ.</b> Mỗi chế độ có bộ luật riêng (độ khó, mục tiêu, tần suất chướng ngại và vật phẩm), nên các thông số có thể khác nhau.</p></div>
       </div>
-      <button class="ver" id="verBtn" title="Quản trị">🔧 Phiên bản 2026.11.24-v1</button>
+      <div class="its" id="helpF" style="display:none">
+        <div class="it"><span>🎯</span><p><b>Mục tiêu.</b> Đứng dưới đất, sống sót và né mọi thứ từ trời rơi xuống. Điểm tăng theo thời gian sống sót, khi hạ quái và khi nhặt vật phẩm; đạt điểm mục tiêu của chế độ là thắng.</p></div>
+        <div class="it"><span>🕹️</span><p><b>Điều khiển.</b> ← → hoặc A D để di chuyển, hoặc giữ chuột / ngón tay rồi kéo. P / Esc để tạm dừng. ↑ / W / Space, chạm nhanh hoặc vuốt lên để nhảy (nếu chế độ cho phép).</p></div>
+        <div class="it"><span>❤</span><p><b>Máu.</b> Trúng đá, đạn hoặc bom thì mất máu; hết máu là thua một lượt (có thể hồi sinh tùy chế độ). Vừa bị trúng sẽ bất tử một chút.</p></div>
+        <div class="it"><span>🪨</span><p><b>Đá rơi</b> có dấu ! cảnh báo trước và vỡ khi chạm đất. Trúng đá thì mất máu.</p></div>
+        <div class="it"><span>👾</span><p><b>Yêu quái</b> bay lơ lửng phía trên và bắn xuống người chơi. Cần súng để hạ quái; quái tự bay đi sau một lúc.</p></div>
+        <div class="it"><span>💣</span><p><b>Bom</b> rơi từ trời và nổ khi chạm đất hoặc chạm bạn, gây sát thương cho mọi thứ trong vùng nổ. Vòng đỏ dưới đất báo chỗ bom sắp rơi. Bắn trúng bom để nó nổ sớm.</p></div>
+        <div class="it"><span>❤</span><p><b>Tim:</b> rơi từ trời, nhặt để hồi máu. Vật phẩm nằm trên đất một lúc rồi biến mất.</p></div>
+        <div class="it"><span>🛡</span><p><b>Khiên:</b> chặn đá, đạn và bom trong một khoảng thời gian.</p></div>
+        <div class="it"><span>🔫</span><p><b>Súng:</b> trong một khoảng thời gian tự nhắm và bắn quái gần nhất; đạn cũng làm nổ bom.</p></div>
+        <div class="it"><span>🎮</span><p><b>Chế độ.</b> Mỗi chế độ có bộ luật riêng (số máu, số lần hồi sinh, độ dày đá, quái, bom và vật phẩm), nên các thông số có thể khác nhau.</p></div>
+      </div>
+      <button class="ver" id="verBtn" title="Quản trị">🔧 Phiên bản 2026.11.24-v3</button>
       <button class="btn alt" data-b="back">← Quay lại</button>
     </div>
 
@@ -274,7 +310,7 @@ fit();
 addEventListener('resize',()=>{try{fit();if(st==='menu'&&P)reset()}catch(e){}});
 addEventListener('orientationchange',()=>setTimeout(()=>{try{fit();if(st==='menu'&&P)reset()}catch(e){}},200));
 const $=id=>document.getElementById(id);
-const D=o=>Object.assign({obs:true,lives:3,mv:1,brk:1,mvSpd:1,rockInt:1,rockSpd:1,monEvery:40,shoot:1,gap:1,allBrk:false,hitMax:5,goal:1000,jump:1,grav:1,bg:'',desc:'',monStart:35,monChance:1,monSpd:1,bulSpd:1,lifeEvery:150,rocketEvery:100,springEvery:50,shieldEvery:40,springSec:5,shieldSec:5,springPow:18.4,rocketSteps:100,lifeGain:1,itemLife:0,brkJumps:2,platW:1,rockStart:0},o);
+const D=o=>Object.assign({obs:true,lives:3,mv:1,brk:1,mvSpd:1,rockInt:1,rockSpd:1,monEvery:40,shoot:1,gap:1,allBrk:false,hitMax:5,goal:1000,jump:1,grav:1,bg:'',desc:'',monStart:35,monChance:1,monSpd:1,bulSpd:1,lifeEvery:150,rocketEvery:100,springEvery:50,shieldEvery:40,springSec:5,shieldSec:5,springPow:18.4,rocketSteps:100,lifeGain:1,itemLife:0,brkJumps:2,platW:1,rockStart:0,fsMonEvery:8,fsMaxMon:3,fsMonHp:3,fsItemEvery:6,fsGunSec:10,fsItemLife:6,fsBombEvery:9,fsBombSpd:2.6,fsBombR:70,fsBombDmg:1,fsBombMark:true,fsPSpd:1,fsScoreSec:3,fsKillPts:10,fsItemPts:5,fsGunRate:3.75,fsGunDmg:1,fsJump:true,fsJumpPow:11,fsGrav:1,fsAirJumps:0,fsHeartW:1,fsShieldW:1,fsGunW:1,rockFrom:0,rockTo:0,rockCond:0,rockNum:1,monFrom:0,monTo:0,monCond:0,monNum:1,springFrom:0,springTo:0,springCond:0,springNum:1,shieldFrom:0,shieldTo:0,shieldCond:0,shieldNum:1,rocketFrom:0,rocketTo:0,rocketCond:0,rocketNum:1,lifeFrom:0,lifeTo:0,lifeCond:0,lifeNum:1,bombFrom:0,bombTo:0,bombCond:0,bombNum:1,itemFrom:0,itemTo:0,itemCond:0,itemNum:1},o);
 const DIFF={
   sd:D({name:'Siêu dễ',desc:'Không có chướng ngại vật, vô hạn mạng, không có bậc di chuyển hoặc bậc vỡ.',obs:false,lives:Infinity,mv:0,brk:0}),
   de:D({name:'Dễ',desc:'Ít chướng ngại vật, ít bậc vỡ, ít bậc di chuyển và di chuyển chậm.',mv:.5,brk:.4,mvSpd:.6,rockInt:1.7,rockSpd:.9,monEvery:60}),
@@ -292,8 +328,8 @@ for(let i=0;i<7;i++)clouds.push({x:Math.random()*W,y:Math.random()*H,s:.5+Math.r
 
 function show(p){$('ui').style.display=p?'flex':'none';onShow(p);['menu','pause','over','win','settings','name','lb','admin','modes','help'].forEach(k=>$(k).classList.toggle('on',k===p))}
 const LV=n=>n===Infinity?'∞':n;
-function hud(){const t=(TEST?'🧪TEST  ':'')+'❤ '+LV(lives)+(sp>0?'  ⏫'+Math.ceil(sp/60)+'s':'')+(shT>0?'  🛡'+Math.ceil(shT/60)+'s':'')+(rk>0?'  🚀':'')+(hits?'  💥'+hits+'/'+cfg.hitMax:'');const e=$('sp');if(e._t!==t){e._t=t;e.textContent=t}}
-function refresh(){[['sprTxt','springSec'],['shTxt','shieldSec'],['rkTxt','rocketSteps']].forEach(([i,k])=>{const e=$(i);if(e&&cfg)e.textContent=cfg[k]});const _g=$('goalTxt');if(_g&&cfg)_g.textContent=cfg.goal;const _e=$('hitTxt');if(_e&&cfg)_e.textContent=cfg.hitMax;$('sc').textContent=score|0;$('bs').textContent='Kỷ lục: '+best;hud();$('menuBest').textContent='Điểm cao nhất ('+cfg.name+'): '+best+(bestT(dk)?' · '+fmtS(bestT(dk)):'')}
+function hud(){const t=(TEST?'🧪TEST  ':'')+'❤ '+LV(lives)+(sp>0?'  ⏫'+Math.ceil(sp/60)+'s':'')+(shT>0?'  🛡'+Math.ceil(shT/60)+'s':'')+(rk>0?'  🚀':'')+(gunT>0?'  🔫'+Math.ceil(gunT/60)+'s':'')+(hits?'  💥'+hits+'/'+cfg.hitMax:'');const e=$('sp');if(e._t!==t){e._t=t;e.textContent=t}}
+function refresh(){[['sprTxt','springSec'],['shTxt','shieldSec'],['rkTxt','rocketSteps']].forEach(([i,k])=>{const e=$(i);if(e&&cfg)e.textContent=cfg[k]});const _g=$('goalTxt');if(_g&&cfg)_g.textContent=cfg.goal;const _e=$('hitTxt');if(_e&&cfg)_e.textContent=cfg.hitMax;$('sc').textContent=score|0;$('bs').textContent='Kỷ lục: '+best;hud();$('menuBest').textContent='Điểm cao nhất ('+cfg.name+(cfg.fs?' · Falling sky':' · Sky Jump')+'): '+best+(bestT(dk)?' · '+fmtS(bestT(dk)):'')}
 
 let lastX=0;
 function platX(w){
@@ -310,13 +346,13 @@ function addPlat(){
   lastBrk=brk;
   const p={x:platX(w),y:nextY,oy:nextY,w,passed:false,mv,brk,jumps:0,dead:false,item:null,vx:mv?(Math.random()<.5?-1:1)*(1+Math.random()*1.2)*cfg.mvSpd:0};
   if(!brk||cfg.allBrk){
-    const hit=(n,o)=>n>0&&pid%n===o%n;if(hit(cfg.lifeEvery,90))p.item='life';
-    else if(hit(cfg.rocketEvery,55))p.item='rocket';
-    else if(hit(cfg.springEvery,20))p.item='spring';
-    else if(hit(cfg.shieldEvery,10))p.item='shield';
+    const hit=(n,o,e)=>n>0&&(((pid-o)%n)+n)%n<Math.min(n,gnum(e))&&gate(e);if(hit(cfg.lifeEvery,90,'life'))p.item='life';
+    else if(hit(cfg.rocketEvery,55,'rocket'))p.item='rocket';
+    else if(hit(cfg.springEvery,20,'spring'))p.item='spring';
+    else if(hit(cfg.shieldEvery,10,'shield'))p.item='shield';
   }
   plats.push(p);
-  if(cfg.obs&&cfg.monEvery>0&&pid>=cfg.monStart&&pid%cfg.monEvery===25%cfg.monEvery&&Math.random()<cfg.monChance)mons.push({x:W<=520?60+Math.random()*(W-120):Math.max(60,Math.min(W-100,p.x+p.w/2+(Math.random()-.5)*340)),y:nextY+gap/2-19,vx:(Math.random()<.5?-1:1)*(.8+Math.random()*.6)*cfg.monSpd,t:60});
+  if(cfg.obs&&cfg.monEvery>0&&pid>=cfg.monStart&&pid%cfg.monEvery===25%cfg.monEvery&&Math.random()<cfg.monChance&&gate('mon'))for(let q=gnum('mon');q-->0;)mons.push({x:W<=520?60+Math.random()*(W-120):Math.max(60,Math.min(W-100,p.x+p.w/2+(Math.random()-.5)*340)),y:nextY+gap/2-19,vx:(Math.random()<.5?-1:1)*(.8+Math.random()*.6)*cfg.monSpd,t:60});
 }
 function reset(){playT=0;scoreT=0;
   score=0;speed=1;won=false;inv=0;spawnT=120;camY=0;rocks=[];warns=[];lives=cfg.lives;sp=0;shT=0;rk=0;rkGoal=0;hits=0;pid=0;lastBrk=false;mons=[];bul=[];fx=[];
@@ -368,9 +404,9 @@ function update(dt){playT+=RT;
   if(inv>0)inv-=dt;
   // chướng ngại vật
   spawnT-=dt;
-  if(spawnT<=0&&cfg.obs&&score>=cfg.rockStart){
+  if(spawnT<=0&&cfg.obs&&score>=cfg.rockStart&&gate('rock')){
     spawnT=Math.max(28,95-score*.07)*(.8+Math.random()*.4)*cfg.rockInt;
-    const n=(1+(score>300&&Math.random()<.4?1:0)+(score>700&&Math.random()<.4?1:0))*Math.max(1,Math.round(W/450));
+    const n=(1+(score>300&&Math.random()<.4?1:0)+(score>700&&Math.random()<.4?1:0))*Math.max(1,Math.round(W/450))*gnum('rock');
     for(let i=0;i<n;i++)warns.push({x:20+Math.random()*(W-40),t:45});
   }
   for(let i=warns.length-1;i>=0;i--){const w=warns[i];w.t-=dt;
@@ -410,32 +446,32 @@ function draw(){
   const t=Math.min(1,score/cfg.goal);
   g.addColorStop(0,`rgb(${120-90*t|0},${190-120*t|0},${255-100*t|0})`);g.addColorStop(1,'#dff1ff');
   if(dk==='hell'){const h=ctx.createLinearGradient(0,0,0,H);h.addColorStop(0,'#12020a');h.addColorStop(.6,'#4a0a0a');h.addColorStop(1,'#b3200a');ctx.fillStyle=h}else ctx.fillStyle=g;
-  ctx.fillRect(0,0,W,H);drawBg();
+  ctx.fillRect(0,0,W,H);drawBg();skMark();
   ctx.fillStyle=dk==='hell'?'rgba(255,90,20,.3)':'rgba(255,255,255,.7)';
   for(const c of clouds){const y=((c.y-(camY||0)*.2*c.s)%(H+60)+(H+60))%(H+60)-30;
-    ctx.beginPath();ctx.ellipse(c.x,y,40*c.s,14*c.s,0,0,7);ctx.ellipse(c.x+22*c.s,y-8*c.s,24*c.s,13*c.s,0,0,7);ctx.fill()}
+    if(TX('cloud',c.x-45*c.s,y-22*c.s,100*c.s,40*c.s))continue;ctx.beginPath();ctx.ellipse(c.x,y,40*c.s,14*c.s,0,0,7);ctx.ellipse(c.x+22*c.s,y-8*c.s,24*c.s,13*c.s,0,0,7);ctx.fill()}
   if(dk==='hell')lava();
   if(!plats)return;
-  for(const p of plats){const y=p.y-camY;if(y<-20||y>H+20)continue;
+  for(const p of plats){const y=p.y-camY;if(y<-20||y>H+20)continue;if(TX(p.brk?'platBrk':p.mv?'platMove':'plat',p.x,y-3,p.w,18)){drawPlatExtra(p,y);continue}
     ctx.fillStyle=dk==='hell'?(p.mv?(p.jumps?'#7a1d12':'#a3281c'):(p.jumps?'#4a2418':'#6b3a26')):p.brk?(p.jumps?'#a86a35':'#c98d4e'):p.mv?'#3b82d6':'#4cb86f';rr(p.x,y,p.w,12,6);ctx.fill();
     ctx.strokeStyle=dk==='hell'?'#ff7a2a':'rgba(20,38,58,.3)';ctx.lineWidth=1.5;ctx.stroke();drawPlatExtra(p,y)}
   drawExtras();
   for(const w of warns){const a=.5+.5*Math.sin(w.t*.5);ctx.fillStyle=`rgba(230,50,40,${a})`;
     ctx.beginPath();ctx.moveTo(w.x,62);ctx.lineTo(w.x-11,82);ctx.lineTo(w.x+11,82);ctx.closePath();ctx.fill();
     ctx.fillStyle='#fff';ctx.font='bold 13px sans-serif';ctx.textAlign='center';ctx.fillText('!',w.x,79)}
-  for(const r of rocks){const y=r.y-camY;ctx.save();ctx.translate(r.x,y);ctx.rotate(r.rot);
+  for(const r of rocks){const y=r.y-camY;ctx.save();ctx.translate(r.x,y);ctx.rotate(r.rot);if(TX('rock',-r.r*1.15,-r.r*1.15,r.r*2.3,r.r*2.3))ctx.globalAlpha=0;
     ctx.fillStyle='#7a7f87';ctx.strokeStyle='#16324a';ctx.lineWidth=2.5;ctx.beginPath();
     for(let i=0;i<7;i++){const a=i/7*6.283,rad=r.r*(i%2?.85:1.05);ctx[i?'lineTo':'moveTo'](Math.cos(a)*rad,Math.sin(a)*rad)}
     ctx.closePath();ctx.fill();ctx.stroke();ctx.fillStyle='#a4a9b0';ctx.beginPath();ctx.arc(-r.r*.3,-r.r*.3,r.r*.25,0,7);ctx.fill();ctx.restore()}
   if(P&&!(inv>0&&Math.floor(inv/6)%2)){
-    const y=P.y-camY;ctx.fillStyle='#ffb43d';ctx.strokeStyle='rgba(20,38,58,.55)';ctx.lineWidth=2;
+    const y=P.y-camY;const _pt=TX('player',P.x-4,y-6,P.w+8,P.h+10);if(_pt)ctx.globalAlpha=0;ctx.fillStyle='#ffb43d';ctx.strokeStyle='rgba(20,38,58,.55)';ctx.lineWidth=2;
     rr(P.x,y,P.w,P.h,12);ctx.fill();ctx.stroke();
     ctx.fillStyle='#fff';ctx.beginPath();ctx.arc(P.x+11,y+13,5,0,7);ctx.arc(P.x+24,y+13,5,0,7);ctx.fill();
     ctx.fillStyle='#16324a';const o=P.vx>.5?1.5:P.vx<-.5?-1.5:0;
     ctx.beginPath();ctx.arc(P.x+11+o,y+14,2.3,0,7);ctx.arc(P.x+24+o,y+14,2.3,0,7);ctx.fill();
-    ctx.fillRect(P.x+12,y+24,10,2.5);
+    ctx.fillRect(P.x+12,y+24,10,2.5);ctx.globalAlpha=1;
     if(sp>0){ctx.strokeStyle='#e0402a';ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(P.x+10,y+P.h);for(let i=1;i<=4;i++)ctx.lineTo(P.x+(i%2?24:10),y+P.h+i*3);ctx.stroke()}
-    if(rk>0){ctx.fillStyle='#ff9d2e';ctx.beginPath();ctx.moveTo(P.x+8,y+P.h);ctx.lineTo(P.x+17,y+P.h+28+Math.random()*10);ctx.lineTo(P.x+26,y+P.h);ctx.fill();ctx.font='30px serif';ctx.textAlign='center';ctx.fillText('🚀',P.x+17,y-2)}
+    if(rk>0){ctx.fillStyle='#ff9d2e';ctx.beginPath();ctx.moveTo(P.x+8,y+P.h);ctx.lineTo(P.x+17,y+P.h+28+Math.random()*10);ctx.lineTo(P.x+26,y+P.h);ctx.fill();if(!TX('rocket',P.x-4,y-36,42,42)){ctx.font='30px serif';ctx.textAlign='center';ctx.fillText('🚀',P.x+17,y-2)}}
     if(shT>0&&(shT>60||Math.floor(shT/5)%2)){ctx.strokeStyle='rgba(60,200,255,.9)';ctx.fillStyle='rgba(60,200,255,.2)';ctx.lineWidth=3;ctx.beginPath();ctx.arc(P.x+17,y+17,28,0,7);ctx.fill();ctx.stroke()}}
 }
 function lava(){const t=performance.now()/500;
@@ -450,17 +486,17 @@ function lava(){const t=performance.now()/500;
 const ICON={spring:'⏫',rocket:'🚀',shield:'🛡',life:'❤'};
 function drawPlatExtra(p,y){
   if(p.brk&&p.jumps===1){ctx.strokeStyle='#16324a';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(p.x+p.w*.45,y);ctx.lineTo(p.x+p.w*.5,y+6);ctx.lineTo(p.x+p.w*.42,y+12);ctx.stroke()}
-  if(p.item&&!(p.itemT<90&&Math.floor(p.itemT/6)%2)){ctx.font='22px serif';ctx.textAlign='center';ctx.fillText(ICON[p.item],p.x+p.w/2,y-8)}
+  if(p.item&&!(p.itemT<90&&Math.floor(p.itemT/6)%2)){if(!TX(p.item,p.x+p.w/2-14,y-30,28,28)){ctx.font='22px serif';ctx.textAlign='center';ctx.fillText(ICON[p.item],p.x+p.w/2,y-8)}}
 }
 function drawExtras(){
-  for(const m of mons){const y=m.y-camY;if(y<-50||y>H+50)continue;
+  for(const m of mons){const y=m.y-camY;if(y<-50||y>H+50)continue;ctx.save();if(TX('mon',m.x-5,y-8,48,52))ctx.globalAlpha=0;
     ctx.fillStyle='#8a4fd6';ctx.strokeStyle='#16324a';ctx.lineWidth=3;
     ctx.beginPath();ctx.arc(m.x+19,y+21,19,0,7);ctx.fill();ctx.stroke();
     ctx.beginPath();ctx.moveTo(m.x+6,y+8);ctx.lineTo(m.x+3,y-4);ctx.lineTo(m.x+14,y+4);ctx.moveTo(m.x+32,y+8);ctx.lineTo(m.x+35,y-4);ctx.lineTo(m.x+24,y+4);ctx.stroke();
     ctx.fillStyle='#fff';ctx.beginPath();ctx.arc(m.x+12,y+19,5,0,7);ctx.arc(m.x+26,y+19,5,0,7);ctx.fill();
     ctx.fillStyle='#c1121f';ctx.beginPath();ctx.arc(m.x+12,y+20,2.5,0,7);ctx.arc(m.x+26,y+20,2.5,0,7);ctx.fill();
-    ctx.fillStyle='#16324a';ctx.fillRect(m.x+12,y+30,14,3)}
-  for(const b of bul){ctx.fillStyle='#ff3b3b';ctx.strokeStyle='#fff';ctx.lineWidth=2;ctx.beginPath();ctx.arc(b.x,b.y-camY,6,0,7);ctx.fill();ctx.stroke()}
+    ctx.fillStyle='#16324a';ctx.fillRect(m.x+12,y+30,14,3);ctx.restore()}
+  for(const b of bul){if(TX('bul',b.x-9,b.y-camY-9,18,18))continue;ctx.fillStyle='#ff3b3b';ctx.strokeStyle='#fff';ctx.lineWidth=2;ctx.beginPath();ctx.arc(b.x,b.y-camY,6,0,7);ctx.fill();ctx.stroke()}
   ctx.fillStyle='#ffd23f';for(const f of fx)ctx.fillRect(f.x-2,f.y-camY-2,4,4);
 }
 function fmtS(t){t=Math.max(0,+t||0);return Math.floor(t/60)+':'+String(Math.floor(t%60)).padStart(2,'0')+'.'+Math.floor(t*10%10)}
@@ -469,8 +505,8 @@ function recT(){if(TEST)return;try{const k='skyhop_bt_'+dk,o=+localStorage.getIt
 function tickTm(){const e=$('tmv');if(!e)return;const t=fmtS(playT);if(e._t!==t){e._t=t;e.textContent=t}}
 function loop(ts){
   const raw=(ts-(last||ts))/16.667,dt=Math.min(2.5,raw)*speed;last=ts;RT=Math.min(raw,30)/60;
-  if(st==='play')update(dt);tickTm();
-  draw();requestAnimationFrame(loop);
+  if(st==='play')(cfg.fs?updateFS:update)(dt);tickTm();
+  (cfg.fs?drawFS:draw)();requestAnimationFrame(loop);
 }
 // điều khiển
 addEventListener('keydown',e=>{if(/INPUT|TEXTAREA|SELECT/.test(e.target.tagName))return;
@@ -490,7 +526,7 @@ addEventListener('blur',()=>{keyL=keyR=0;lx=null;tx=null;pause()});
 $('pauseBtn').onclick=pause;
 $('ui').addEventListener('click',e=>{
   const t=e.target.closest&&e.target.closest('[data-a]'),a=t&&t.dataset.a;if(!a)return;
-  if(a==='play')start();else if(a==='pick')openP('modes');else if(a==='help')openP('help');
+  if(a==='play')start();else if(a==='pick')pickPlay();else if(a==='help')openP('help');
   else if(a==='resume')resume();
   else if(a==='revive')revive();else if(a==='settings')openSet();else if(a==='back')closeSet();
   else if(a==='menu'&&TEST){endTest()}else if(a==='menu'){st='menu';reset();$('pauseBtn').style.visibility='hidden';refresh();show('menu')}
@@ -512,6 +548,13 @@ function closeSet(){show(setFrom)}
 
 // ===== PATCH: BXH online + Admin =====
 const FB={db:'https://sky-nohope-default-rtdb.asia-southeast1.firebasedatabase.app',key:'AIzaSyA7DnOWgebkuOn19Ps9KLO80CzWqBY14E0',admin:'admin@skynohope.local'},FBOK=!!FB.db&&!/YOUR/.test(FB.db);
+const SKY=o=>D(Object.assign({fs:true,lives:3,hitMax:5,goal:1000},o));
+DIFF.fs_sd=SKY({name:'Siêu dễ',desc:'Không đá, quái, bom; vô hạn mạng. Chỉ việc nhặt vật phẩm.',obs:false,lives:Infinity,hitMax:10});
+DIFF.fs_de=SKY({name:'Dễ',desc:'Đá rơi thưa và chậm, ít quái, bom ít và nổ nhỏ.',lives:5,hitMax:7,rockInt:1.7,rockSpd:.85,shoot:.8,bulSpd:.8,monSpd:.8,fsMonEvery:14,fsMaxMon:2,fsMonHp:2,fsItemEvery:4,fsBombEvery:16,fsBombSpd:2,fsBombR:55,fsBombDmg:1});
+DIFF.sky=SKY({name:'Bình thường',desc:'Thiên đường: đứng dưới đất, né đá, đạn quái và bom; nhặt giáp, máu, súng từ trời rơi.'});
+DIFF.fs_kho=SKY({name:'Khó',desc:'Đá nhanh hơn, quái trâu và bắn nhanh hơn, bom dày hơn.',rockInt:.9,rockSpd:1.05,shoot:1.05,fsMonEvery:6,fsMaxMon:4,fsMonHp:4,fsItemEvery:8,fsBombEvery:6.5,fsBombSpd:3,fsBombR:80});
+DIFF.fs_cd=SKY({name:'Cực đoan',desc:'Mưa đá, nhiều quái, bom từng cặp nổ lớn. Chỉ 2 mạng.',lives:2,rockInt:.75,rockSpd:1.2,shoot:1.25,bulSpd:1.2,monSpd:1.2,fsMonEvery:4.5,fsMaxMon:5,fsMonHp:5,fsItemEvery:9,fsItemLife:4,fsGunSec:8,shieldSec:4,fsBombEvery:4.5,fsBombSpd:3.4,fsBombR:90,fsBombDmg:2,bombNum:2});
+DIFF.fs_hell=SKY({name:'Địa ngục',desc:'Bầu trời rực lửa: đá, đạn, bom dồn dập. Chỉ 1 mạng, 4 máu.',lives:1,hitMax:4,rockInt:.55,rockSpd:1.4,shoot:1.5,bulSpd:1.4,monSpd:1.4,fsMonEvery:3,fsMaxMon:6,fsMonHp:6,fsItemEvery:12,fsItemLife:3,fsGunSec:6,shieldSec:3,fsBombEvery:3,fsBombSpd:4,fsBombR:100,fsBombDmg:2,bombNum:3});
 const BASE={};for(const k in DIFF)BASE[k]=Object.assign({},DIFF[k]);
 let RT=0,playT=0,scoreT=0,ret='menu',ADM=null,CF={v:null},LB={v:null},myName='',me='',tab='pl',aMode='bt',eMode='bt',lbM=null;
 try{myName=localStorage.getItem('skyhop_name')||'';me=localStorage.getItem('skyhop_uid')||''}catch(e){}
@@ -523,6 +566,22 @@ const err=e=>alert('Lỗi: '+(e&&e.message||e));
 const fmtT=t=>Math.floor(t/60)+':'+String(Math.floor(t%60)).padStart(2,'0');
 const PF=[["obs", "Có chướng ngại (đá/quái)", "b", null, null, null, "Bật: đá rơi và yêu quái hoạt động theo các mục bên dưới. Tắt: không có đá và quái nào (các thông số đá/quái bị bỏ qua); vật phẩm và bậc đặc biệt vẫn có.", "1. Luật chơi chung", "Bật"], ["lives", "Số lần hồi sinh (999 = ∞)", "n", 1, 0, 999, "Số lần bấm Hồi sinh sau khi chết (mỗi lần trừ 1; hồi sinh trên bậc gần nhất, bất tử 2,5 giây). 0 = chết là hết. Nhập 999 trở lên = vô hạn (hiện ∞). Giá trị 100–998 bị ép về 99.", "1. Luật chơi chung", 3], ["goal", "Điểm tối đa của màn", "n", 10, 10, 50000, "Đạt đủ số điểm này (1 điểm = vượt qua 1 bậc) thì hiện thông báo thắng đúng 1 lần mỗi ván và ghi điểm lên bảng. Màu nền trời đậm dần theo điểm ÷ giá trị này. Nếu không bật 'Dừng hẳn' người chơi có thể bấm Chơi tiếp.", "1. Luật chơi chung", 1000], ["jump", "Sức nhảy ×", "n", 0.05, 0.6, 1.8, "Vận tốc bật lên = 13 × giá trị này (khi có lò xo: Lực nảy lò xo × giá trị này). Độ cao nhảy ≈ 169 × jump² ÷ trọng lực (px). Quá thấp thì không với tới bậc kế tiếp (khoảng cách bậc tối đa ≈ 139 × 'Khoảng cách bậc').", "1. Luật chơi chung", 1], ["grav", "Trọng lực ×", "n", 0.05, 0.4, 1.8, "Gia tốc rơi = 0,5 × giá trị này mỗi khung hình. Cao: rơi nhanh, nhảy thấp và ngắn. Thấp: lơ lửng, nhảy cao và lâu. Độ cao nhảy tỉ lệ nghịch với giá trị này.", "1. Luật chơi chung", 1], ["gap", "Khoảng cách bậc ×", "n", 0.01, 0.5, 1.1, "Khoảng cách dọc giữa 2 bậc = (68 + điểm×0,05, tối đa 125, cộng ngẫu nhiên 0–14) × giá trị này (px). Nhỏ = bậc dày, dễ. Lớn = bậc thưa, khó. Tối đa 1,1 vì xa hơn thì với sức nhảy/trọng lực gốc sẽ không nhảy tới.", "2. Bậc đứng", 1], ["platW", "Độ rộng bậc ×", "n", 0.05, 0.5, 2, "Chiều rộng bậc = max(50, 72 − điểm×0,02) px × giá trị này (bậc hẹp dần theo điểm). 0,5 = rất hẹp, 2 = rất rộng.", "2. Bậc đứng", 1], ["mv", "Tỉ lệ bậc di chuyển ×", "n", 0.1, 0, 3, "Hệ số nhân xác suất bậc xanh dương (trượt ngang). Xác suất mỗi bậc = min(35%, điểm÷1500) × giá trị này: ở ×1 bậc di chuyển xuất hiện dần và đạt tối đa 35% sau ~525 điểm; ×3 có thể lên tới 100%. 0 = không có bậc di chuyển.", "2. Bậc đứng", 1], ["mvSpd", "Tốc độ bậc di chuyển ×", "n", 0.1, 0, 3, "Tốc độ trượt ngang = (ngẫu nhiên 1–2,2 px/khung) × giá trị này. Bậc bật vào mép sẽ quay đầu. 0 = đứng yên (vẫn là bậc xanh dương).", "2. Bậc đứng", 1], ["brk", "Tỉ lệ bậc vỡ ×", "n", 0.1, 0, 3, "Hệ số nhân xác suất bậc nâu (vỡ). Xác suất mỗi bậc = min(25%, 8% + điểm÷2500) × giá trị này. Chỉ xét từ bậc thứ 10, không có 2 bậc vỡ liền nhau và không trùng bậc di chuyển. 0 = không có.", "2. Bậc đứng", 1], ["brkJumps", "Số lần nhảy thì bậc vỡ gãy", "n", 1, 1, 10, "Bậc nâu gãy (rơi xuống) sau đúng N lần người chơi nhảy lên nó. Vết nứt hiện sau lần nhảy đầu tiên. 1 = vừa chạm là gãy.", "2. Bậc đứng", 2], ["allBrk", "Mọi bậc đều vỡ", "b", null, null, null, "Bật: mọi bậc sinh ra đều là bậc vỡ (có thể vừa di chuyển vừa vỡ), 'Tỉ lệ bậc vỡ' bị bỏ qua. Bậc dưới chân lúc bắt đầu vẫn an toàn. Vật phẩm vẫn xuất hiện trên các bậc này.", "2. Bậc đứng", "Tắt"], ["rockStart", "Đá rơi bắt đầu từ điểm", "n", 10, 0, 50000, "Chỉ bắt đầu có đá rơi khi điểm >= giá trị này. 0 = có ngay từ đầu (đợt đầu sau ~2 giây).", "3. Đá rơi (cần bật chướng ngại)", 0], ["rockInt", "Giãn cách đá rơi × (lớn = ít đá)", "n", 0.1, 0.3, 5, "Giãn cách giữa 2 đợt đá = max(28, 95 − điểm×0,07) khung (±20% ngẫu nhiên; 60 khung = 1 giây) × giá trị này. Lớn = thưa đá, 0,3 = dồn dập. Mỗi đợt 1 viên; từ 300 điểm có thể thêm 1 viên, từ 700 điểm thêm tiếp (40% mỗi viên thêm).", "3. Đá rơi (cần bật chướng ngại)", 1], ["rockSpd", "Tốc độ đá ×", "n", 0.05, 0.2, 3, "Tốc độ rơi = (3 + min(3, điểm÷300) + ngẫu nhiên 0–1) px/khung × giá trị này. Dấu '!' cảnh báo hiện 0,75 giây trước khi đá rơi. Giẫm lên đá từ trên xuống để bật lên; khiên và rocket phá đá.", "3. Đá rơi (cần bật chướng ngại)", 1], ["monStart", "Quái bắt đầu từ bậc thứ", "n", 1, 0, 5000, "Quái chỉ được sinh ra từ bậc thứ N trở đi (số thứ tự bậc ≈ điểm + 8). Dùng để chừa đoạn đầu êm ả.", "4. Yêu quái (cần bật chướng ngại)", 35], ["monEvery", "Quái mỗi N bậc (0 = tắt quái)", "n", 1, 0, 500, "Cứ N bậc có 1 mốc sinh quái (quái đặt giữa 2 bậc). Càng nhỏ càng nhiều quái. 0 = không có quái. Nếu > 0 thì tối thiểu 5 (giá trị 1–4 bị nâng lên 5). Mốc cố định: bậc chia N dư (25 mod N), ví dụ N=40 → bậc 25, 65, 105… (mốc dưới 'Quái bắt đầu từ bậc' bị bỏ qua).", "4. Yêu quái (cần bật chướng ngại)", 40], ["monChance", "Xác suất sinh quái tại mỗi mốc", "n", 0.05, 0, 1, "Xác suất thật sự sinh quái ở mỗi mốc trên (0,5 = 50%, 1 = luôn sinh, 0 = không bao giờ). Kết hợp với 'Quái mỗi N bậc' để chỉnh mật độ, ví dụ N=10 và 0,3 ≈ trung bình 33 bậc mới có 1 quái.", "4. Yêu quái (cần bật chướng ngại)", 1], ["monSpd", "Tốc độ đi ngang của quái ×", "n", 0.05, 0, 3, "Tốc độ đi ngang = (ngẫu nhiên 0,8–1,4 px/khung) × giá trị này, quay đầu khi chạm mép. 0 = đứng yên. Chỉ áp dụng cho quái sinh ra sau khi lưu.", "4. Yêu quái (cần bật chướng ngại)", 1], ["shoot", "Tốc độ quái bắn ×", "n", 0.05, 0.2, 3, "Quái bắn mỗi 130 ÷ giá trị này khung (gốc ≈ 2,2 giây/viên), chỉ bắn khi đang trong màn hình và nhắm vào người chơi. Giá trị này cũng nhân vào tốc độ đạn (xem dòng dưới).", "4. Yêu quái (cần bật chướng ngại)", 1], ["bulSpd", "Tốc độ đạn ×", "n", 0.05, 0.2, 3, "Hệ số riêng cho tốc độ đạn. Tốc độ đạn = 0,75 × 'Tốc độ quái bắn' × giá trị này (px/khung). Đạn bay thẳng theo hướng đã nhắm, không đuổi theo.", "4. Yêu quái (cần bật chướng ngại)", 1], ["hitMax", "Số đạn trúng thì thua", "n", 1, 1, 50, "Trúng đủ số đạn này là thua. Đạn trúng lúc đang có khiên, đang bay rocket hoặc vừa hồi sinh không tính. Số đạn đã trúng hiện trên HUD. Giẫm lên đầu quái từ trên xuống để diệt.", "4. Yêu quái (cần bật chướng ngại)", 5], ["springEvery", "Lò xo: cứ N bậc có 1 cái (0 = tắt)", "n", 1, 0, 1000, "Mỗi N bậc có 1 lò xo (mốc: bậc chia N dư 20 mod N). 0 = tắt; nếu > 0 thì tối thiểu 5. Vật phẩm chỉ nằm trên bậc đứng thường (không có trên bậc vỡ, trừ khi bật 'Mọi bậc đều vỡ'). Nếu nhiều vật phẩm trùng bậc, thứ tự ưu tiên: Tim > Rocket > Lò xo > Khiên.", "5. Vật phẩm", 50], ["shieldEvery", "Khiên: cứ N bậc có 1 cái (0 = tắt)", "n", 1, 0, 1000, "Mỗi N bậc có 1 khiên (mốc: bậc chia N dư 10 mod N). 0 = tắt; nếu > 0 thì tối thiểu 5.", "5. Vật phẩm", 40], ["rocketEvery", "Rocket: cứ N bậc có 1 cái (0 = tắt)", "n", 1, 0, 1000, "Mỗi N bậc có 1 rocket (mốc: bậc chia N dư 55 mod N). 0 = tắt; nếu > 0 thì tối thiểu 5.", "5. Vật phẩm", 100], ["lifeEvery", "Tim: cứ N bậc có 1 cái (0 = tắt)", "n", 1, 0, 1000, "Mỗi N bậc có 1 tim (mốc: bậc chia N dư 90 mod N). 0 = tắt; nếu > 0 thì tối thiểu 5.", "5. Vật phẩm", 150], ["springSec", "Lò xo: hiệu lực (giây)", "n", 0.5, 0.5, 60, "Thời gian hiệu ứng nhảy cao kéo dài sau khi nhặt lò xo. Nhặt thêm lò xo khi đang có hiệu ứng thì đặt lại về đủ thời gian (không cộng dồn).", "5. Vật phẩm", 5], ["springPow", "Lò xo: lực nảy", "n", 0.5, 13.5, 30, "Vận tốc bật lên khi có lò xo (bình thường là 13). Độ cao nhảy ≈ (giá trị × sức nhảy)² ÷ trọng lực — gốc 18,4 nhảy cao gấp ~2 lần bình thường. Cũng áp dụng khi giẫm quái hoặc đá lúc có lò xo.", "5. Vật phẩm", 18.4], ["shieldSec", "Khiên: hiệu lực (giây)", "n", 0.5, 0.5, 60, "Thời gian khiên chặn đá và đạn (chạm đá thì đá vỡ, đạn bị hủy mà không tính trúng). Nhấp nháy ở 1 giây cuối. Nhặt thêm khiên thì đặt lại về đủ thời gian.", "5. Vật phẩm", 5], ["rocketSteps", "Rocket: số bậc bay lên", "n", 10, 10, 1000, "Rocket bay vút lên tốc độ cố định 22 px/khung, miễn nhiễm đá, đạn, quái, cho tới khi điểm tăng thêm đúng N bậc; rồi hạ cánh nhẹ và bất tử thêm 1,5 giây. Nhiều bậc = bay lâu hơn.", "5. Vật phẩm", 100], ["lifeGain", "Tim: số lần hồi sinh cộng thêm", "n", 1, 1, 10, "Số lần hồi sinh được cộng khi nhặt tim. Không có tác dụng nếu chế độ đang vô hạn lần hồi sinh.", "5. Vật phẩm", 1], ["itemLife", "Vật phẩm tự biến mất sau (giây, 0 = không)", "n", 0.5, 0, 120, "Thời gian vật phẩm tồn tại trên bậc nếu không ai nhặt. Bắt đầu đếm từ lúc bậc chứa nó lộ ra ở mép trên màn hình; 1,5 giây cuối nhấp nháy rồi biến mất. 0 = nằm đó cho tới khi rơi khỏi màn hình. Khác với 'hiệu lực' của lò xo/khiên (thời gian hiệu ứng sau khi nhặt).", "5. Vật phẩm", 0]];
 
+PF.push(
+["fs","Kiểu Falling sky (đứng dưới đất)","b",null,null,null,"Bật: chơi kiểu Falling sky - nhân vật đứng dưới đất, né đá rơi và đạn quái, nhặt giáp/máu/súng rơi từ trời. Các thông số về bậc (khoảng cách, bậc di chuyển/vỡ, sức nhảy, trọng lực, vật phẩm theo bậc…) bị bỏ qua. 'Số đạn trúng thì thua' = máu tối đa; 'Điểm tối đa' = mục tiêu thắng; 'Số lần hồi sinh' như thường. Đá dùng nhóm 3, quái/đạn dùng nhóm 4 (tốc độ quái, tốc độ bắn, tốc độ đạn). Điểm = 3/giây sống sót + 10/quái hạ + 5/vật phẩm.","6. Falling sky","Tắt"],
+["fsMonEvery","Quái xuất hiện mỗi (giây, 0 = tắt)","n",0.5,0,120,"Cứ khoảng N giây (±20%) có 1 quái bay lên lơ lửng phía trên và bắn xuống người chơi. Quái tự bay đi sau ~18 giây. Chỉ có tác dụng khi bật 'Có chướng ngại'.","6. Falling sky",8],
+["fsMaxMon","Số quái tối đa cùng lúc","n",1,0,10,"Giới hạn số quái trên màn hình (nhân thêm theo bề rộng màn hình khi chơi toàn màn hình rộng).","6. Falling sky",3],
+["fsMonHp","Máu quái (số phát súng để hạ)","n",1,1,20,"Số phát đạn của người chơi cần để hạ 1 quái. Hạ 1 quái được +10 điểm.","6. Falling sky",3],
+["fsItemEvery","Vật phẩm rơi mỗi (giây, 0 = tắt)","n",0.5,0,120,"Cứ khoảng N giây (±30%) có 1 vật phẩm rơi từ trời: tim (+1 máu), khiên, súng với xác suất tương đương. Nhặt 1 vật phẩm được +5 điểm. Khiên dùng thời gian ở mục 'Khiên: hiệu lực'.","6. Falling sky",6],
+["fsGunSec","Súng: hiệu lực (giây)","n",0.5,0.5,60,"Thời gian súng hoạt động sau khi nhặt: tự nhắm và bắn quái gần nhất (khoảng 3-4 phát/giây) khi có quái trên màn hình. Nhặt thêm súng thì đặt lại thời gian.","6. Falling sky",10],
+["fsItemLife","Vật phẩm nằm đất tối đa (giây)","n",0.5,1,60,"Sau khi rơi xuống đất, vật phẩm còn nằm bao lâu thì biến mất (nhấp nháy ở nhịp cuối).","6. Falling sky",6]
+);
+PF.push.apply(PF,[["fsBombEvery", "Bom rơi mỗi (giây, 0 = tắt)", "n", 0.5, 0, 120, "Cứ khoảng N giây (±25%) thả 1 đợt bom từ trời (số bom mỗi đợt: mục 7.7). Bom nổ khi chạm đất hoặc chạm người chơi, sát thương lan trong bán kính nổ. Bắn trúng bom làm nổ sớm. Khiên chặn sát thương bom. Cần bật 'Có chướng ngại'.", "6. Falling sky", 9], ["fsBombSpd", "Bom: tốc độ rơi (px/khung)", "n", 0.1, 0.5, 12, "Tốc độ rơi của bom, ngẫu nhiên ±10%.", "6. Falling sky", 2.6], ["fsBombR", "Bom: bán kính nổ (px)", "n", 5, 20, 300, "Người chơi trong vòng bán kính này quanh điểm nổ sẽ mất máu.", "6. Falling sky", 70], ["fsBombDmg", "Bom: sát thương (số máu mất)", "n", 1, 1, 50, "Số máu mất khi dính bom (không có khiên, không bất tử).", "6. Falling sky", 1], ["fsBombMark", "Bom: hiện vòng cảnh báo dưới đất", "b", null, null, null, "Bật: hiện vòng đỏ chỗ bom sắp rơi và tầm nổ.", "6. Falling sky", "Bật"], ["fsPSpd", "Tốc độ di chuyển nhân vật ×", "n", 0.05, 0.4, 2.5, "Nhân tốc độ chạy ngang của nhân vật (cả bàn phím và kéo).", "6. Falling sky", 1], ["fsScoreSec", "Điểm cộng mỗi giây sống sót", "n", 0.5, 0, 50, "Điểm tự tăng theo thời gian sống sót.", "6. Falling sky", 3], ["fsKillPts", "Điểm khi hạ 1 quái", "n", 1, 0, 1000, "Điểm thưởng khi hạ 1 quái.", "6. Falling sky", 10], ["fsItemPts", "Điểm khi nhặt 1 vật phẩm", "n", 1, 0, 1000, "Điểm thưởng khi nhặt tim/khiên/súng.", "6. Falling sky", 5], ["fsGunRate", "Súng: số phát/giây", "n", 0.25, 0.5, 20, "Tốc độ bắn của súng người chơi.", "6. Falling sky", 3.75], ["fsGunDmg", "Súng: sát thương mỗi phát", "n", 1, 1, 20, "Máu quái bị trừ mỗi phát trúng.", "6. Falling sky", 1], ["fsHeartW", "Tỉ lệ rơi: Tim (trọng số)", "n", 0.5, 0, 100, "Xác suất rơi tim = giá trị này ÷ tổng 3 trọng số (tim + khiên + súng).", "6. Falling sky", 1], ["fsShieldW", "Tỉ lệ rơi: Khiên (trọng số)", "n", 0.5, 0, 100, "Trọng số rơi khiên.", "6. Falling sky", 1], ["fsGunW", "Tỉ lệ rơi: Súng (trọng số)", "n", 0.5, 0, 100, "Trọng số rơi súng.", "6. Falling sky", 1], ["rockFrom", "Đá rơi: xuất hiện từ điểm", "n", 1, 0, 50000, "Thời điểm bắt đầu: chỉ xuất hiện khi điểm hiện tại >= giá trị này (1 điểm = 1 bậc ở Sky Jump; ở Falling sky điểm tăng theo thời gian/quái/vật phẩm). 0 = ngay từ đầu. Đá còn bị giới hạn bởi \"Đá rơi bắt đầu từ điểm\" ở mục 3: áp dụng giá trị lớn hơn.", "7.1 Đá rơi", 0], ["rockTo", "Đá rơi: ngừng xuất hiện sau điểm (0 = không)", "n", 1, 0, 50000, "Thời điểm kết thúc: khi điểm vượt giá trị này thì không xuất hiện thêm nữa. 0 = không giới hạn. Phải lớn hơn \"từ điểm\" mới có tác dụng.", "7.1 Đá rơi", 0], ["rockCond", "Đá rơi: điều kiện xuất hiện", "s", ["Luôn luôn", "Khi máu đầy (chưa bị trúng)", "Khi máu thấp (còn ≤ một nửa)", "Khi đang có khiên", "Khi không có khiên", "Khi đang có buff (lò xo/khiên/súng/rocket)"], 0, 5, "Chỉ xuất hiện khi điều kiện đúng ở thời điểm sinh. \"Máu\" = số đạn trúng so với \"Số đạn trúng thì thua\". Kết hợp được với khoảng điểm ở trên.", "7.1 Đá rơi", "Luôn luôn"], ["rockNum", "Đá rơi: số lượng mỗi lần", "n", 1, 1, 20, "Lượng mỗi lần xuất hiện: số viên đá mỗi đợt (nhân với số viên gốc của đợt).", "7.1 Đá rơi", 1], ["monFrom", "Yêu quái: xuất hiện từ điểm", "n", 1, 0, 50000, "Thời điểm bắt đầu: chỉ xuất hiện khi điểm hiện tại >= giá trị này (1 điểm = 1 bậc ở Sky Jump; ở Falling sky điểm tăng theo thời gian/quái/vật phẩm). 0 = ngay từ đầu.", "7.2 Yêu quái", 0], ["monTo", "Yêu quái: ngừng xuất hiện sau điểm (0 = không)", "n", 1, 0, 50000, "Thời điểm kết thúc: khi điểm vượt giá trị này thì không xuất hiện thêm nữa. 0 = không giới hạn. Phải lớn hơn \"từ điểm\" mới có tác dụng.", "7.2 Yêu quái", 0], ["monCond", "Yêu quái: điều kiện xuất hiện", "s", ["Luôn luôn", "Khi máu đầy (chưa bị trúng)", "Khi máu thấp (còn ≤ một nửa)", "Khi đang có khiên", "Khi không có khiên", "Khi đang có buff (lò xo/khiên/súng/rocket)"], 0, 5, "Chỉ xuất hiện khi điều kiện đúng ở thời điểm sinh. \"Máu\" = số đạn trúng so với \"Số đạn trúng thì thua\". Kết hợp được với khoảng điểm ở trên.", "7.2 Yêu quái", "Luôn luôn"], ["monNum", "Yêu quái: số lượng mỗi lần", "n", 1, 1, 20, "Lượng mỗi lần xuất hiện: số quái sinh ra mỗi lần tới mốc sinh (Sky Jump: tại mỗi mốc bậc; Falling sky: mỗi lần quái xuất hiện, vẫn bị giới hạn bởi số quái tối đa).", "7.2 Yêu quái", 1], ["springFrom", "Lò xo: xuất hiện từ điểm", "n", 1, 0, 50000, "Thời điểm bắt đầu: chỉ xuất hiện khi điểm hiện tại >= giá trị này (1 điểm = 1 bậc ở Sky Jump; ở Falling sky điểm tăng theo thời gian/quái/vật phẩm). 0 = ngay từ đầu.", "7.3 Lò xo (Sky Jump)", 0], ["springTo", "Lò xo: ngừng xuất hiện sau điểm (0 = không)", "n", 1, 0, 50000, "Thời điểm kết thúc: khi điểm vượt giá trị này thì không xuất hiện thêm nữa. 0 = không giới hạn. Phải lớn hơn \"từ điểm\" mới có tác dụng.", "7.3 Lò xo (Sky Jump)", 0], ["springCond", "Lò xo: điều kiện xuất hiện", "s", ["Luôn luôn", "Khi máu đầy (chưa bị trúng)", "Khi máu thấp (còn ≤ một nửa)", "Khi đang có khiên", "Khi không có khiên", "Khi đang có buff (lò xo/khiên/súng/rocket)"], 0, 5, "Chỉ xuất hiện khi điều kiện đúng ở thời điểm sinh. \"Máu\" = số đạn trúng so với \"Số đạn trúng thì thua\". Kết hợp được với khoảng điểm ở trên.", "7.3 Lò xo (Sky Jump)", "Luôn luôn"], ["springNum", "Lò xo: số lượng mỗi lần", "n", 1, 1, 20, "Lượng mỗi lần xuất hiện: số bậc LIÊN TIẾP cùng mang lò xo ở mỗi mốc.", "7.3 Lò xo (Sky Jump)", 1], ["shieldFrom", "Khiên: xuất hiện từ điểm", "n", 1, 0, 50000, "Thời điểm bắt đầu: chỉ xuất hiện khi điểm hiện tại >= giá trị này (1 điểm = 1 bậc ở Sky Jump; ở Falling sky điểm tăng theo thời gian/quái/vật phẩm). 0 = ngay từ đầu.", "7.4 Khiên (Sky Jump)", 0], ["shieldTo", "Khiên: ngừng xuất hiện sau điểm (0 = không)", "n", 1, 0, 50000, "Thời điểm kết thúc: khi điểm vượt giá trị này thì không xuất hiện thêm nữa. 0 = không giới hạn. Phải lớn hơn \"từ điểm\" mới có tác dụng.", "7.4 Khiên (Sky Jump)", 0], ["shieldCond", "Khiên: điều kiện xuất hiện", "s", ["Luôn luôn", "Khi máu đầy (chưa bị trúng)", "Khi máu thấp (còn ≤ một nửa)", "Khi đang có khiên", "Khi không có khiên", "Khi đang có buff (lò xo/khiên/súng/rocket)"], 0, 5, "Chỉ xuất hiện khi điều kiện đúng ở thời điểm sinh. \"Máu\" = số đạn trúng so với \"Số đạn trúng thì thua\". Kết hợp được với khoảng điểm ở trên.", "7.4 Khiên (Sky Jump)", "Luôn luôn"], ["shieldNum", "Khiên: số lượng mỗi lần", "n", 1, 1, 20, "Lượng mỗi lần xuất hiện: số bậc LIÊN TIẾP cùng mang khiên ở mỗi mốc.", "7.4 Khiên (Sky Jump)", 1], ["rocketFrom", "Rocket: xuất hiện từ điểm", "n", 1, 0, 50000, "Thời điểm bắt đầu: chỉ xuất hiện khi điểm hiện tại >= giá trị này (1 điểm = 1 bậc ở Sky Jump; ở Falling sky điểm tăng theo thời gian/quái/vật phẩm). 0 = ngay từ đầu.", "7.5 Rocket (Sky Jump)", 0], ["rocketTo", "Rocket: ngừng xuất hiện sau điểm (0 = không)", "n", 1, 0, 50000, "Thời điểm kết thúc: khi điểm vượt giá trị này thì không xuất hiện thêm nữa. 0 = không giới hạn. Phải lớn hơn \"từ điểm\" mới có tác dụng.", "7.5 Rocket (Sky Jump)", 0], ["rocketCond", "Rocket: điều kiện xuất hiện", "s", ["Luôn luôn", "Khi máu đầy (chưa bị trúng)", "Khi máu thấp (còn ≤ một nửa)", "Khi đang có khiên", "Khi không có khiên", "Khi đang có buff (lò xo/khiên/súng/rocket)"], 0, 5, "Chỉ xuất hiện khi điều kiện đúng ở thời điểm sinh. \"Máu\" = số đạn trúng so với \"Số đạn trúng thì thua\". Kết hợp được với khoảng điểm ở trên.", "7.5 Rocket (Sky Jump)", "Luôn luôn"], ["rocketNum", "Rocket: số lượng mỗi lần", "n", 1, 1, 20, "Lượng mỗi lần xuất hiện: số bậc LIÊN TIẾP cùng mang rocket ở mỗi mốc.", "7.5 Rocket (Sky Jump)", 1], ["lifeFrom", "Tim: xuất hiện từ điểm", "n", 1, 0, 50000, "Thời điểm bắt đầu: chỉ xuất hiện khi điểm hiện tại >= giá trị này (1 điểm = 1 bậc ở Sky Jump; ở Falling sky điểm tăng theo thời gian/quái/vật phẩm). 0 = ngay từ đầu.", "7.6 Tim (Sky Jump)", 0], ["lifeTo", "Tim: ngừng xuất hiện sau điểm (0 = không)", "n", 1, 0, 50000, "Thời điểm kết thúc: khi điểm vượt giá trị này thì không xuất hiện thêm nữa. 0 = không giới hạn. Phải lớn hơn \"từ điểm\" mới có tác dụng.", "7.6 Tim (Sky Jump)", 0], ["lifeCond", "Tim: điều kiện xuất hiện", "s", ["Luôn luôn", "Khi máu đầy (chưa bị trúng)", "Khi máu thấp (còn ≤ một nửa)", "Khi đang có khiên", "Khi không có khiên", "Khi đang có buff (lò xo/khiên/súng/rocket)"], 0, 5, "Chỉ xuất hiện khi điều kiện đúng ở thời điểm sinh. \"Máu\" = số đạn trúng so với \"Số đạn trúng thì thua\". Kết hợp được với khoảng điểm ở trên.", "7.6 Tim (Sky Jump)", "Luôn luôn"], ["lifeNum", "Tim: số lượng mỗi lần", "n", 1, 1, 20, "Lượng mỗi lần xuất hiện: số bậc LIÊN TIẾP cùng mang tim ở mỗi mốc.", "7.6 Tim (Sky Jump)", 1], ["bombFrom", "Bom: xuất hiện từ điểm", "n", 1, 0, 50000, "Thời điểm bắt đầu: chỉ xuất hiện khi điểm hiện tại >= giá trị này (1 điểm = 1 bậc ở Sky Jump; ở Falling sky điểm tăng theo thời gian/quái/vật phẩm). 0 = ngay từ đầu.", "7.7 Bom (Falling sky)", 0], ["bombTo", "Bom: ngừng xuất hiện sau điểm (0 = không)", "n", 1, 0, 50000, "Thời điểm kết thúc: khi điểm vượt giá trị này thì không xuất hiện thêm nữa. 0 = không giới hạn. Phải lớn hơn \"từ điểm\" mới có tác dụng.", "7.7 Bom (Falling sky)", 0], ["bombCond", "Bom: điều kiện xuất hiện", "s", ["Luôn luôn", "Khi máu đầy (chưa bị trúng)", "Khi máu thấp (còn ≤ một nửa)", "Khi đang có khiên", "Khi không có khiên", "Khi đang có buff (lò xo/khiên/súng/rocket)"], 0, 5, "Chỉ xuất hiện khi điều kiện đúng ở thời điểm sinh. \"Máu\" = số đạn trúng so với \"Số đạn trúng thì thua\". Kết hợp được với khoảng điểm ở trên.", "7.7 Bom (Falling sky)", "Luôn luôn"], ["bombNum", "Bom: số lượng mỗi lần", "n", 1, 1, 20, "Lượng mỗi lần xuất hiện: số bom thả mỗi đợt.", "7.7 Bom (Falling sky)", 1], ["itemFrom", "Vật phẩm rơi: xuất hiện từ điểm", "n", 1, 0, 50000, "Thời điểm bắt đầu: chỉ xuất hiện khi điểm hiện tại >= giá trị này (1 điểm = 1 bậc ở Sky Jump; ở Falling sky điểm tăng theo thời gian/quái/vật phẩm). 0 = ngay từ đầu.", "7.8 Vật phẩm rơi (Falling sky)", 0], ["itemTo", "Vật phẩm rơi: ngừng xuất hiện sau điểm (0 = không)", "n", 1, 0, 50000, "Thời điểm kết thúc: khi điểm vượt giá trị này thì không xuất hiện thêm nữa. 0 = không giới hạn. Phải lớn hơn \"từ điểm\" mới có tác dụng.", "7.8 Vật phẩm rơi (Falling sky)", 0], ["itemCond", "Vật phẩm rơi: điều kiện xuất hiện", "s", ["Luôn luôn", "Khi máu đầy (chưa bị trúng)", "Khi máu thấp (còn ≤ một nửa)", "Khi đang có khiên", "Khi không có khiên", "Khi đang có buff (lò xo/khiên/súng/rocket)"], 0, 5, "Chỉ xuất hiện khi điều kiện đúng ở thời điểm sinh. \"Máu\" = số đạn trúng so với \"Số đạn trúng thì thua\". Kết hợp được với khoảng điểm ở trên.", "7.8 Vật phẩm rơi (Falling sky)", "Luôn luôn"], ["itemNum", "Vật phẩm rơi: số lượng mỗi lần", "n", 1, 1, 20, "Lượng mỗi lần xuất hiện: số vật phẩm (tim/khiên/súng) rơi mỗi lần.", "7.8 Vật phẩm rơi (Falling sky)", 1]]);
+/*PATCH_V5*/
+PF.splice(PF.findIndex(function(r){return r[0]==='fsPSpd'})+1,0,
+["fsJump","Cho phép nhảy","b",null,null,null,"Bật: nhân vật có thể nhảy lên (↑ / W / Space, hoặc chạm nhanh / vuốt lên trên điện thoại). Tắt: chỉ chạy ngang trên mặt đất như cũ.","6. Falling sky","Bật"],
+["fsJumpPow","Lực nhảy (px/khung)","n",0.5,5,25,"Vận tốc bật lên khi nhảy. Độ cao đỉnh nhảy ≈ lực² ÷ trọng lực nhảy (gốc 11 ≈ 120 px). Chỉ có tác dụng khi bật 'Cho phép nhảy'.","6. Falling sky",11],
+["fsGrav","Trọng lực khi nhảy ×","n",0.05,0.4,2.5,"Nhân gia tốc rơi khi nhảy (gốc 0,5 px/khung²). Cao: nhảy thấp và rơi nhanh. Thấp: bay lâu hơn.","6. Falling sky",1],
+["fsAirJumps","Số lần nhảy thêm trên không","n",1,0,5,"0 = chỉ nhảy được khi đang đứng trên đất. 1 = nhảy đôi, 2 = nhảy ba...","6. Falling sky",0]);
 // ---- Firebase REST ----
 async function login(pw,em){
   const r=await fetch('https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key='+FB.key,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:em||FB.admin,password:pw,returnSecureToken:true})});
@@ -614,8 +673,8 @@ function clampX(c){/*DEEPCFG*/
 function applyConfig(){DRAFT=null;
   const mods=(CF.v&&CF.v.modes)||{};
   for(const k of Object.keys(DIFF))if(!BASE[k]&&!mods[k])delete DIFF[k];
-  for(const k in BASE){const o=mods[k]||{};DIFF[k]=D(Object.assign({},BASE[k],o.p||{},{name:o.name||BASE[k].name,desc:o.desc!==undefined?o.desc:BASE[k].desc,bg:o.bg||'',winTitle:o.winTitle||'',winMsg:o.winMsg||'',winImg:o.winImg||'',stop:!!o.stop}))}
-  for(const k in mods){if(BASE[k])continue;const o=mods[k];DIFF[k]=D(Object.assign({},o.p||{},{name:o.name||k,desc:o.desc||'',bg:o.bg||'',winTitle:o.winTitle||'',winMsg:o.winMsg||'',winImg:o.winImg||'',stop:!!o.stop}))}
+  for(const k in BASE){const o=mods[k]||{};DIFF[k]=D(Object.assign({},BASE[k],o.p||{},{name:o.name||BASE[k].name,desc:o.desc!==undefined?o.desc:BASE[k].desc,bg:o.bg||'',icon:o.icon||'',tex:o.tex||{},winTitle:o.winTitle||'',winMsg:o.winMsg||'',winImg:o.winImg||'',stop:!!o.stop}))}
+  for(const k in mods){if(BASE[k])continue;const o=mods[k];DIFF[k]=D(Object.assign({},o.p||{},{name:o.name||k,desc:o.desc||'',bg:o.bg||'',icon:o.icon||'',tex:o.tex||{},winTitle:o.winTitle||'',winMsg:o.winMsg||'',winImg:o.winImg||'',stop:!!o.stop}))}
   const cl=(v,a,b,d)=>Number.isFinite(+v)?Math.min(b,Math.max(a,+v)):d;
   for(const k in DIFF){const c=DIFF[k];
     c.gap=cl(c.gap,.5,1.1,1);c.rockInt=cl(c.rockInt,.3,5,1);c.rockSpd=cl(c.rockSpd,.2,3,1);
@@ -627,6 +686,13 @@ function applyConfig(){DRAFT=null;
   if(!TEST)cfg=DIFF[dk];buildDiffs();refresh();
 }
 const IMG={};
+function TX(key,x,y,w,h2){
+  const u=cfg&&cfg.tex&&cfg.tex[key];
+  if(!u||!/^(https?:|data:image)/.test(u))return false;
+  let im=IMG[u];if(!im){im=IMG[u]=new Image();im.onerror=()=>{im.bad=1};im.src=u}
+  if(!im.complete||im.bad||!im.naturalWidth)return false;
+  ctx.drawImage(im,x,y,w,h2);return true;
+}
 function drawBg(){
   const u=cfg&&cfg.bg;if(!u||!/^(https?:|data:image)/.test(u))return;
   let im=IMG[u];if(!im){im=IMG[u]=new Image();im.onerror=()=>{im.bad=1};im.src=u}
@@ -662,7 +728,7 @@ function rows(m){
 }
 const RANKSVG=i=>{const C=[['#fbbf24','#b45309'],['#d1d5db','#4b5563'],['#e0925a','#7c3a14']][i];return '<svg viewBox="0 0 24 24" width="24" height="24" aria-label="Hạng '+(i+1)+'" style="display:block;margin:0 auto"><path d="M8 1.5l4 7.5 4-7.5z" fill="#ef4444"/><circle cx="12" cy="15" r="7.5" fill="'+C[0]+'" stroke="'+C[1]+'" stroke-width="1.6"/><text x="12" y="18.6" text-anchor="middle" font-size="10" font-weight="800" fill="'+C[1]+'" font-family="sans-serif">'+(i+1)+'</text></svg>'};
 const dn=s=>{s=(s==null?'':String(s));return bad(s)?'Tên đã bị ẩn':s};
-let lbSort=null;
+let lbSort=null,lbG=null;
 /*PATCH_PLAYERS_V1*/
 function uniqNames(){
   const P={};
@@ -729,7 +795,7 @@ function listInto(box,m,n,edit){
   if(!FBOK){box.replaceChildren(h('p',{textContent:'Chưa cấu hình Firebase.'}));return}
   const ae=document.activeElement;
   if(edit&&box.children.length&&ae&&box.contains(ae)&&/INPUT|SELECT/.test(ae.tagName))return;
-  const ks=Object.keys(DIFF),key=lbSort&&DIFF[lbSort]?lbSort:(DIFF[m]?m:ks[0]),U={};
+  const GT=lbGT(),ks=Object.keys(DIFF).filter(k=>!!DIFF[k].fs===(GT==='sky')),key=lbSort&&ks.includes(lbSort)?lbSort:(ks.includes(m)?m:ks[0]),U={};
   ks.forEach(k=>rows(k).forEach(r=>{const u=U[r.id]||(U[r.id]={id:r.id,name:r.name,m:{}});u.m[k]=r;u.name=r.name||u.name}));
   const tot=u=>ks.reduce((s,k)=>s+(u.m[k]?u.m[k].score:0),0);
   const L=Object.keys(U).map(k=>U[k]).sort((a,b)=>{
@@ -742,7 +808,7 @@ function listInto(box,m,n,edit){
   const old=box.querySelector('.lbw'),sx=old?old.scrollLeft:0,sy=old?old.scrollTop:0;
   const add=edit?lbAddForm(ks,key):null;
   if(!L.length){box.replaceChildren(h('p',{textContent:'Chưa có ai. Hãy là người đầu tiên!'}),...(add?[add]:[]));return}
-  const CR=44,CN=edit?132:96,CM=edit?136:74,total=CR+CN+CM*ks.length;
+  const CR=44,CN=edit?132:112,CM=edit?136:74,total=CR+CN+CM*ks.length;
   const th=(t,c,x)=>h('th',Object.assign({className:c,textContent:t},x||{}));
   const hr=h('tr',{},th('Hạng','c1'),th('Tên','c2'),...ks.map(k=>th(DIFF[k].name+(k===key?' ▾':''),'mh'+(k===key?' on':''),{title:DIFF[k].name+' - xếp theo chế độ này',onclick:()=>{lbSort=k;onLB()}})));
   const cg=h('colgroup',{},h('col',{style:'width:'+CR+'px'}),h('col',{style:'width:'+CN+'px'}),...ks.map(()=>h('col',{style:'width:'+CM+'px'})));
@@ -776,7 +842,8 @@ const side=h('aside',{id:'side'});$('wrap').after(side);
 function renderSide(){return;const b=h('div');listInto(b,dk,10);side.replaceChildren(h('h3',{textContent:'🏆 Bảng xếp hạng · Top 10'}),b,h('p',{className:'hint',textContent:'Chạm tên chế độ để đổi cách xếp · cập nhật trực tiếp'}))}
 window.__side=renderSide;addEventListener('resize',()=>renderSide());
 function fillModes(){if(!DIFF[lbM])lbM=dk}
-function renderLB(){const ed=!!ADM;$('lb').style.maxWidth=ed?'min(96%,900px)':'';listInto($('lbList'),lbM||dk,50,ed)}
+function lbGT(){return lbG||(DIFF[dk]&&DIFF[dk].fs?'sky':'classic')}
+function renderLB(){const ed=!!ADM;document.querySelectorAll('#lbGt button').forEach(b=>b.classList.toggle('sel',b.dataset.lg===lbGT()));$('lb').style.maxWidth=ed?'min(96%,900px)':'';listInto($('lbList'),lbM||dk,50,ed)}
 function submitScore(){
   const s=score|0;if(TEST||!FBOK||s<=0)return;
   if(!myName){setTimeout(()=>{if(confirm('Bạn chưa đặt tên nên điểm chưa lên bảng xếp hạng. Đặt tên ngay?')){ret=st==='win'?'win':'over';openName()}},400);return}
@@ -856,13 +923,80 @@ const MI={
  hell:SV('<path d="M2 21L8.5 9h7L22 21z" fill="#7c2d12"/><path d="M9 9l1.2-5M15 9l-1.2-6M12 9V3" stroke="#f97316" stroke-width="2" stroke-linecap="round" fill="none"/><path d="M8.5 9h7l-1 2.5h-5z" fill="#ef4444"/>'),
  x:SV('<circle cx="12" cy="12" r="9" fill="none" stroke="#2563eb" stroke-width="2"/><circle cx="12" cy="12" r="4.5" fill="none" stroke="#2563eb" stroke-width="2"/><circle cx="12" cy="12" r="1.5" fill="#2563eb"/>')
 };
+MI.sky=SV('<ellipse cx="12" cy="4" rx="4.2" ry="1.5" fill="none" stroke="#fbbf24" stroke-width="1.7"/><path d="M5.5 19a4.2 4.2 0 0 1 .5-8.4 5.8 5.8 0 0 1 11.2 1.6A3.6 3.6 0 0 1 17.5 19z" fill="#bae6fd" stroke="#0ea5e9" stroke-width="1.4" stroke-linejoin="round"/>');
+const ICONS={
+ sprout:SV('<path d="M12 21V11" stroke="#15803d" stroke-width="2" stroke-linecap="round" fill="none"/><path d="M12 12C12 8 9 6 5 6c0 4 3 6 7 6z" fill="#4ade80"/><path d="M12 14c0-3 2.5-5 7-5 0 3.5-2.5 5.5-7 5.5z" fill="#22c55e"/>'),
+ leaf:SV('<path d="M5 19C5 10 10 5 20 4c0 10-5 15-14 15z" fill="#34d399"/><path d="M5 19l8-8" stroke="#047857" stroke-width="1.8" stroke-linecap="round" fill="none"/>'),
+ star:SV('<polygon points="12,2 15.1,8.6 22,9.3 16.8,14 18.2,21 12,17.5 5.8,21 7.2,14 2,9.3 8.9,8.6" fill="#fbbf24" stroke="#d97706" stroke-width="1" stroke-linejoin="round"/>'),
+ flame:SV('<path d="M12 2c1 4 5 6 5 11a5 5 0 0 1-10 0c0-2 1-3 2-4 0 2 1 3 2 3 0-4-1-6 1-10z" fill="#f97316"/><path d="M12 22a3 3 0 0 1-3-3c0-2 2-3 3-5 1 2 3 3 3 5a3 3 0 0 1-3 3z" fill="#fde047"/>'),
+ volcano:SV('<path d="M2 21L8.5 9h7L22 21z" fill="#7c2d12"/><path d="M9 9l1.2-5M15 9l-1.2-6M12 9V3" stroke="#f97316" stroke-width="2" stroke-linecap="round" fill="none"/><path d="M8.5 9h7l-1 2.5h-5z" fill="#ef4444"/>'),
+ skull:SV('<path d="M12 2.5c-4.7 0-8 3.2-8 7.5 0 2.6 1.3 4.4 3 5.4V19h10v-3.6c1.7-1 3-2.8 3-5.4 0-4.3-3.3-7.5-8-7.5z" fill="#e5e7eb" stroke="#6b7280" stroke-width="1.4" stroke-linejoin="round"/><circle cx="8.8" cy="10.5" r="2.2" fill="#1f2937"/><circle cx="15.2" cy="10.5" r="2.2" fill="#1f2937"/><path d="M12 13l-1 2h2z" fill="#1f2937"/><path d="M9.5 19v2.5M12 19v2.5M14.5 19v2.5" stroke="#6b7280" stroke-width="1.4" stroke-linecap="round"/>'),
+ bolt:SV('<path d="M13.5 2L5 13.5h6L9.8 22 19 9.8h-6.2z" fill="#fbbf24" stroke="#d97706" stroke-width="1.3" stroke-linejoin="round"/>'),
+ snow:SV('<path d="M12 2v20M3.3 7l17.4 10M3.3 17L20.7 7" stroke="#38bdf8" stroke-width="2" stroke-linecap="round"/><path d="M9.5 3.5L12 6l2.5-2.5M9.5 20.5L12 18l2.5 2.5" stroke="#38bdf8" stroke-width="1.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/>'),
+ rocket:SV('<path d="M12 1.8c4.2 2.6 5.8 7.4 4.6 12.7H7.4C6.2 9.2 7.8 4.4 12 1.8z" fill="#f1f5f9" stroke="#475569" stroke-width="1.4" stroke-linejoin="round"/><circle cx="12" cy="9" r="2.3" fill="#38bdf8" stroke="#475569" stroke-width="1.2"/><path d="M7.6 12.5L3.8 17.5l4.6-1.3zM16.4 12.5l3.8 5-4.6-1.3z" fill="#ef4444" stroke="#7f1d1d" stroke-width="1" stroke-linejoin="round"/><path d="M9.6 15h4.8L12 22z" fill="#fb923c"/>'),
+ crown:SV('<path d="M3 8l4.5 4L12 5l4.5 7L21 8l-2 11H5z" fill="#fbbf24" stroke="#d97706" stroke-width="1.4" stroke-linejoin="round"/><circle cx="3" cy="8" r="1.4" fill="#ef4444"/><circle cx="12" cy="5" r="1.4" fill="#ef4444"/><circle cx="21" cy="8" r="1.4" fill="#ef4444"/>'),
+ bomb:SV('<circle cx="11" cy="14" r="7.5" fill="#1f2937" stroke="#0b1220" stroke-width="1.4"/><rect x="9" y="4.6" width="4.4" height="3.2" rx=".8" fill="#475569"/><path d="M13 5c2-2 4-2 5.5-.5" stroke="#a16207" stroke-width="1.6" fill="none" stroke-linecap="round"/><circle cx="19" cy="3.8" r="1.8" fill="#f97316"/><circle cx="8.4" cy="11.6" r="1.8" fill="#fff" opacity=".35"/>'),
+ heart:SV('<path d="M12 21.2S3.6 15.8 3.6 9.9a4.6 4.6 0 0 1 8.4-2.6 4.6 4.6 0 0 1 8.4 2.6c0 5.9-8.4 11.3-8.4 11.3z" fill="#ef4444" stroke="#991b1b" stroke-width="1.2" stroke-linejoin="round"/>'),
+ shield:SV('<path d="M12 2l8 3v6c0 5-3.5 9-8 11-4.5-2-8-6-8-11V5z" fill="#38bdf8" stroke="#0369a1" stroke-width="1.6" stroke-linejoin="round"/><path d="M12 4.6v15.2c3.2-1.7 5.6-4.7 5.6-8.6V7z" fill="#0ea5e9"/>'),
+ ghost:SV('<path d="M5 21V11a7 7 0 0 1 14 0v10l-2.3-2-2.4 2-2.3-2-2.3 2-2.4-2z" fill="#f1f5f9" stroke="#64748b" stroke-width="1.4" stroke-linejoin="round"/><circle cx="9.5" cy="11" r="1.6" fill="#1e293b"/><circle cx="14.5" cy="11" r="1.6" fill="#1e293b"/>'),
+ moon:SV('<path d="M20 14.5A8.5 8.5 0 0 1 9.5 4 8.5 8.5 0 1 0 20 14.5z" fill="#fde68a" stroke="#d97706" stroke-width="1.4" stroke-linejoin="round"/>'),
+ sun:SV('<circle cx="12" cy="12" r="4.6" fill="#fbbf24" stroke="#d97706" stroke-width="1.3"/><path d="M12 2.5v3M12 18.5v3M2.5 12h3M18.5 12h3M5.3 5.3l2.1 2.1M16.6 16.6l2.1 2.1M18.7 5.3l-2.1 2.1M7.4 16.6l-2.1 2.1" stroke="#f59e0b" stroke-width="2" stroke-linecap="round"/>'),
+ diamond:SV('<path d="M6 3h12l4 6-10 12L2 9z" fill="#67e8f9" stroke="#0891b2" stroke-width="1.4" stroke-linejoin="round"/><path d="M2 9h20M9 3l-2 6 5 12 5-12-2-6" fill="none" stroke="#0891b2" stroke-width="1.1" stroke-linejoin="round"/>'),
+ trophy:SV('<path d="M7 3h10v6.2a5 5 0 0 1-10 0z" fill="#fbbf24" stroke="#d97706" stroke-width="1.3" stroke-linejoin="round"/><path d="M7 5H3.6c0 4 1.5 6.1 3.9 6.4M17 5h3.4c0 4-1.5 6.1-3.9 6.4" fill="none" stroke="#d97706" stroke-width="1.8" stroke-linecap="round"/><rect x="10.6" y="14" width="2.8" height="4" fill="#d97706"/><rect x="7.5" y="18" width="9" height="3.2" rx="1.2" fill="#b45309"/>'),
+ target:SV('<circle cx="12" cy="12" r="9" fill="none" stroke="#2563eb" stroke-width="2"/><circle cx="12" cy="12" r="4.5" fill="none" stroke="#2563eb" stroke-width="2"/><circle cx="12" cy="12" r="1.5" fill="#2563eb"/>'),
+ cloud:SV('<ellipse cx="12" cy="4" rx="4.2" ry="1.5" fill="none" stroke="#fbbf24" stroke-width="1.7"/><path d="M5.5 19a4.2 4.2 0 0 1 .5-8.4 5.8 5.8 0 0 1 11.2 1.6A3.6 3.6 0 0 1 17.5 19z" fill="#bae6fd" stroke="#0ea5e9" stroke-width="1.4" stroke-linejoin="round"/>'),
+ comet:SV('<circle cx="16" cy="16" r="5" fill="#f97316" stroke="#9a3412" stroke-width="1.3"/><path d="M12.5 12.5L3 3M10 15L2 9M15 10L9 2" stroke="#fdba74" stroke-width="2" stroke-linecap="round"/>')
+};
+const SKX='<g stroke-linecap="round"><path d="M4 14.5L20 22M20 14.5L4 22" stroke="#6b7280" stroke-width="4.2" fill="none"/><path d="M4 14.5L20 22M20 14.5L4 22" stroke="#f8fafc" stroke-width="2.6" fill="none"/></g><circle cx="3.6" cy="14.4" r="1.6" fill="#f8fafc" stroke="#6b7280" stroke-width="1"/><circle cx="20.4" cy="14.4" r="1.6" fill="#f8fafc" stroke="#6b7280" stroke-width="1"/><circle cx="3.6" cy="22.2" r="1.6" fill="#f8fafc" stroke="#6b7280" stroke-width="1"/><circle cx="20.4" cy="22.2" r="1.6" fill="#f8fafc" stroke="#6b7280" stroke-width="1"/><g transform="translate(2.64 .3) scale(.78)"><path d="M12 2.5c-4.7 0-8 3.2-8 7.5 0 2.6 1.3 4.4 3 5.4V19h10v-3.6c1.7-1 3-2.8 3-5.4 0-4.3-3.3-7.5-8-7.5z" fill="#f1f5f9" stroke="#475569" stroke-width="1.5" stroke-linejoin="round"/><circle cx="8.8" cy="10.5" r="2.4" fill="#1f2937"/><circle cx="15.2" cy="10.5" r="2.4" fill="#1f2937"/><path d="M12 13l-1.2 2.4h2.4z" fill="#1f2937"/><path d="M9.5 16.5V19M12 16.5V19M14.5 16.5V19" stroke="#6b7280" stroke-width="1.2" stroke-linecap="round"/></g>';
+ICONS.skullx=SV(SKX);
+var SKM=null;
+function skMark(){
+  if(!(dk==='hell'||dk==='fs_hell'||dk==='fs_cd'))return;
+  if(!SKM){SKM=new Image();SKM.src='data:image/svg+xml;charset=utf-8,'+encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="256" height="256">'+SKX+'</svg>')}
+  if(!SKM.complete||!SKM.naturalWidth)return;
+  const s=Math.min(W,H)*.62,t=performance.now()/1000;
+  ctx.save();ctx.globalAlpha=.13+.04*Math.sin(t*1.5);ctx.drawImage(SKM,W/2-s/2,H*.42-s/2,s,s);ctx.restore();
+}
+const ICONL={sprout:'Mầm cây',leaf:'Chiếc lá',star:'Ngôi sao',flame:'Ngọn lửa',volcano:'Núi lửa',skull:'Đầu lâu',bolt:'Tia sét',snow:'Bông tuyết',rocket:'Tên lửa',crown:'Vương miện',bomb:'Bom',heart:'Trái tim',shield:'Khiên',ghost:'Con ma',moon:'Mặt trăng',sun:'Mặt trời',diamond:'Kim cương',trophy:'Cúp',skullx:'Đầu lâu xương chéo',target:'Bia bắn',cloud:'Đám mây',comet:'Sao chổi'};
+MI.fs_sd=ICONS.sun;MI.fs_de=ICONS.snow;MI.fs_kho=ICONS.bolt;MI.fs_cd=ICONS.skullx;MI.hell=ICONS.skullx;MI.fs_hell=ICONS.skull;
+function modeIcon(c,k){
+  const u=c&&c.icon;
+  if(u&&/^(https?:|data:image)/.test(u))return '<img src="'+String(u).replace(/"/g,'')+'" alt="" style="width:26px;height:26px;object-fit:contain;display:block">';
+  if(u&&ICONS[u])return ICONS[u];
+  return MI[k]||MI.x;
+}
+function texPack(f,max,lim){
+  return new Promise((ok,no)=>{
+    const rd=new FileReader();
+    rd.onerror=()=>no(new Error('Không đọc được file'));
+    rd.onload=()=>{
+      const im=new Image();
+      im.onerror=()=>no(new Error('Định dạng ảnh không hỗ trợ (HEIC/HEIF?). Hãy chọn PNG, WebP hoặc JPG.'));
+      im.onload=()=>{
+        let sc=Math.min(1,max/Math.max(im.naturalWidth,im.naturalHeight)),d='';
+        for(let i=0;i<8;i++){
+          const k=document.createElement('canvas');
+          k.width=Math.max(1,Math.round(im.naturalWidth*sc));k.height=Math.max(1,Math.round(im.naturalHeight*sc));
+          k.getContext('2d').drawImage(im,0,0,k.width,k.height);
+          d=k.toDataURL('image/webp',.85);
+          if(d.indexOf('data:image/webp')!==0)d=k.toDataURL('image/png');
+          if(d.length<=lim)break;
+          sc*=.8;
+        }
+        ok(d);
+      };
+      im.src=rd.result;
+    };
+    rd.readAsDataURL(f);
+  });
+}
 const MEDAL=SV('<path d="M8 2l4 7 4-7z" fill="#ef4444"/><circle cx="12" cy="15" r="6.5" fill="#fbbf24" stroke="#d97706" stroke-width="1.5"/>');
 function bestOf(k){try{return +localStorage.getItem('skyhop_best_'+k)||0}catch(e){return 0}}
 function buildModes(){
-  $('modeList').replaceChildren(...Object.keys(DIFF).map(k=>{
+  $('modeList').replaceChildren(...Object.keys(DIFF).filter(k=>{const sk=gtype==='sky',any=Object.keys(DIFF).some(x=>!!DIFF[x].fs===sk);return !any||!!DIFF[k].fs===sk}).map(k=>{
     const c=DIFF[k],b=bestOf(k);
     const x=h('button',{className:'mode'+(k===dk?' cur':'')},
-      h('span',{className:'mi',innerHTML:MI[k]||MI.x}),
+      h('span',{className:'mi',innerHTML:modeIcon(c,k)}),
       h('span',{className:'mt'},h('b',{textContent:c.name}),...(c.desc?[h('small',{textContent:c.desc})]:[])),
       h('span',{className:'mb',innerHTML:b?MEDAL+' '+(+b):''}));
     x.onclick=()=>{dk=k;cfg=DIFF[k];lbSort=null;saveSet();loadBest();start()};
@@ -874,18 +1008,35 @@ $('verBtn').onclick=()=>wr.onclick();
 // ---- UI: panel ----
 $('ui').insertAdjacentHTML('beforeend',
  '<div class="panel" id="name"><h2>Đặt tên</h2><p>Tên hiển thị trên bảng xếp hạng.</p><input class="in" id="nameIn" maxlength="14" autocomplete="off" placeholder="Tên của bạn"><p id="nameErr" style="color:#d62a0b;min-height:18px"></p><button class="btn good" data-b="saveName">✔ Lưu</button></div>'+
- '<div class="panel" id="lb"><h2>🏆 Bảng xếp hạng</h2><p class="hint">Chạm tên chế độ để xếp theo chế độ đó. Bằng điểm thì ai nhanh hơn xếp trên.</p><div id="lbList"></div><button class="btn alt" data-b="back">← Quay lại</button></div>'+
+ '<div class="panel" id="lb"><h2>🏆 Bảng xếp hạng</h2><p class="hint">Chạm tên chế độ để xếp theo chế độ đó. Bằng điểm thì ai nhanh hơn xếp trên.</p><div class="gt" id="lbGt"><button data-lg="classic">Sky Jump</button><button data-lg="sky">Falling sky</button></div><div id="lbList"></div><button class="btn alt" data-b="back">← Quay lại</button></div>'+
  '<div class="panel" id="admin"><h2>Quản trị</h2><div id="admBody"></div><button class="btn alt" data-b="back">← Quay lại</button></div>');
 const nameBtn=$('nameBtn');
 function updNameBtn(){nameBtn.innerHTML='<svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="12" cy="8" r="4.2"/><path d="M4 21c0-4.4 3.6-7.5 8-7.5s8 3.1 8 7.5z"/></svg>';nameBtn.append(h('span',{textContent:myName||'Đặt tên'}))}
 const wr=h('button',{id:'wrenchBtn',title:'Quản trị',innerHTML:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>'});$('wrap').append(wr);
 wr.onclick=()=>{if(!FBOK){alert('Chưa cấu hình Firebase trong file.');return}openP('admin')};
 function onShow(p){wr.style.display=p==='admin'?'none':''}
+function helpFor(){
+  const sky=st==='menu'?gtype==='sky':!!(DIFF[dk]&&DIFF[dk].fs);
+  const c=(DIFF[dk]&&!!DIFF[dk].fs===sky)?DIFF[dk]:(sky?DIFF.sky:DIFF.bt);
+  const g=(k,d)=>{const v=c[k];return v!=null&&Number.isFinite(+v)?+v:d};
+  const T=(id,v)=>{const e=$(id);if(e)e.textContent=v};
+  $('helpJ').style.display=sky?'none':'';
+  $('helpF').style.display=sky?'':'none';
+  T('helpT','❓ Hướng dẫn · '+(sky?'Falling sky':'Sky Jump'));
+  T('helpM','Chế độ: '+c.name);
+  if(sky){
+    T('fG',c.goal);T('fSc',g('fsScoreSec',3));T('fKp',g('fsKillPts',10));T('fIp',g('fsItemPts',5));
+    T('fHp',c.hitMax);T('fLv',LV(c.lives));T('fMh',g('fsMonHp',3));T('fBr',g('fsBombR',70));T('fBd',g('fsBombDmg',1));
+    T('fSh',c.shieldSec);T('fGs',g('fsGunSec',10));T('fGr',g('fsGunRate',3.75));T('fGd',g('fsGunDmg',1));T('fIl',g('fsItemLife',6));
+  }else{
+    T('hitTxt',c.hitMax);T('sprTxt',c.springSec);T('shTxt',c.shieldSec);T('rkTxt',c.rocketSteps);
+  }
+}
 function openP(id){
   if(st==='play')pause();
   ret=st==='pause'?'pause':st==='over'?'over':st==='win'?'win':'menu';
-  if(id==='lb'){lbM=dk;fillModes();renderLB();window.__lbFull&&window.__lbFull()}
-  if(id==='admin')renderAdmin();if(id==='modes')buildModes();
+  if(id==='lb'){lbM=dk;lbG=(st==='menu')?gtype:(DIFF[dk]&&DIFF[dk].fs?'sky':'classic');lbSort=null;fillModes();renderLB();window.__lbFull&&window.__lbFull()}
+  if(id==='admin')renderAdmin();if(id==='modes')buildModes();if(id==='help')helpFor();
   show(id);
 }
 function openName(){$('nameIn').value=myName;$('nameErr').textContent='';show('name');setTimeout(()=>$('nameIn').focus(),50)}
@@ -905,7 +1056,9 @@ $('ui').addEventListener('click',e=>{
 });
 
 // ---- Admin ----
-function modeSel(cur,fn){const s=h('select',{className:'in'});for(const k in DIFF)s.append(h('option',{value:k,textContent:DIFF[k].name,selected:k===cur}));s.onchange=()=>fn(s.value);return s}
+const mnm=k=>DIFF[k].name+(DIFF[k].fs?' · Falling sky':' · Sky Jump');
+function SEL(o,v){const x=h('select',{className:'in'},...o.map((t,j)=>h('option',{value:j,textContent:t})));x.value=String(+v||0);return x}
+function modeSel(cur,fn){const s=h('select',{className:'in'});for(const k in DIFF)s.append(h('option',{value:k,textContent:mnm(k),selected:k===cur}));s.onchange=()=>fn(s.value);return s}
 function putEntry(m,id,n,s,t,ts){
   const body={name:String(n).trim().slice(0,14)||'?',score:Math.min(50000,Math.max(0,+s|0)),time:Math.min(86400,Math.max(0,+t||0)),ts:ts||Date.now()};
   api('PUT','lb/'+m+'/'+id,body,1).then(()=>{setAt(LB,'/'+m+'/'+id,body);onLB(1)}).catch(err);
@@ -951,7 +1104,7 @@ function plTab(out){
       const s=h('input',{className:'in',type:'number',placeholder:'Điểm',value:e?e.score:''}),
             t=h('input',{className:'in',type:'number',step:'.1',placeholder:'Giây',value:e?e.time:''});
       out.push(h('div',{className:'rw'},
-        h('label',{style:'flex:1 1 100%',textContent:DIFF[k].name+(e?'':' (chưa chơi)')}),
+        h('label',{style:'flex:1 1 100%',textContent:mnm(k)+(e?'':' (chưa chơi)')}),
         s,t,
         btn(e?'Lưu':'Thêm',()=>plSave(k,u.id,u.name,s.value,t.value===''?0:t.value,e&&e.ts),'sm'),
         ...(e?[btn('Xóa',()=>{if(confirm('Xóa điểm '+u.name+' ở chế độ '+DIFF[k].name+'?'))
@@ -1025,8 +1178,12 @@ function renderAdmin(){
     });
   }else if(tab==='mode'){
     if(!DIFF[eMode])eMode=Object.keys(DIFF)[0];
+    if(!eType)eType=DIFF[eMode].fs?'sky':'jump';
+    if(!!DIFF[eMode].fs!==(eType==='sky')){const f0=Object.keys(DIFF).find(k=>!!DIFF[k].fs===(eType==='sky'));if(f0)eMode=f0}
     const c=(DRAFT&&DRAFT.k===eMode)?DRAFT.o:DIFF[eMode];
-    out.push(modeSel(eMode,v=>{eMode=v;renderAdmin()}));
+    out.push(h('div',{className:'tabs'},...[['jump','Sky Jump'],['sky','Falling sky']].map(([k,t])=>{const x=btn(t,()=>{eType=k;renderAdmin()},'sm');if(k===eType)x.style.outline='3px solid var(--ink)';return x})));
+    out.push(h('h3',{className:'gh',textContent:eType==='sky'?'Cài đặt Falling sky':'Cài đặt Sky Jump'}));
+    out.push(modeSelT(eMode,v=>{eMode=v;renderAdmin()},eType));
     const nm=h('input',{className:'in',value:c.name,maxLength:24,placeholder:'Tên chế độ'}),ds=h('input',{className:'in',value:c.desc||'',placeholder:'Mô tả'}),bg=h('input',{className:'in',value:c.bg||'',placeholder:'Link ảnh nền (https://...)'});
     const bgInfo=h('p',{style:'font-size:12px;margin:4px 0;color:var(--mut)',textContent:c.bg?('Đang có ảnh nền ('+(String(c.bg).slice(0,5)==='data:'?Math.round(String(c.bg).length/1024)+' KB':'link')+')'):'Chưa có ảnh nền'}),
       bgPrev=h('img',{alt:'',style:'display:'+(c.bg?'block':'none')+';max-width:100%;max-height:120px;border-radius:10px;margin:4px auto'});
@@ -1057,10 +1214,10 @@ function renderAdmin(){
     out.push(btn('Ẩn / hiện mô tả chi tiết',()=>document.body.classList.toggle('nohp'),'btn alt'));
     let lastG='';
     PF.forEach(([k,l,ty,stp,mn,mx,ds,gr,df])=>{
-      if(gr&&gr!==lastG){lastG=gr;out.push(h('h3',{className:'gh',textContent:gr}))}
-      const i=ty==='b'?h('input',{type:'checkbox',checked:!!c[k]}):h('input',{className:'in',type:'number',step:stp,min:mn,max:mx,value:c[k]===Infinity?999:c[k]});
-      ins[k]=i;out.push(h('div',{className:'rw'},h('label',{textContent:l}),i));
-      if(ds)out.push(h('p',{className:'hp',textContent:(ty==='b'?'Công tắc':'Min '+mn+' · Max '+mx)+' · Gốc '+df+' — '+ds}));
+      
+      const i=ty==='b'?h('input',{type:'checkbox',checked:!!c[k]}):ty==='s'?SEL(stp,c[k]):h('input',{className:'in',type:'number',step:stp,min:mn,max:mx,value:c[k]===Infinity?999:c[k]});
+      ins[k]=i;if(k==='fs')i.checked=(eType==='sky');if(!fldOK(k))return;if(gr&&gr!==lastG){lastG=gr;out.push(h('h3',{className:'gh',textContent:gr}))}out.push(h('div',{className:'rw'},h('label',{textContent:l}),i));
+      if(ds)out.push(h('p',{className:'hp',textContent:(ty==='b'?'Công tắc':ty==='s'?'Lựa chọn':'Min '+mn+' · Max '+mx)+' · Gốc '+df+' — '+ds}));
     });
     const wt=h('input',{className:'in',value:c.winTitle||'',maxLength:40,placeholder:'Tiêu đề thông báo (vd: 🎉 Chúc mừng!)'}),
       wm=h('textarea',{className:'in',rows:3,value:c.winMsg||'',maxLength:500,placeholder:'Nội dung thông báo khi đạt điểm tối đa (để trống = mặc định)'}),
@@ -1073,7 +1230,29 @@ function renderAdmin(){
       h('div',{className:'rw'},wt),h('div',{className:'rw'},wm),h('div',{className:'rw'},wi),
       h('div',{className:'rw'},h('label',{textContent:'Hoặc tải ảnh từ máy (tự nén)'}),wf),
       h('div',{className:'rw'},h('label',{textContent:'Dừng hẳn khi đạt tối đa (ẩn nút Chơi tiếp)'}),wStop));
-    const winData=()=>({winTitle:wt.value.trim().slice(0,40),winMsg:wm.value.slice(0,500),winImg:wi.value.trim(),stop:wStop.checked});
+    const TEXL=[['player','Nhân vật'],['plat','Bậc thường (Sky Jump)'],['platMove','Bậc di chuyển (Sky Jump)'],['platBrk','Bậc vỡ (Sky Jump)'],['ground','Mặt đất (Falling sky)'],['rock','Đá rơi'],['mon','Yêu quái'],['bul','Đạn của quái'],['pbul','Đạn của người chơi (Falling sky)'],['bomb','Bom (Falling sky)'],['boom','Vụ nổ bom (Falling sky)'],['spring','Lò xo (Sky Jump)'],['shield','Khiên'],['rocket','Rocket (Sky Jump)'],['life','Tim'],['gun','Súng (Falling sky)'],['cloud','Mây trang trí'],['sun','Mặt trời (Falling sky)']];
+    const TEXD=Object.assign({},c.tex||{});
+    let ICV=c.icon||'';
+    const ICP=h('span',{className:'icp'});
+    const icPaint=()=>{ICP.innerHTML=modeIcon({icon:ICV},eMode)};
+    const icSel=h('select',{className:'in',onchange:()=>{ICV=icSel.value;icUrl.value='';icPaint()}},h('option',{value:'',textContent:'(Icon mặc định của chế độ)'}),...Object.keys(ICONS).map(k=>h('option',{value:k,textContent:ICONL[k]||k})));
+    const icUrl=h('input',{className:'in',placeholder:'Hoặc dán link ảnh icon (https://...)',value:/^https?:/.test(ICV)?ICV:'',onchange:()=>{const v=icUrl.value.trim();if(v&&!/^https?:/.test(v)){alert('Link phải bắt đầu bằng http:// hoặc https://');return}ICV=v;if(v)icSel.value='';icPaint()}});
+    const icFile=h('input',{type:'file',accept:'image/*',className:'in',onchange:()=>{const f=icFile.files&&icFile.files[0];if(!f)return;texPack(f,96,30*1024).then(d=>{ICV=d;icSel.value='';icUrl.value='';icPaint()}).catch(e=>alert('Lỗi icon: '+(e&&e.message||e)))}});
+    icSel.value=ICONS[ICV]?ICV:'';icPaint();
+    out.push(h('h3',{className:'gh',textContent:'8. Icon & texture của chế độ'}),
+      h('p',{className:'hp',textContent:'Icon hiện ở danh sách chọn chế độ. Texture thay hình mặc định của từng thứ (nên dùng PNG/WebP nền trong suốt; ảnh tự nén nhỏ, tối đa ~40 KB mỗi ảnh). Để trống = dùng hình mặc định. Nhớ bấm "Lưu chế độ" (hoặc "Chơi thử" để xem ngay).'}),
+      h('div',{className:'rw'},h('label',{textContent:'Icon chế độ (xem trước)'}),ICP),
+      h('div',{className:'rw'},icSel),h('div',{className:'rw'},icUrl),
+      h('div',{className:'rw'},h('label',{textContent:'Hoặc tải icon từ máy'}),icFile));
+    TEXL.forEach(([k,l])=>{if(!texOK(k))return;
+      const pv=h('img',{alt:'',className:'texp'}),stt=h('span',{className:'texs'});
+      const paint=()=>{const v=TEXD[k];if(v){pv.src=v;pv.style.display='block';stt.textContent=String(v).slice(0,5)==='data:'?Math.round(v.length/1024)+' KB':'link'}else{pv.removeAttribute('src');pv.style.display='none';stt.textContent='mặc định'}};
+      const lk=h('input',{className:'in',placeholder:'hoặc link ảnh',value:/^https?:/.test(TEXD[k]||'')?TEXD[k]:'',onchange:()=>{const v=lk.value.trim();if(!v){delete TEXD[k];paint();return}if(!/^https?:/.test(v)){alert('Link phải bắt đầu bằng http:// hoặc https://');return}TEXD[k]=v;paint()}});
+      const fi=h('input',{type:'file',accept:'image/*',className:'in',onchange:()=>{const f=fi.files&&fi.files[0];if(!f)return;stt.textContent='đang xử lý…';texPack(f,128,40*1024).then(d=>{TEXD[k]=d;lk.value='';paint()}).catch(e=>{paint();alert('Lỗi texture: '+(e&&e.message||e))})}});
+      out.push(h('div',{className:'rw texr'},h('label',{textContent:l}),pv,stt,btn('Xóa',()=>{delete TEXD[k];lk.value='';fi.value='';paint()},'sm')),h('div',{className:'rw'},fi,lk));
+      paint();
+    });
+    const winData=()=>({winTitle:wt.value.trim().slice(0,40),winMsg:wm.value.slice(0,500),winImg:wi.value.trim(),stop:wStop.checked,icon:ICV,tex:Object.assign({},TEXD)});
     out.push(btn('🧪 Chơi thử (không lưu điểm, dùng giá trị đang nhập)',()=>{
       const p={};PF.forEach(([k,l,ty])=>{p[k]=ty==='b'?ins[k].checked:+ins[k].value});
       testPlay(Object.assign({},p,{name:nm.value.trim()||eMode,desc:ds.value,bg:bg.value.trim()},winData()),eMode);
@@ -1086,7 +1265,7 @@ function renderAdmin(){
     out.push(btn('Tạo chế độ mới (sao chép chế độ này)',()=>{
       const name=prompt('Tên chế độ mới?');if(!name)return;
       const p={};PF.forEach(([k,l,ty])=>{p[k]=ty==='b'?!!c[k]:(c[k]===Infinity?999:c[k])});const g=Math.round(+prompt('Điểm tối đa của màn này (10–50000)?',c.goal));if(g>=10)p.goal=Math.min(50000,g);
-      const key='c'+Date.now().toString(36),body={name:name.slice(0,24),desc:c.desc||'',bg:c.bg||'',custom:true,p,winTitle:c.winTitle||'',winMsg:c.winMsg||'',winImg:c.winImg||'',stop:!!c.stop};
+      const key='c'+Date.now().toString(36),body={name:name.slice(0,24),desc:c.desc||'',bg:c.bg||'',icon:c.icon||'',tex:Object.assign({},c.tex||{}),custom:true,p,winTitle:c.winTitle||'',winMsg:c.winMsg||'',winImg:c.winImg||'',stop:!!c.stop};
       api('PUT','config/modes/'+key,body,1).then(()=>{setAt(CF,'/modes/'+key,body);eMode=key;onCF(1)}).catch(err);
     },'btn alt'));
     out.push(btn(BASE[eMode]?'Khôi phục mặc định':'Xóa chế độ này',()=>{
@@ -1104,6 +1283,426 @@ function renderAdmin(){
 
 window.__lbFull=stream('lb',LB,onLB);stream('config',CF,onCF);
 updNameBtn();
+
+/*PATCH_FSKY*/
+var gtype='classic',gunT=0,fsIt=[],fsPb=[],fsSpawn=0,fsMonT=0,fsItT=0,fsFire=0,fsBonus=0,fsOK=false,fsBm=[],fsEx=[],fsBmT=0;
+try{gtype=localStorage.getItem('skyhop_gt')==='sky'?'sky':'classic'}catch(e){}
+const fsv=(k,d)=>{const v=cfg&&cfg[k];return v!=null&&Number.isFinite(+v)?+v:d};
+function fsc(k,d,a,b){const v=cfg&&cfg[k];return v!=null&&Number.isFinite(+v)?Math.min(b,Math.max(a,+v)):d}
+function gnum(e){return Math.max(1,Math.min(20,Math.round(+(cfg&&cfg[e+'Num'])||1)))}
+function gate(e){
+  const fr=+cfg[e+'From']||0,to=+cfg[e+'To']||0;
+  if(score<fr)return false;
+  if(to>0&&to>=fr&&score>to)return false;
+  switch(+cfg[e+'Cond']||0){
+    case 1:return hits===0;
+    case 2:return (cfg.hitMax-hits)<=cfg.hitMax/2;
+    case 3:return shT>0;
+    case 4:return !(shT>0);
+    case 5:return sp>0||shT>0||rk>0||gunT>0;
+  }
+  return true;
+}
+const GT_DESC={classic:'Nhảy lên cao, tránh đá rơi.',sky:'Đứng dưới đất, né đá, đạn và bom; nhặt giáp, máu, súng từ trời rơi.'};
+function paintGt(){
+  document.querySelectorAll('#gtype button').forEach(b=>b.classList.toggle('sel',b.dataset.g===gtype));
+  const e=$('gtDesc');if(e)e.textContent=GT_DESC[gtype];
+}
+paintGt();
+$('ui').addEventListener('click',e=>{
+  const b=e.target.closest&&e.target.closest('[data-g]');if(!b)return;
+  gtype=b.dataset.g==='sky'?'sky':'classic';
+  try{localStorage.setItem('skyhop_gt',gtype)}catch(x){}
+  paintGt();
+});
+$('ui').addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('[data-lg]');if(!b)return;lbG=b.dataset.lg==='sky'?'sky':'classic';lbSort=null;lbM=null;renderLB()});
+function pickPlay(){
+  const fk=Object.keys(DIFF).filter(k=>DIFF[k].fs);
+  if(gtype==='sky'&&fk.length===1){dk=fk[0];cfg=DIFF[dk];lbSort=null;saveSet();loadBest();start();return}
+  openP('modes');
+}
+
+var fsJumpReq=0,fsAir=0,eType=null;
+function fsJumpOK(){return !!(cfg&&cfg.fs&&cfg.fsJump!==false)}
+addEventListener('keydown',function(e){
+  if(/INPUT|TEXTAREA|SELECT/.test(e.target.tagName))return;
+  if(e.code==='ArrowUp'||e.code==='KeyW'||e.code==='Space'){
+    if(st==='play'&&fsJumpOK()){fsJumpReq=1;e.preventDefault()}
+  }
+});
+(function(){
+  var g=null;
+  cv.addEventListener('pointerdown',function(e){if(e.button!==0)return;g={x:e.clientX,y:e.clientY,t:performance.now(),j:0}});
+  cv.addEventListener('pointermove',function(e){
+    if(!g||g.j||st!=='play'||!fsJumpOK())return;
+    var dx=e.clientX-g.x,dy=g.y-e.clientY;
+    if(dy>50&&dy>Math.abs(dx)){fsJumpReq=1;g.j=1}
+  });
+  var up=function(e){
+    if(!g)return;var q=g;g=null;
+    if(q.j||st!=='play'||!fsJumpOK()||e.type==='pointercancel')return;
+    if(performance.now()-q.t<250&&Math.hypot(e.clientX-q.x,e.clientY-q.y)<10)fsJumpReq=1;
+  };
+  cv.addEventListener('pointerup',up);cv.addEventListener('pointercancel',up);
+})();
+
+// ---- Admin: phân loại thông số theo kiểu game ----
+var JUMP_ONLY=['jump','grav','gap','platW','mv','mvSpd','brk','brkJumps','allBrk','monStart','monEvery','monChance','springEvery','shieldEvery','rocketEvery','lifeEvery','springSec','springPow','rocketSteps','lifeGain','itemLife'];
+function fldType(k){
+  if(k==='fs')return 'none';
+  if(/^(spring|shield|rocket|life)(From|To|Cond|Num)$/.test(k))return 'jump';
+  if(JUMP_ONLY.indexOf(k)>=0)return 'jump';
+  if(/^fs[A-Z]/.test(k)||/^(bomb|item)(From|To|Cond|Num)$/.test(k))return 'sky';
+  return 'both';
+}
+function fldOK(k){var t=fldType(k);if(t==='none')return false;if(t==='both')return true;return t===(eType==='sky'?'sky':'jump')}
+var TEX_JUMP=['plat','platMove','platBrk','spring','rocket'],TEX_SKY=['ground','pbul','bomb','boom','gun','sun'];
+function texOK(k){return eType==='sky'?TEX_JUMP.indexOf(k)<0:TEX_SKY.indexOf(k)<0}
+function modeSelT(cur,fn,type){
+  const s=h('select',{className:'in'});
+  for(const k in DIFF)if(!!DIFF[k].fs===(type==='sky'))s.append(h('option',{value:k,textContent:DIFF[k].name,selected:k===cur}));
+  s.onchange=()=>fn(s.value);return s;
+}
+
+// ---- trạng thái ----
+function fsInit(){
+  fsOK=true;camY=0;gunT=0;fsJumpReq=0;fsAir=0;fsIt=[];fsPb=[];fsBonus=0;fsFire=0;fsBm=[];fsEx=[];fsBmT=fsc('fsBombEvery',9,0,120)*60*.8;
+  rocks=[];warns=[];bul=[];mons=[];fx=[];
+  fsSpawn=100;fsMonT=fsv('fsMonEvery',8)*60;fsItT=fsv('fsItemEvery',6)*30;
+  P={x:W/2-17,y:H-64,vx:0,vy:0,w:34,h:34};inv=60;
+  refresh();
+}
+const _reset0=reset;
+reset=function(){_reset0();fsOK=false;gunT=0;if(cfg&&cfg.fs)fsInit()};
+function fsRevive(){
+  lives--;hits=0;rocks=[];warns=[];bul=[];fsPb=[];mons=[];fsBm=[];fsEx=[];
+  inv=150;fsSpawn=90;P.x=W/2-17;P.vx=0;P.y=H-64;P.vy=0;fsJumpReq=0;fsAir=0;
+  st='play';show(null);refresh();
+}
+const _revive0=revive;
+revive=function(){if(cfg.fs)fsRevive();else _revive0()};
+
+// ---- sát thương ----
+function fsHit(x,y,n){
+  boom(x,y);
+  if(shT>0)return false;
+  hits+=(n||1);inv=40;
+  if(hits>=cfg.hitMax){hud();die();return true}
+  return false;
+}
+
+// ---- cập nhật ----
+function fsBlast(x,y,R){
+  fsEx.push({x:x,y:y,r:R,l:0});
+  for(let i=0;i<22;i++){const a=Math.random()*6.283,sp3=2+Math.random()*5;fx.push({x:x,y:y,vx:Math.cos(a)*sp3,vy:Math.sin(a)*sp3-2,l:30})}
+  if(inv<=0&&Math.hypot(P.x+17-x,P.y+17-y)<R+12)return fsHit(x,y,Math.round(fsc('fsBombDmg',1,1,50)));
+  return false;
+}
+function updateFS(dt){const ps=fsc('fsPSpd',1,.4,2.5);
+  if(!fsOK)fsInit();
+  playT+=RT;
+  const d=(keyR-keyL)||touch;
+  if(d){tx=null;P.vx+=((d*6.5*ps)-P.vx)*.6*Math.min(dt,1.6)}
+  else if(tx!==null){P.vx=Math.max(-20*ps,Math.min(20*ps,(tx-(P.x+P.w/2))*.4))}
+  else P.vx*=.7;
+  P.x+=P.vx*dt;
+  if(P.x>W){P.x=-P.w;if(tx!==null)tx-=W+P.w}if(P.x<-P.w){P.x=W;if(tx!==null)tx+=W+P.w}
+  if(inv>0)inv-=dt;if(shT>0)shT-=dt;if(gunT>0)gunT-=dt;
+  {const gr0=H-30-P.h;
+   if(cfg.fsJump!==false){
+     const jp=fsc('fsJumpPow',11,5,25),gv=.5*fsc('fsGrav',1,.4,2.5),air=Math.round(fsc('fsAirJumps',0,0,5));
+     if(fsJumpReq){fsJumpReq=0;
+       if(P.y>=gr0-.5){P.vy=-jp;fsAir=0}
+       else if(fsAir<air){P.vy=-jp;fsAir++}}
+     P.vy+=gv*dt;P.y+=P.vy*dt;
+     if(P.y>=gr0){P.y=gr0;P.vy=0;fsAir=0}
+   }else{fsJumpReq=0;P.y=gr0;P.vy=0}}
+
+  // điểm
+  const ns=Math.floor(playT*fsc('fsScoreSec',3,0,50)+fsBonus);
+  if(ns>score){
+    score=ns;scoreT=playT;refresh();
+    if(score>=cfg.goal&&!won){
+      won=true;st='win';try{submitScore()}catch(e){}recT();
+      if(score>best){best=score;try{(TEST||localStorage.setItem('skyhop_best_'+dk,best))}catch(e){}}
+      refresh();$('winTm').textContent='Thời gian: '+fmtS(scoreT);winBox();show('win');return;
+    }
+  }
+
+  // sinh đá + quái
+  if(cfg.obs){
+    fsSpawn-=dt;
+    if(fsSpawn<=0&&score>=(+cfg.rockStart||0)&&gate('rock')){
+      fsSpawn=Math.max(22,70-playT*.25)*(.8+Math.random()*.4)*cfg.rockInt;
+      let n=1+(playT>60&&Math.random()<.4?1:0)+(playT>150&&Math.random()<.4?1:0);
+      n*=Math.max(1,Math.round(W/450))*gnum('rock');
+      for(let i=0;i<n;i++)warns.push({x:20+Math.random()*(W-40),t:45});
+    }
+    const ev=fsv('fsMonEvery',8);
+    if(ev>0){
+      fsMonT-=dt;
+      if(fsMonT<=0){
+        fsMonT=ev*60*(.8+Math.random()*.4);
+        const cap=Math.round(fsv('fsMaxMon',3))*Math.max(1,Math.round(W/450));
+        for(let q=gnum('mon');q-->0&&mons.length<cap&&gate('mon');){
+          const hp=Math.max(1,Math.round(fsv('fsMonHp',3)));
+          mons.push({x:60+Math.random()*(W-120),y:30+Math.random()*Math.min(160,H*.25),
+            vx:(Math.random()<.5?-1:1)*(.8+Math.random()*.6)*cfg.monSpd,t:60,hp:hp,mh:hp,life:60*18,ph:Math.random()*6});
+        }
+      }
+    }
+  }
+  for(let i=warns.length-1;i>=0;i--){
+    const w=warns[i];w.t-=dt;
+    if(w.t<=0){rocks.push({x:w.x,y:-30,vy:(3+Math.min(3,playT/60)+Math.random())*cfg.rockSpd,r:13+Math.random()*5,rot:0});warns.splice(i,1)}
+  }
+
+  // đá
+  for(let i=rocks.length-1;i>=0;i--){
+    const r=rocks[i];r.y+=r.vy*dt;r.rot+=.08*dt;
+    if(r.y+r.r>=H-30){boom(r.x,H-30);rocks.splice(i,1);continue}
+    if(inv<=0){
+      const cx=Math.max(P.x,Math.min(r.x,P.x+P.w)),cy=Math.max(P.y,Math.min(r.y,P.y+P.h));
+      if((cx-r.x)**2+(cy-r.y)**2<(r.r-2)**2){rocks.splice(i,1);if(fsHit(r.x,r.y))return}
+    }
+  }
+
+  // quái
+  for(let i=mons.length-1;i>=0;i--){
+    const m=mons[i];m.x+=m.vx*dt;if(m.x<20||m.x>W-58)m.vx*=-1;
+    m.life-=dt;m.ph+=.05*dt;
+    if(m.life<=0){mons.splice(i,1);continue}
+    m.t-=dt;
+    if(m.t<=0){
+      m.t=130/cfg.shoot;
+      const dx=P.x+17-(m.x+19),dy=P.y+17-(m.y+21),l=Math.hypot(dx,dy)||1,sp2=2.2*cfg.shoot*cfg.bulSpd;
+      bul.push({x:m.x+19,y:m.y+21,vx:dx/l*sp2,vy:dy/l*sp2});
+    }
+  }
+  // đạn quái
+  for(let i=bul.length-1;i>=0;i--){
+    const b=bul[i];b.x+=b.vx*dt;b.y+=b.vy*dt;
+    if(b.y>H||b.y<-60||b.x<-60||b.x>W+60){bul.splice(i,1);continue}
+    if(inv<=0&&Math.abs(b.x-(P.x+17))<20&&Math.abs(b.y-(P.y+17))<20){bul.splice(i,1);if(fsHit(b.x,b.y))return}
+  }
+
+  // súng người chơi
+  if(gunT>0&&mons.length){
+    fsFire-=dt;
+    if(fsFire<=0){
+      fsFire=60/fsc('fsGunRate',3.75,.5,20);
+      const sx=P.x+17,sy=P.y;let tm=null,bd=1e9;
+      for(const m of mons){const dd=Math.hypot(m.x+19-sx,m.y+21-sy);if(dd<bd){bd=dd;tm=m}}
+      if(tm){const dx=tm.x+19-sx,dy=tm.y+21-sy,l=Math.hypot(dx,dy)||1;fsPb.push({x:sx,y:sy,vx:dx/l*9,vy:dy/l*9})}
+    }
+  }
+  for(let i=fsPb.length-1;i>=0;i--){
+    const b=fsPb[i];b.x+=b.vx*dt;b.y+=b.vy*dt;
+    if(b.x<-30||b.x>W+30||b.y<-30||b.y>H){fsPb.splice(i,1);continue}
+    let hit=false;
+    for(let j=mons.length-1;j>=0;j--){
+      const m=mons[j];
+      if(Math.abs(b.x-(m.x+19))<22&&Math.abs(b.y-(m.y+21))<22){
+        hit=true;m.hp-=fsc('fsGunDmg',1,1,20);boom(b.x,b.y);
+        if(m.hp<=0){boom(m.x+19,m.y+21);boom(m.x+19,m.y+21);mons.splice(j,1);fsBonus+=fsc('fsKillPts',10,0,1000)}
+        break;
+      }
+    }
+    if(!hit){for(let j=fsBm.length-1;j>=0;j--){const q=fsBm[j];if(Math.hypot(b.x-q.x,b.y-q.y)<18){hit=true;fsBm.splice(j,1);if(fsBlast(q.x,q.y,fsc('fsBombR',70,20,300)))return;break}}}
+    if(hit)fsPb.splice(i,1);
+  }
+
+  // bom rơi từ trời
+{
+  const be=fsc('fsBombEvery',9,0,120),GY=H-30,BR=fsc('fsBombR',70,20,300);
+  if(cfg.obs&&be>0&&gate('bomb')){
+    fsBmT-=dt;
+    if(fsBmT<=0){
+      fsBmT=be*60*(.75+Math.random()*.5);
+      const n=gnum('bomb')*Math.max(1,Math.round(W/450)),bs=fsc('fsBombSpd',2.6,.5,12);
+      for(let i=0;i<n;i++)fsBm.push({x:24+Math.random()*(W-48),y:-30-i*45,vy:bs*(.9+Math.random()*.2)});
+    }
+  }
+  for(let i=fsBm.length-1;i>=0;i--){
+    const b=fsBm[i];b.y+=b.vy*dt;
+    if(b.y+12>=GY||Math.hypot(b.x-(P.x+17),b.y-(P.y+17))<26){
+      fsBm.splice(i,1);
+      if(fsBlast(b.x,Math.min(b.y,GY),BR))return;
+    }
+  }
+  for(let i=fsEx.length-1;i>=0;i--){fsEx[i].l+=dt;if(fsEx[i].l>24)fsEx.splice(i,1)}
+}
+// vật phẩm rơi từ trời
+  const ie=fsv('fsItemEvery',6);
+  if(ie>0){
+    fsItT-=dt;
+    if(fsItT<=0&&gate('item')){
+      fsItT=ie*60*(.7+Math.random()*.6);
+      for(let q=gnum('item');q-->0;){const wh=fsc('fsHeartW',1,0,100),ws=fsc('fsShieldW',1,0,100),wg=fsc('fsGunW',1,0,100),tw=(wh+ws+wg)||1,r=Math.random()*tw,type=r<wh?'heart':r<wh+ws?'shield':'gun';
+      fsIt.push({x:30+Math.random()*(W-60),y:-24,vy:1.6+Math.random()*.8,type:type,ph:Math.random()*6,land:0});}
+    }
+  }
+  const gy=H-30-24;
+  for(let i=fsIt.length-1;i>=0;i--){
+    const it=fsIt[i];
+    if(!it.land){it.y+=it.vy*dt;it.ph+=.06*dt;if(it.y>=gy){it.y=gy;it.land=fsv('fsItemLife',6)*60}}
+    else{it.land-=dt;if(it.land<=0){fsIt.splice(i,1);continue}}
+    const ix=it.x+(it.land?0:Math.sin(it.ph)*8);
+    if(P.x<ix+12&&P.x+P.w>ix-12&&P.y<it.y+24&&P.y+P.h>it.y){
+      if(it.type==='heart')hits=Math.max(0,hits-1);
+      else if(it.type==='shield')shT=cfg.shieldSec*60;
+      else gunT=fsv('fsGunSec',10)*60;
+      fsBonus+=fsc('fsItemPts',5,0,1000);boom(ix,it.y+12);fsIt.splice(i,1);hud();
+    }
+  }
+
+  for(const f of fx){f.x+=f.vx*dt;f.y+=f.vy*dt;f.vy+=.2*dt;f.l-=dt}
+  fx=fx.filter(f=>f.l>0);
+  hud();
+}
+
+// ---- vẽ (chủ đề thiên đường) ----
+function fsGun(x,y,s){
+  ctx.fillStyle='#334155';rr(x+2*s,y+10*s,5*s,9*s,2*s);ctx.fill();
+  ctx.fillStyle='#475569';rr(x-10*s,y+3*s,20*s,9*s,3*s);ctx.fill();
+  ctx.fillStyle='#94a3b8';ctx.fillRect(x+6*s,y+5*s,10*s,4*s);
+  ctx.fillStyle='#fbbf24';ctx.fillRect(x-7*s,y+5*s,5*s,2*s);
+}
+function drawFS(){
+  if(!fsOK)fsInit();
+  const t=performance.now()/1000;
+  const g=ctx.createLinearGradient(0,0,0,H);
+  const th=dk==='fs_hell'?['#12020a','#4a0a0a','#b3200a']:dk==='fs_cd'?['#3b1d6e','#c2410c','#fcd34d']:['#7cc8ff','#dff3ff','#fff3c9'];g.addColorStop(0,th[0]);g.addColorStop(.6,th[1]);g.addColorStop(1,th[2]);
+  ctx.fillStyle=g;ctx.fillRect(0,0,W,H);
+  drawBg();
+  skMark();
+  // mặt trời + tia sáng
+  const sx=W*.82,sy=80,rg=ctx.createRadialGradient(sx,sy,6,sx,sy,170);
+  rg.addColorStop(0,'rgba(255,248,200,.95)');rg.addColorStop(1,'rgba(255,248,200,0)');
+  ctx.fillStyle=rg;ctx.fillRect(sx-180,sy-180,360,360);
+  ctx.fillStyle='rgba(255,246,190,.16)';
+  for(let i=0;i<10;i++){
+    ctx.save();ctx.translate(sx,sy);ctx.rotate(t*.06+i*Math.PI/5);
+    ctx.beginPath();ctx.moveTo(0,0);ctx.lineTo(-22,-520);ctx.lineTo(22,-520);ctx.closePath();ctx.fill();ctx.restore();
+  }
+  TX('sun',W*.82-60,20,120,120);
+  // mây trôi
+  ctx.fillStyle='rgba(255,255,255,.85)';
+  const reps=Math.max(1,Math.round(W/450));
+  for(let rp=0;rp<reps;rp++)for(const c of clouds){
+    const x=((c.x+rp*W/reps+t*7*c.s)%(W+120)+W+120)%(W+120)-60,y=(c.y*H/640)%H;
+    if(TX('cloud',x-45*c.s,y-22*c.s,100*c.s,40*c.s))continue;ctx.beginPath();ctx.ellipse(x,y,40*c.s,14*c.s,0,0,7);ctx.ellipse(x+22*c.s,y-8*c.s,24*c.s,13*c.s,0,0,7);ctx.fill();
+  }
+  // sao vàng lấp lánh
+  ctx.fillStyle='#ffd23f';
+  for(let i=0;i<26;i++){
+    const x=(i*61+17)%W,y=(i*97+31)%(H-60);
+    ctx.globalAlpha=.25+.5*Math.abs(Math.sin(t*1.6+i));ctx.fillRect(x,y,2.5,2.5);
+  }
+  ctx.globalAlpha=1;
+  // mặt đất bằng mây
+  const gy=H-30;const _gt=TX('ground',0,gy-8,W,H-gy+8);if(_gt)ctx.globalAlpha=0;
+  ctx.fillStyle='#ffffff';
+  for(let x=-10;x<W+40;x+=34){ctx.beginPath();ctx.arc(x,gy+4,20,Math.PI,0);ctx.fill()}
+  ctx.fillStyle='#fffaf0';ctx.fillRect(0,gy+2,W,40);
+  ctx.strokeStyle='rgba(250,200,70,.9)';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(0,gy+2);ctx.lineTo(W,gy+2);ctx.stroke();ctx.globalAlpha=1;
+
+  // vật phẩm
+  ctx.textAlign='center';
+  for(const it of fsIt){
+    if(it.land&&it.land<90&&Math.floor(it.land/6)%2)continue;
+    const ix=it.x+(it.land?0:Math.sin(it.ph)*8);
+    const gl=ctx.createRadialGradient(ix,it.y+12,2,ix,it.y+12,24);
+    gl.addColorStop(0,'rgba(255,255,255,.9)');gl.addColorStop(1,'rgba(255,255,255,0)');
+    ctx.fillStyle=gl;ctx.fillRect(ix-26,it.y-14,52,52);
+    if(TX(it.type==='heart'?'life':it.type,ix-15,it.y-3,30,30)){}else if(it.type==='gun')fsGun(ix,it.y+1,1);
+    else{ctx.font='24px serif';ctx.fillText(it.type==='heart'?'❤':'🛡',ix,it.y+22)}
+  }
+  // bom
+  if(cfg.fsBombMark!==false)for(const b of fsBm){
+    const R=fsc('fsBombR',70,20,300),a=.25+.25*Math.sin(t*10);
+    ctx.strokeStyle='rgba(230,50,40,'+(a+.25)+')';ctx.fillStyle='rgba(230,50,40,'+(a*.4)+')';ctx.lineWidth=2;
+    ctx.beginPath();ctx.ellipse(b.x,H-30,R,R*.22,0,0,7);ctx.fill();ctx.stroke();
+  }
+  for(const b of fsBm){
+    ctx.save();ctx.translate(b.x,b.y);if(TX('bomb',-16,-24,32,38))ctx.globalAlpha=0;
+    ctx.fillStyle='#1f2937';ctx.strokeStyle='#0b1220';ctx.lineWidth=2;ctx.beginPath();ctx.arc(0,0,12,0,7);ctx.fill();ctx.stroke();
+    ctx.fillStyle='#374151';ctx.fillRect(-4,-17,8,6);
+    ctx.strokeStyle='#a16207';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(0,-17);ctx.quadraticCurveTo(5,-22,9,-20);ctx.stroke();
+    ctx.fillStyle=Math.floor(t*12)%2?'#fde047':'#f97316';ctx.beginPath();ctx.arc(9,-20,3.2,0,7);ctx.fill();
+    ctx.fillStyle='rgba(255,255,255,.35)';ctx.beginPath();ctx.arc(-4,-4,3,0,7);ctx.fill();
+    ctx.restore();
+  }
+  for(const e of fsEx){
+    const k=e.l/24,q=Math.min(1,k*2.2);
+    ctx.globalAlpha=Math.max(0,1-k);if(TX('boom',e.x-e.r*(.3+.7*q),e.y-e.r*(.3+.7*q),2*e.r*(.3+.7*q),2*e.r*(.3+.7*q))){ctx.globalAlpha=1;continue}ctx.fillStyle='#fde047';ctx.beginPath();ctx.arc(e.x,e.y,e.r*(.3+.7*q),0,7);ctx.fill();
+    ctx.strokeStyle='#f97316';ctx.lineWidth=4;ctx.beginPath();ctx.arc(e.x,e.y,e.r*Math.min(1,q+.15),0,7);ctx.stroke();ctx.globalAlpha=1;
+  }
+  // cảnh báo đá
+  for(const w of warns){
+    const a=.5+.5*Math.sin(w.t*.5);ctx.fillStyle='rgba(230,50,40,'+a+')';
+    ctx.beginPath();ctx.moveTo(w.x,62);ctx.lineTo(w.x-11,82);ctx.lineTo(w.x+11,82);ctx.closePath();ctx.fill();
+    ctx.fillStyle='#fff';ctx.font='bold 13px sans-serif';ctx.textAlign='center';ctx.fillText('!',w.x,79);
+  }
+  // đá
+  for(const r of rocks){
+    ctx.save();ctx.translate(r.x,r.y);ctx.rotate(r.rot);if(TX('rock',-r.r*1.15,-r.r*1.15,r.r*2.3,r.r*2.3))ctx.globalAlpha=0;
+    ctx.fillStyle='#7a7f87';ctx.strokeStyle='#16324a';ctx.lineWidth=2.5;ctx.beginPath();
+    for(let i=0;i<7;i++){const a=i/7*6.283,rad=r.r*(i%2?.85:1.05);ctx[i?'lineTo':'moveTo'](Math.cos(a)*rad,Math.sin(a)*rad)}
+    ctx.closePath();ctx.fill();ctx.stroke();
+    ctx.fillStyle='#a4a9b0';ctx.beginPath();ctx.arc(-r.r*.3,-r.r*.3,r.r*.25,0,7);ctx.fill();ctx.restore();
+  }
+  // quái (có vòng hào quang)
+  for(const m of mons){
+    const y=m.y+Math.sin(m.ph)*6;ctx.save();if(TX('mon',m.x-5,y-14,48,58))ctx.globalAlpha=0;
+    ctx.strokeStyle='#fbbf24';ctx.lineWidth=3;ctx.beginPath();ctx.ellipse(m.x+19,y-8,11,4,0,0,7);ctx.stroke();
+    ctx.fillStyle='#8a4fd6';ctx.strokeStyle='#16324a';ctx.lineWidth=3;
+    ctx.beginPath();ctx.arc(m.x+19,y+21,19,0,7);ctx.fill();ctx.stroke();
+    ctx.beginPath();ctx.moveTo(m.x+6,y+8);ctx.lineTo(m.x+3,y-4);ctx.lineTo(m.x+14,y+4);ctx.moveTo(m.x+32,y+8);ctx.lineTo(m.x+35,y-4);ctx.lineTo(m.x+24,y+4);ctx.stroke();
+    ctx.fillStyle='#fff';ctx.beginPath();ctx.arc(m.x+12,y+19,5,0,7);ctx.arc(m.x+26,y+19,5,0,7);ctx.fill();
+    ctx.fillStyle='#c1121f';ctx.beginPath();ctx.arc(m.x+12,y+20,2.5,0,7);ctx.arc(m.x+26,y+20,2.5,0,7);ctx.fill();
+    ctx.fillStyle='#16324a';ctx.fillRect(m.x+12,y+30,14,3);
+    ctx.restore();ctx.fillStyle='rgba(0,0,0,.35)';ctx.fillRect(m.x,y+44,38,4);
+    ctx.fillStyle='#ef4444';ctx.fillRect(m.x,y+44,38*Math.max(0,m.hp/m.mh),4);
+  }
+  // đạn quái
+  for(const b of bul){if(TX('bul',b.x-9,b.y-9,18,18))continue;ctx.fillStyle='#ff3b3b';ctx.strokeStyle='#fff';ctx.lineWidth=2;ctx.beginPath();ctx.arc(b.x,b.y,6,0,7);ctx.fill();ctx.stroke()}
+  // đạn người chơi
+  for(const b of fsPb){if(TX('pbul',b.x-9,b.y-9,18,18))continue;
+    ctx.fillStyle='rgba(255,210,63,.35)';ctx.beginPath();ctx.arc(b.x,b.y,8,0,7);ctx.fill();
+    ctx.fillStyle='#ffd23f';ctx.strokeStyle='#b45309';ctx.lineWidth=1.5;ctx.beginPath();ctx.arc(b.x,b.y,4,0,7);ctx.fill();ctx.stroke();
+  }
+  // nhân vật
+  if(P&&!(inv>0&&Math.floor(inv/6)%2)){
+    {const sh=Math.max(0,Math.min(1,(H-64-P.y)/140));ctx.fillStyle='rgba(60,70,90,'+(.22*(1-sh*.6))+')';ctx.beginPath();ctx.ellipse(P.x+17,H-28,16*(1-sh*.4),4*(1-sh*.4),0,0,7);ctx.fill()}
+    const y=P.y;const _pt=TX('player',P.x-4,y-12,P.w+8,P.h+16);if(_pt)ctx.globalAlpha=0;
+    ctx.strokeStyle='#ffd23f';ctx.lineWidth=3;ctx.beginPath();ctx.ellipse(P.x+17,y-6,11,4,0,0,7);ctx.stroke();
+    ctx.fillStyle='#ffb43d';ctx.strokeStyle='rgba(20,38,58,.55)';ctx.lineWidth=2;
+    rr(P.x,y,P.w,P.h,12);ctx.fill();ctx.stroke();
+    ctx.fillStyle='#fff';ctx.beginPath();ctx.arc(P.x+11,y+13,5,0,7);ctx.arc(P.x+24,y+13,5,0,7);ctx.fill();
+    ctx.fillStyle='#16324a';const o=P.vx>.5?1.5:P.vx<-.5?-1.5:0;
+    ctx.beginPath();ctx.arc(P.x+11+o,y+14,2.3,0,7);ctx.arc(P.x+24+o,y+14,2.3,0,7);ctx.fill();
+    ctx.fillRect(P.x+12,y+24,10,2.5);ctx.globalAlpha=1;
+    if(gunT>0&&(gunT>60||Math.floor(gunT/5)%2)&&!TX('gun',P.x+P.w-4,y+2,26,22))fsGun(P.x+P.w+2,y+8,.8);
+    if(shT>0&&(shT>60||Math.floor(shT/5)%2)){
+      ctx.strokeStyle='rgba(60,200,255,.9)';ctx.fillStyle='rgba(60,200,255,.2)';ctx.lineWidth=3;
+      ctx.beginPath();ctx.arc(P.x+17,y+17,28,0,7);ctx.fill();ctx.stroke();
+    }
+  }
+  // hiệu ứng
+  ctx.fillStyle='#ffd23f';for(const f of fx)ctx.fillRect(f.x-2,f.y-2,4,4);
+  // máu
+  const mx=Math.round(cfg.hitMax),left=Math.max(0,mx-hits);
+  ctx.textAlign='center';
+  if(mx<=10){
+    const sz=mx>6?15:19,gp=sz+4,x0=W/2-(mx*gp)/2+gp/2;
+    ctx.font=sz+'px serif';
+    for(let i=0;i<mx;i++){ctx.globalAlpha=i<left?1:.22;ctx.fillText('❤',x0+i*gp,26)}
+    ctx.globalAlpha=1;
+  }else{
+    ctx.font='bold 16px sans-serif';ctx.fillStyle='#e11d48';ctx.fillText('♥ '+left+'/'+mx,W/2,26);
+  }
+}
 
 reset();$('pauseBtn').style.visibility='hidden';show('menu');
 if(myName&&bad(myName)){myName='';try{localStorage.removeItem('skyhop_name')}catch(e){}updNameBtn()}if(!myName){ret='menu';openName()}
@@ -1150,6 +1749,8 @@ K('❓','<circle cx="12" cy="12" r="10" fill="#3b82f6"/><path d="M8.9 9.6a3.1 3.
 K('✔','<path d="M4 12.8l5 5L20 6.6" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/>');
 K('👆','<path d="M10 11V4.6a1.7 1.7 0 0 1 3.4 0V11h1.3a2.3 2.3 0 0 1 2.3 2.3V15c0 3.1-2 6-5.6 6H10c-2 0-3.2-1-4.4-3l-2-3.2a1.4 1.4 0 0 1 2.2-1.6L10 15z" fill="#fcd34d" stroke="#b45309" stroke-width="1.3" stroke-linejoin="round"/>');
 
+K('💣','<circle cx="11" cy="14" r="7.5" fill="#1f2937" stroke="#0b1220" stroke-width="1.4"/><rect x="9" y="4.6" width="4.4" height="3.2" rx=".8" fill="#475569"/><path d="M13 5c2-2 4-2 5.5-.5" stroke="#a16207" stroke-width="1.6" fill="none" stroke-linecap="round"/><circle cx="19" cy="3.8" r="1.8" fill="#f97316"/><circle cx="8.4" cy="11.6" r="1.8" fill="#fff" opacity=".35"/>');
+K('🔫','<rect x="10" y="11" width="5" height="9" rx="1.5" fill="#334155"/><rect x="2" y="6" width="19" height="7" rx="2.5" fill="#475569"/><rect x="15" y="7.5" width="7" height="3.5" fill="#94a3b8"/><rect x="4" y="8" width="4" height="1.8" fill="#fbbf24"/>');
 var keys=Object.keys(I).sort(function(a,b){return b.length-a.length});
 var SRC='('+keys.join('|')+')\uFE0F?';
 var RE=new RegExp(SRC,'g'),RT=new RegExp(SRC);
