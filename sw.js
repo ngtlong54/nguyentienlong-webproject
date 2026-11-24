@@ -1,6 +1,6 @@
 /* Sky NoHope - service worker
    Đổi VERSION mỗi lần cập nhật game để máy người chơi tải bản mới. */
-const VERSION = 'v3';
+const VERSION = 'v4';
 const CACHE = 'sky-nohope-' + VERSION;
 const CORE = [
   './',
@@ -8,7 +8,8 @@ const CORE = [
   './manifest.json',
   './icon.svg',
   './icon-192.png',
-  './icon-512.png'
+  './icon-512.png',
+  './thumbnail.png'
 ];
 
 self.addEventListener('install', (e) => {
