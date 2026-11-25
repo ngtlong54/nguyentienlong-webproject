@@ -1763,7 +1763,7 @@ try{const x=JSON.parse(localStorage.getItem('skyhop_snd')||'{}');
 // ---- WebAudio ----
 let AC=null;
 function ac(){if(!AC){try{AC=new(window.AudioContext||window.webkitAudioContext)()}catch(e){}}return AC}
-function acResume(){const A=ac();if(A&&A.state==='suspended'){try{A.resume()}catch(e){}}}
+function acResume(){const A=ac();if(A&&A.state!=='running'&&A.state!=='closed'){try{const p=A.resume();if(p&&p.catch)p.catch(()=>{})}catch(e){}}}/*PFIX-acr*/
 function tone(f,d,ty,v,f2,dl){const A=ac();if(!A)return;const t=A.currentTime+(dl||0),o=A.createOscillator(),g=A.createGain();
   o.type=ty||'sine';o.frequency.setValueAtTime(f,t);if(f2)o.frequency.exponentialRampToValueAtTime(Math.max(1,f2),t+d);
   g.gain.setValueAtTime(Math.max(.0001,v),t);g.gain.exponentialRampToValueAtTime(.0001,t+d);
@@ -1840,11 +1840,11 @@ function sfx(key){
     const vol=r.vol*PV.s;if(vol<=0)return;
     if(r.u){
       const c=load(r.u);
-      if(c.buf&&AC){const s=AC.createBufferSource(),g=AC.createGain();s.buffer=c.buf;g.gain.value=Math.min(1,vol);s.connect(g);g.connect(AC.destination);s.start(0)}
+      if(c.buf&&AC){acResume();/*PFIX-sfxbuf*/const s=AC.createBufferSource(),g=AC.createGain();s.buffer=c.buf;g.gain.value=Math.min(1,vol);s.connect(g);g.connect(AC.destination);s.start(0)}
       else if(c.el){const e=c.el.cloneNode(true);e.volume=Math.min(1,vol);const p=e.play();if(p&&p.catch)p.catch(()=>{})}
       return;
     }
-    if(r.syn&&SYN[key]){ac();SYN[key](vol)}
+    if(r.syn&&SYN[key]){acResume();SYN[key](vol)}/*PFIX-sfx*/
   }catch(e){}
 }
 
@@ -2023,6 +2023,29 @@ function sndSave(){
     sDraft=null;prefetch();alert('Đã lưu âm thanh.');renderAdmin();
   }).catch(err);
 }
+
+/*PATCH_MOBILE_AUDIO*/
+// Điện thoại chỉ cho bật âm thanh trong sự kiện "kích hoạt thật" (touchend / pointerup / click),
+// KHÔNG tính pointerdown/touchstart bằng ngón tay. Mở khóa lại sau khi app bị ẩn/gián đoạn.
+(function(){
+  // iOS 16.4+: phát âm thanh kể cả khi gạt nút im lặng
+  try{if(navigator.audioSession)navigator.audioSession.type='playback'}catch(e){}
+  let primed=false;
+  function unlock(){
+    const A=ac();if(!A)return;
+    if(A.state!=='running'&&A.state!=='closed'){try{const p=A.resume();if(p&&p.catch)p.catch(()=>{})}catch(e){}}
+    if(!primed){
+      // phát 1 mẫu im lặng: bắt buộc trên iOS để mở khóa WebAudio
+      try{const b=A.createBuffer(1,1,22050),s=A.createBufferSource();s.buffer=b;s.connect(A.destination);s.start(0)}catch(e){}
+      primed=true;
+    }
+    try{musicTick()}catch(e){}
+  }
+  ['touchend','pointerup','click','keydown','mousedown'].forEach(n=>addEventListener(n,unlock,{capture:true,passive:true}));
+  const wake=()=>{if(!document.hidden&&AC&&AC.state!=='running'&&AC.state!=='closed'){try{const p=AC.resume();if(p&&p.catch)p.catch(()=>{})}catch(e){}}};
+  document.addEventListener('visibilitychange',wake);
+  addEventListener('pageshow',wake);addEventListener('focus',wake);
+})();
 // =================== HẾT ÂM THANH ===================
 
 reset();$('pauseBtn').style.visibility='hidden';show('menu');

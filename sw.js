@@ -1,6 +1,6 @@
 /* Sky NoHope - service worker
    Đổi VERSION mỗi lần cập nhật game để máy người chơi tải bản mới. */
-const VERSION = 'v5';
+const VERSION = 'v6';
 const CACHE = 'sky-nohope-' + VERSION;
 const CORE = [
   './',
