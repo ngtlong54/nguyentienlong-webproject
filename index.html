@@ -1744,7 +1744,23 @@ function drawFS(){
 
 /*PATCH_AUDIO_V1*/
 // ===================== ÂM THANH =====================
-const SND_MAX=400*1024;
+/*PATCH_AUDIO_LINK_V1*/
+const SND_MAX=1024*1024;            // hiệu ứng: tối đa 1MB khi tải trực tiếp
+const SND_MAX_MUS=3*1024*1024;      // nhạc nền: tối đa 3MB khi tải trực tiếp
+function sndMax(k){return (k&&String(k).indexOf('music')===0)?SND_MAX_MUS:SND_MAX}
+// Đổi link trang GitHub (blob) / Dropbox / Drive thành link file thật
+function fixUrl(u){
+  if(!u||typeof u!=='string')return u;
+  u=u.trim();
+  if(u.indexOf('data:')===0)return u;
+  let m=u.match(/^https?:\/\/(?:www\.)?github\.com\/([^\/?#]+)\/([^\/?#]+)\/(?:blob|raw)\/([^?#]+)/i);
+  if(m)return 'https://raw.githubusercontent.com/'+m[1]+'/'+m[2]+'/'+m[3];
+  m=u.match(/^https?:\/\/(?:www\.)?dropbox\.com\/(s|scl)\/([^?#]+)/i);
+  if(m)return 'https://dl.dropboxusercontent.com/'+m[1]+'/'+m[2];
+  m=u.match(/^https?:\/\/drive\.google\.com\/file\/d\/([^\/?#]+)/i)||u.match(/^https?:\/\/drive\.google\.com\/(?:open|uc)\?(?:[^#]*&)?id=([^&#]+)/i);
+  if(m)return 'https://drive.google.com/uc?export=download&id='+m[1];
+  return u;
+}
 const SNDOK=/^(https?:\/\/|data:audio\/|[A-Za-z0-9_.\-\/]+\.(mp3|ogg|wav|m4a|aac|opus|webm|flac)(\?.*)?$)/i;
 const SNDEV=[
  ['Nhạc nền',[['musicMenu','Nhạc nền menu (chỉ dùng cài đặt chung)'],['music','Nhạc nền khi chơi (lặp lại)']]],
@@ -1808,7 +1824,7 @@ function res(key){
   let u=m.u||'';
   if(!u){if(g.off)return {off:1};u=g.u||''}
   const raw=(m.v!=null&&m.v!=='')?+m.v:((g.v!=null&&g.v!=='')?+g.v:100);
-  return {u:u,vol:Math.max(0,Math.min(100,isFinite(raw)?raw:100))/100,syn:S.synth!==false};
+  return {u:fixUrl(u),vol:Math.max(0,Math.min(100,isFinite(raw)?raw:100))/100,syn:S.synth!==false};
 }
 
 // ---- Tải & phát hiệu ứng ----
@@ -1829,7 +1845,7 @@ function prefetch(){
   try{
     const S=(CF.v&&CF.v.sounds)||{};if(S.enabled===false)return;
     const M=(S.m&&S.m[dk])||{};
-    SNDK.forEach(k=>{if(isMus(k))return;[S.g&&S.g[k],M[k]].forEach(e=>{if(e&&e.u&&!e.off)load(e.u)})});
+    SNDK.forEach(k=>{if(isMus(k))return;[S.g&&S.g[k],M[k]].forEach(e=>{if(e&&e.u&&!e.off)load(fixUrl(e.u))})});
   }catch(e){}
 }
 const LAST={},CDM={jump:60,brk:80,warn:120,rock:60,monShoot:80,gunShoot:70,hurt:150,bomb:100,bombDrop:100,click:30};
@@ -1874,8 +1890,9 @@ function sndPreview(key,u,v){
     if(PVA){PVA.pause();PVA=null}
     const vol=Math.max(0,Math.min(100,isFinite(+v)&&v!==''&&v!=null?+v:100))/100;
     if(u){
+      u=fixUrl(u);
       const a=new Audio(u);a.volume=vol;PVA=a;
-      const p=a.play();if(p&&p.catch)p.catch(()=>alert('Không phát được file này (sai link / không hỗ trợ định dạng).'));
+      const p=a.play();if(p&&p.catch)p.catch(()=>alert('Không phát được file này (sai link / không hỗ trợ định dạng).\nLink đang dùng: '+(u.length>120?u.slice(0,120)+'...':u)+'\nVới GitHub hãy dùng link raw.githubusercontent.com/... hoặc link dạng .../blob/... (game tự đổi).'));
       setTimeout(()=>{if(PVA===a){a.pause();PVA=null}},isMus(key)?15000:6000);
     }else if(SYN[key]){acResume();SYN[key](vol||.7)}
     else alert('Mục này chưa có file nên không có gì để nghe thử.');
@@ -1952,7 +1969,7 @@ function sndTab(out){
     h('option',{value:'_g',textContent:'Chung (áp dụng mọi chế độ)',selected:G}),
     ...Object.keys(DIFF).map(k=>h('option',{value:k,textContent:'Riêng: '+mnm(k),selected:k===sScope})));
   sel.onchange=()=>{sScope=sel.value;sDraft=null;renderAdmin()};
-  out.push(h('p',{textContent:'Chọn phạm vi cấu hình. "Chung" áp dụng cho mọi chế độ; chọn một chế độ để ghi đè âm thanh riêng cho màn đó (ô để trống = dùng âm chung). File dán link/đường dẫn nhẹ hơn tải trực tiếp (tối đa '+Math.round(SND_MAX/1024)+' KB). Nên bỏ file vào thư mục game rồi nhập đường dẫn, ví dụ sounds/bgm.mp3.'}),sel);
+  out.push(h('p',{textContent:'Chọn phạm vi cấu hình. "Chung" áp dụng cho mọi chế độ; chọn một chế độ để ghi đè âm thanh riêng cho màn đó (ô để trống = dùng âm chung). File dán link/đường dẫn nhẹ hơn tải trực tiếp (tải trực tiếp tối đa '+Math.round(SND_MAX/1024)+' KB hiệu ứng, '+Math.round(SND_MAX_MUS/1024)+' KB nhạc nền). Nên bỏ file vào thư mục game rồi nhập đường dẫn, ví dụ sounds/bgm.mp3.'}),sel);
   if(G){
     const en=h('input',{type:'checkbox',checked:sDraft.en,onchange:()=>{sDraft.en=en.checked}});
     const sy=h('input',{type:'checkbox',checked:sDraft.sy,onchange:()=>{sDraft.sy=sy.checked}});
@@ -1971,10 +1988,10 @@ function sndTab(out){
       const info=h('span',{className:'texs'});
       const paint=()=>{info.textContent=e.u?(e.u.indexOf('data:')===0?'file '+Math.round(e.u.length*.75/1024)+' KB':'link'):(G?'mặc định':'theo âm chung')};
       const url=h('input',{className:'in',placeholder:'Link hoặc đường dẫn (vd: sounds/bgm.mp3)',value:(e.u&&e.u.indexOf('data:')!==0)?e.u:'',
-        onchange:()=>{const v=url.value.trim();if(v&&!SNDOK.test(v)){alert('Chỉ nhận link http(s)://... hoặc đường dẫn file .mp3/.ogg/.wav/.m4a/.aac/.opus/.webm/.flac');url.value='';return}if(v)e.u=v;else delete e.u;paint()}});
+        onchange:()=>{const v=url.value.trim();if(v&&!SNDOK.test(v)){alert('Chỉ nhận link http(s)://... hoặc đường dẫn file .mp3/.ogg/.wav/.m4a/.aac/.opus/.webm/.flac');url.value='';return}if(v){const fx=fixUrl(v);e.u=fx;url.value=fx}else delete e.u;paint()}});
       const fi=h('input',{type:'file',accept:'audio/*',className:'in',onchange:()=>{
         const f=fi.files&&fi.files[0];if(!f)return;
-        if(f.size>SND_MAX){alert('File quá nặng ('+Math.round(f.size/1024)+' KB). Tải trực tiếp tối đa '+Math.round(SND_MAX/1024)+' KB. Hãy nén nhỏ lại, hoặc đặt file vào thư mục game rồi dán đường dẫn.');fi.value='';return}
+        if(f.size>sndMax(k)){alert('File quá nặng ('+Math.round(f.size/1024)+' KB). Tải trực tiếp tối đa '+Math.round(sndMax(k)/1024)+' KB. Hãy nén nhỏ lại, hoặc đưa file lên GitHub rồi dán link (không giới hạn).');fi.value='';return}
         const rd=new FileReader();
         rd.onerror=()=>alert('Không đọc được file.');
         rd.onload=()=>{
@@ -2008,7 +2025,7 @@ function sndSave(){
     const e=d.d[k]||{},o={};
     if(e.u){
       if(!SNDOK.test(e.u)){alert('Link/đường dẫn không hợp lệ ở mục "'+k+'".');return}
-      o.u=e.u;
+      o.u=fixUrl(e.u);
     }
     if(e.v!=null&&isFinite(+e.v))o.v=Math.round(+e.v);
     if(e.off)o.off=true;
