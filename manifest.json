@@ -1,7 +1,7 @@
 {
   "name": "Sky NoHope",
   "short_name": "Sky NoHope",
-  "description": "Game như tên =))",
+  "description": "Game khó như tên =))",
   "lang": "vi",
   "dir": "ltr",
   "id": "./",
@@ -12,7 +12,7 @@
     "fullscreen",
     "standalone"
   ],
-  "orientation": "portrait",
+  "orientation": "any",
   "background_color": "#bfe6ff",
   "theme_color": "#2563eb",
   "categories": [
@@ -57,7 +57,7 @@
       "sizes": "1200x630",
       "type": "image/png",
       "form_factor": "wide",
-      "label": "Sky NoHope - thiên đường và địa ngục"
+      "label": "No Hope như tên."
     }
   ],
   "prefer_related_applications": false

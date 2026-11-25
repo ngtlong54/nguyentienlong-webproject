@@ -1,6 +1,6 @@
 /* Sky NoHope - service worker
    Đổi VERSION mỗi lần cập nhật game để máy người chơi tải bản mới. */
-const VERSION = 'v4';
+const VERSION = 'v5';
 const CACHE = 'sky-nohope-' + VERSION;
 const CORE = [
   './',
@@ -32,6 +32,7 @@ self.addEventListener('activate', (e) => {
 self.addEventListener('fetch', (e) => {
   const req = e.request;
   if (req.method !== 'GET') return;
+  if (req.headers.has('range')) return; // PFIX-range
 
   const url = new URL(req.url);
   // Chỉ xử lý file cùng domain. Firebase (bảng xếp hạng, config, đăng nhập admin, EventSource)
@@ -43,11 +44,15 @@ self.addEventListener('fetch', (e) => {
     e.respondWith(
       fetch(req)
         .then((res) => {
-          const copy = res.clone();
-          caches.open(CACHE).then((c) => c.put(req, copy));
+          if (res && res.ok) { // PFIX-navok
+            const copy = res.clone();
+            caches.open(CACHE).then((c) => c.put(req, copy)).catch(() => {});
+          }
           return res;
         })
-        .catch(() => caches.match(req).then((r) => r || caches.match('./index.html') || caches.match('./')))
+        .catch(() => caches.match(req)
+          .then((r) => r || caches.match('./index.html'))
+          .then((r) => r || caches.match('./'))) // PFIX-fallback
     );
     return;
   }

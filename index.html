@@ -255,6 +255,7 @@ html,body{margin:0;overflow:hidden;overscroll-behavior:none}
         <div class="it"><span>🚀</span><p><b>Rocket:</b> bay vút lên nhiều bậc, miễn nhiễm mọi thứ trên đường.</p></div>
         <div class="it"><span>❤</span><p><b>Tim:</b> thêm một lượt hồi sinh.</p></div>
         <div class="it"><span>🎮</span><p><b>Chế độ.</b> Mỗi chế độ có bộ luật riêng (độ khó, mục tiêu, tần suất chướng ngại và vật phẩm), nên các thông số có thể khác nhau.</p></div>
+        <div class="it" data-pfix="helpJ"><span>🎮</span><p><b>Thông số chế độ này.</b> Trúng <b id="hitTxt"></b> đạn là thua · Lò xo <b id="sprTxt"></b> giây · Khiên <b id="shTxt"></b> giây · Rocket bay <b id="rkTxt"></b> bậc.</p></div>
       </div>
       <div class="its" id="helpF" style="display:none">
         <div class="it"><span>🎯</span><p><b>Mục tiêu.</b> Đứng dưới đất, sống sót và né mọi thứ từ trời rơi xuống. Điểm tăng theo thời gian sống sót, khi hạ quái và khi nhặt vật phẩm; đạt điểm mục tiêu của chế độ là thắng.</p></div>
@@ -267,8 +268,9 @@ html,body{margin:0;overflow:hidden;overscroll-behavior:none}
         <div class="it"><span>🛡</span><p><b>Khiên:</b> chặn đá, đạn và bom trong một khoảng thời gian.</p></div>
         <div class="it"><span>🔫</span><p><b>Súng:</b> trong một khoảng thời gian tự nhắm và bắn quái gần nhất; đạn cũng làm nổ bom.</p></div>
         <div class="it"><span>🎮</span><p><b>Chế độ.</b> Mỗi chế độ có bộ luật riêng (số máu, số lần hồi sinh, độ dày đá, quái, bom và vật phẩm), nên các thông số có thể khác nhau.</p></div>
+        <div class="it" data-pfix="helpF"><span>🎮</span><p><b>Thông số chế độ này.</b> Mục tiêu <b id="fG"></b> điểm · +<b id="fSc"></b> điểm/giây, +<b id="fKp"></b>/quái, +<b id="fIp"></b>/vật phẩm · Máu <b id="fHp"></b> · Hồi sinh <b id="fLv"></b> lần · Máu quái <b id="fMh"></b> · Bom nổ bán kính <b id="fBr"></b>px, mất <b id="fBd"></b> máu · Khiên <b id="fSh"></b> giây · Súng <b id="fGs"></b> giây, <b id="fGr"></b> phát/giây, <b id="fGd"></b> sát thương · Vật phẩm nằm đất <b id="fIl"></b> giây.</p></div>
       </div>
-      <button class="ver" id="verBtn" title="Quản trị">🔧 Phiên bản 2026.11.24-v3</button>
+      <button class="ver" id="verBtn" title="Quản trị">🔧 Phiên bản 2026.11.25-v4</button>
       <button class="btn alt" data-b="back">← Quay lại</button>
     </div>
 
@@ -300,6 +302,10 @@ html,body{margin:0;overflow:hidden;overscroll-behavior:none}
       <h2>⚙️ Cài đặt</h2>
       <div class="row"><span>👆 Độ nhạy kéo</span><b id="sensV">1.4</b></div>
       <input type="range" id="sens" min="0.5" max="3" step="0.1" value="1.4">
+      <div class="row"><span>Âm lượng nhạc nền</span><b id="vmV">70</b></div>
+      <input type="range" id="vm" min="0" max="100" step="5" value="70">
+      <div class="row"><span>Âm lượng hiệu ứng</span><b id="vsV">80</b></div>
+      <input type="range" id="vs" min="0" max="100" step="5" value="80">
       <div hidden>
         <div class="dgrid" id="diffs"></div>
         <p id="diffDesc"></p>
@@ -395,7 +401,7 @@ function reset(){playT=0;scoreT=0;
 function start(){reset();st='play';show(null);$('pauseBtn').style.visibility='visible'}
 function die(){try{submitScore()}catch(e){}
   st='over';
-  recT();if(score>best){best=score|0;try{(TEST||localStorage.setItem('skyhop_best_'+dk,best))}catch(e){}}
+  recT();if(!TEST&&score>best){best=score|0;try{(TEST||localStorage.setItem('skyhop_best_'+dk,best))}catch(e){}}
   $('overS').textContent=score|0;$('overB').textContent='Kỷ lục: '+best+(bestT(dk)?' ('+fmtS(bestT(dk))+')':'');$('overTm').textContent='Thời gian: '+fmtS(playT)+' · Đạt điểm cuối lúc '+fmtS(scoreT);
   $('reviveBtn').style.display=lives>0?'flex':'none';$('reviveBtn').textContent='💖 Hồi sinh (còn '+LV(lives)+' lần đau khổ)';
   $('overT').textContent=lives>0?'Chỉ có thế thôi à =))':'Hết cứu!';
@@ -427,7 +433,7 @@ function update(dt){playT+=RT;
     if(p.dead)p.y+=7*dt;
     if(!p.dead&&P.vy>0&&prevB<=p.y+6&&P.y+P.h>=p.y&&P.x+P.w>p.x+4&&P.x<p.x+p.w-4){P.y=p.y-P.h;P.vy=(sp>0?-cfg.springPow:-13)*cfg.jump;lastPlat=p;if(p.brk){p.jumps++;if(p.jumps>=cfg.brkJumps){p.dead=true;boom(P.x+17,p.y)}}}
     if(!p.passed&&p.y>P.y+P.h){p.passed=true;score++;scoreT=playT;refresh();
-      if(score>=cfg.goal&&!won){won=true;st='win';try{submitScore()}catch(e){}recT();if(score>best){best=score;try{(TEST||localStorage.setItem('skyhop_best_'+dk,best))}catch(e){}}refresh();$('winTm').textContent='Thời gian: '+fmtS(scoreT);winBox();show('win');return}}
+      if(score>=cfg.goal&&!won){won=true;st='win';try{submitScore()}catch(e){}recT();if(!TEST&&score>best){best=score;try{(TEST||localStorage.setItem('skyhop_best_'+dk,best))}catch(e){}}refresh();$('winTm').textContent='Thời gian: '+fmtS(scoreT);winBox();show('win');return}}
   }
   if(P.y-camY<H*.4)camY=P.y-H*.4;
   while(nextY>camY-150)addPlat();
@@ -1038,7 +1044,7 @@ $('verBtn').onclick=()=>wr.onclick();
 
 // ---- UI: panel ----
 $('ui').insertAdjacentHTML('beforeend',
- '<div class="panel" id="name"><h2>Đặt tên</h2><p>Tên hiển thị trên bảng xếp hạng.</p><input class="in" id="nameIn" maxlength="14" autocomplete="off" placeholder="Tên của bạn"><p id="nameErr" style="color:#d62a0b;min-height:18px"></p><button class="btn good" data-b="saveName">✔ Lưu</button></div>'+
+ '<div class="panel" id="name"><h2>Đặt tên</h2><p>Tên hiển thị trên bảng xếp hạng.</p><input class="in" id="nameIn" maxlength="14" autocomplete="off" placeholder="Tên của bạn"><p id="nameErr" style="color:#d62a0b;min-height:18px"></p><button class="btn good" data-b="saveName">✔ Lưu</button><button class="btn alt" data-b="back">Để sau</button></div>'+
  '<div class="panel" id="lb"><h2>🏆 Bảng xếp hạng</h2><p class="hint">Chạm tên chế độ để xếp theo chế độ đó. Bằng điểm thì ai nhanh hơn xếp trên.</p><div class="gt" id="lbGt"><button data-lg="classic">Sky Jump</button><button data-lg="sky">Falling sky</button></div><div id="lbList"></div><button class="btn alt" data-b="back">← Quay lại</button></div>'+
  '<div class="panel" id="admin"><h2>Quản trị</h2><div id="admBody"></div><button class="btn alt" data-b="back">← Quay lại</button></div>');
 const nameBtn=$('nameBtn');
@@ -1173,12 +1179,12 @@ function renderAdmin(){
   const B=$('admBody');
   if(!ADM){
     const em=h('input',{className:'in',type:'email',value:'',placeholder:'Email admin',autocomplete:'off'}),pw=h('input',{className:'in',type:'password',placeholder:'Mật khẩu admin',autocomplete:'current-password'}),er=h('p',{style:'color:#d62a0b'});
-    const go=async()=>{if(!em.value.trim()){er.textContent='Nhập email admin.';return}er.textContent='Đang đăng nhập…';try{await login(pw.value,em.value.trim());renderAdmin()}catch(e){const m=String(e&&e.message||e);er.textContent=/EMAIL_NOT_FOUND/.test(m)?'Tài khoản admin@skynohope.local KHÔNG tồn tại trong Firebase Authentication (cần tạo lại).':/INVALID_PASSWORD|INVALID_LOGIN_CREDENTIALS/.test(m)?'Sai mật khẩu (hoặc tài khoản đã bị đổi/xóa).':/USER_DISABLED/.test(m)?'Tài khoản admin đang bị vô hiệu hóa.':/OPERATION_NOT_ALLOWED|PASSWORD_LOGIN_DISABLED/.test(m)?'Chưa bật đăng nhập Email/Password trong Firebase.':/API key|API_KEY|referer|blocked|PERMISSION_DENIED/i.test(m)?'API key bị chặn/hạn chế: '+m:/TOO_MANY_ATTEMPTS/.test(m)?'Thử sai quá nhiều lần, đợi vài phút rồi thử lại.':/Failed to fetch|NetworkError|Load failed/i.test(m)?'Lỗi mạng.':'Lỗi: '+m}};
+    const go=async()=>{if(!em.value.trim()){er.textContent='Nhập email admin.';return}er.textContent='Đang đăng nhập…';try{await login(pw.value,em.value.trim());renderAdmin()}catch(e){const m=String(e&&e.message||e);er.textContent=/EMAIL_NOT_FOUND/.test(m)?'Tài khoản admin KHÔNG tồn tại trong Firebase Authentication (cần tạo lại).':/INVALID_PASSWORD|INVALID_LOGIN_CREDENTIALS/.test(m)?'Sai mật khẩu (hoặc tài khoản đã bị đổi/xóa).':/USER_DISABLED/.test(m)?'Tài khoản admin đang bị vô hiệu hóa.':/OPERATION_NOT_ALLOWED|PASSWORD_LOGIN_DISABLED/.test(m)?'Chưa bật đăng nhập Email/Password trong Firebase.':/API key|API_KEY|referer|blocked|PERMISSION_DENIED/i.test(m)?'API key bị chặn/hạn chế: '+m:/TOO_MANY_ATTEMPTS/.test(m)?'Thử sai quá nhiều lần, đợi vài phút rồi thử lại.':/Failed to fetch|NetworkError|Load failed/i.test(m)?'Lỗi mạng.':'Lỗi: '+m}};
     pw.onkeydown=e=>{if(e.key==='Enter')go()};
     B.replaceChildren(h('p',{textContent:'Đăng nhập bằng tài khoản Firebase của admin.'}),em,pw,er,btn('Đăng nhập',go,'btn good'));
     return;
   }
-  const tb=h('div',{className:'tabs'},...[['pl','Người chơi'],['mode','Chế độ'],['cfg','Khác']].map(([k,t])=>{const x=btn(t,()=>{tab=k;renderAdmin()},'sm');if(k===tab)x.style.outline='3px solid var(--ink)';return x}));
+  const tb=h('div',{className:'tabs'},...[['pl','Người chơi'],['mode','Chế độ'],['snd','Âm thanh'],['cfg','Khác']].map(([k,t])=>{const x=btn(t,()=>{tab=k;renderAdmin()},'sm');if(k===tab)x.style.outline='3px solid var(--ink)';return x}));
   const out=[tb];
   if(tab==='lb'){
     if(!DIFF[aMode])aMode=dk;
@@ -1193,7 +1199,7 @@ function renderAdmin(){
     const n=h('input',{className:'in',placeholder:'Tên mới',maxLength:14}),s=h('input',{className:'in',type:'number',placeholder:'Điểm'}),t=h('input',{className:'in',type:'number',placeholder:'Giây'});
     out.push(h('p',{textContent:'Thêm người vào bảng'}),h('div',{className:'rw'},n,s,t,btn('Thêm',()=>putEntry(aMode,'a'+Date.now().toString(36),n.value,s.value,t.value),'sm')));
     out.push(btn('Xóa TOÀN BỘ bảng chế độ này',()=>{if(confirm('Xóa hết bảng xếp hạng của chế độ này?'))api('DELETE','lb/'+aMode,undefined,1).then(()=>{setAt(LB,'/'+aMode,null);onLB(1)}).catch(err)},'btn alt'));
-  }else if(tab==='pl'){plTab(out);}else if(tab==='pl_old'){
+  }else if(tab==='pl'){plTab(out);}else if(tab==='snd'){sndTab(out);}else if(tab==='pl_old'){
     const U={};
     Object.keys(DIFF).forEach(m=>rows(m).forEach(r=>{const u=U[r.id]||(U[r.id]={id:r.id,name:r.name,ms:[]});u.ms.push(m);u.name=r.name||u.name}));
     out.push(h('p',{textContent:'Mỗi người chơi (theo thiết bị). Đổi tên / xóa áp dụng cho TẤT CẢ chế độ.'}));
@@ -1455,7 +1461,7 @@ function updateFS(dt){const ps=fsc('fsPSpd',1,.4,2.5);
     score=ns;scoreT=playT;refresh();
     if(score>=cfg.goal&&!won){
       won=true;st='win';try{submitScore()}catch(e){}recT();
-      if(score>best){best=score;try{(TEST||localStorage.setItem('skyhop_best_'+dk,best))}catch(e){}}
+      if(!TEST&&score>best){best=score;try{(TEST||localStorage.setItem('skyhop_best_'+dk,best))}catch(e){}}
       refresh();$('winTm').textContent='Thời gian: '+fmtS(scoreT);winBox();show('win');return;
     }
   }
@@ -1734,6 +1740,290 @@ function drawFS(){
     ctx.font='bold 16px sans-serif';ctx.fillStyle='#e11d48';ctx.fillText('♥ '+left+'/'+mx,W/2,26);
   }
 }
+
+
+/*PATCH_AUDIO_V1*/
+// ===================== ÂM THANH =====================
+const SND_MAX=400*1024;
+const SNDOK=/^(https?:\/\/|data:audio\/|[A-Za-z0-9_.\-\/]+\.(mp3|ogg|wav|m4a|aac|opus|webm|flac)(\?.*)?$)/i;
+const SNDEV=[
+ ['Nhạc nền',[['musicMenu','Nhạc nền menu (chỉ dùng cài đặt chung)'],['music','Nhạc nền khi chơi (lặp lại)']]],
+ ['Giao diện & kết quả',[['click','Bấm nút'],['win','Thắng / đạt điểm tối đa'],['die','Thua (hết lượt)'],['revive','Hồi sinh']]],
+ ['Nhân vật',[['jump','Nhảy / nảy lên bậc'],['hurt','Bị trúng (mất máu)'],['block','Khiên chặn sát thương (Falling sky)']]],
+ ['Vật phẩm',[['spring','Nhặt lò xo (Sky Jump)'],['shield','Nhặt khiên'],['rocket','Nhặt rocket (Sky Jump)'],['life','Nhặt tim'],['gun','Nhặt súng (Falling sky)'],['brk','Bậc nâu gãy (Sky Jump)']]],
+ ['Đá, quái, bom, súng',[['warn','Cảnh báo đá sắp rơi'],['rock','Đá vỡ / chạm đất'],['monShoot','Quái bắn đạn'],['monDie','Hạ quái'],['gunShoot','Súng của người chơi bắn'],['bombDrop','Bom xuất hiện'],['bomb','Bom nổ']]]
+];
+const SNDK=[];SNDEV.forEach(g=>g[1].forEach(e=>SNDK.push(e[0])));
+const isMus=k=>k.indexOf('music')===0;
+let PV={m:.7,s:.8};
+try{const x=JSON.parse(localStorage.getItem('skyhop_snd')||'{}');
+  if(x.m!=null&&isFinite(+x.m))PV.m=Math.max(0,Math.min(1,+x.m));
+  if(x.s!=null&&isFinite(+x.s))PV.s=Math.max(0,Math.min(1,+x.s))}catch(e){}
+
+// ---- WebAudio ----
+let AC=null;
+function ac(){if(!AC){try{AC=new(window.AudioContext||window.webkitAudioContext)()}catch(e){}}return AC}
+function acResume(){const A=ac();if(A&&A.state==='suspended'){try{A.resume()}catch(e){}}}
+function tone(f,d,ty,v,f2,dl){const A=ac();if(!A)return;const t=A.currentTime+(dl||0),o=A.createOscillator(),g=A.createGain();
+  o.type=ty||'sine';o.frequency.setValueAtTime(f,t);if(f2)o.frequency.exponentialRampToValueAtTime(Math.max(1,f2),t+d);
+  g.gain.setValueAtTime(Math.max(.0001,v),t);g.gain.exponentialRampToValueAtTime(.0001,t+d);
+  o.connect(g);g.connect(A.destination);o.start(t);o.stop(t+d+.02)}
+function noise(d,v,fc,dl){const A=ac();if(!A)return;const n=Math.max(1,Math.floor(A.sampleRate*d)),b=A.createBuffer(1,n,A.sampleRate),a=b.getChannelData(0);
+  for(let i=0;i<n;i++)a[i]=Math.random()*2-1;
+  const s=A.createBufferSource(),f=A.createBiquadFilter(),g=A.createGain(),t=A.currentTime+(dl||0);
+  s.buffer=b;f.type='lowpass';f.frequency.value=fc||1500;
+  g.gain.setValueAtTime(Math.max(.0001,v),t);g.gain.exponentialRampToValueAtTime(.0001,t+d);
+  s.connect(f);f.connect(g);g.connect(A.destination);s.start(t)}
+// âm tổng hợp mặc định (dùng khi chưa có file)
+const SYN={};
+SYN.click=v=>tone(660,.05,'square',.12*v);
+SYN.jump=v=>tone(320,.14,'sine',.3*v,640);
+SYN.brk=v=>noise(.2,.35*v,1400);
+SYN.spring=v=>tone(380,.22,'triangle',.35*v,1300);
+SYN.shield=v=>{tone(520,.12,'sine',.3*v,780);tone(880,.16,'sine',.3*v,1100,.1)};
+SYN.rocket=v=>{noise(.45,.3*v,2600);tone(180,.45,'sawtooth',.2*v,700)};
+SYN.life=v=>{tone(660,.1,'sine',.3*v);tone(990,.18,'sine',.3*v,null,.1)};
+SYN.gun=v=>{tone(520,.08,'square',.2*v,1040);tone(1040,.14,'square',.2*v,null,.08)};
+SYN.warn=v=>tone(900,.09,'square',.12*v);
+SYN.rock=v=>noise(.18,.35*v,900);
+SYN.monShoot=v=>tone(520,.12,'sawtooth',.14*v,200);
+SYN.monDie=v=>{tone(420,.28,'square',.2*v,70);noise(.2,.2*v,1800)};
+SYN.gunShoot=v=>{tone(1300,.06,'square',.1*v,400);noise(.05,.1*v,3000)};
+SYN.bombDrop=v=>tone(900,.4,'sine',.1*v,260);
+SYN.bomb=v=>{noise(.55,.6*v,700);tone(100,.5,'sine',.5*v,30)};
+SYN.hurt=v=>tone(220,.22,'sawtooth',.3*v,80);
+SYN.block=v=>tone(1100,.09,'triangle',.28*v,700);
+SYN.die=v=>tone(440,.6,'sawtooth',.3*v,60);
+SYN.revive=v=>{[392,523,659].forEach((f,i)=>tone(f,.14,'triangle',.3*v,null,i*.1))};
+SYN.win=v=>{[523,659,784,1047].forEach((f,i)=>tone(f,.2,'triangle',.3*v,null,i*.13))};
+
+// ---- Giải cấu hình: ưu tiên riêng từng chế độ -> chung -> âm tổng hợp ----
+function res(key){
+  const S=(CF.v&&CF.v.sounds)||{};
+  if(S.enabled===false)return {off:1};
+  const M=key==='musicMenu'?{}:((S.m&&S.m[dk])||{});
+  if(M.__off)return {off:1};
+  const g=(S.g&&S.g[key])||{},m=M[key]||{};
+  if(m.off)return {off:1};
+  let u=m.u||'';
+  if(!u){if(g.off)return {off:1};u=g.u||''}
+  const raw=(m.v!=null&&m.v!=='')?+m.v:((g.v!=null&&g.v!=='')?+g.v:100);
+  return {u:u,vol:Math.max(0,Math.min(100,isFinite(raw)?raw:100))/100,syn:S.synth!==false};
+}
+
+// ---- Tải & phát hiệu ứng ----
+const CACHE={};
+function load(u){
+  let c=CACHE[u];if(c)return c;c=CACHE[u]={};
+  const A=ac();
+  const fb=()=>{c.bad=1;try{const a=new Audio();a.preload='auto';a.src=u;c.el=a}catch(e){}};
+  if(!A){fb();return c}
+  try{
+    fetch(u).then(r=>{if(!r.ok)throw 0;return r.arrayBuffer()})
+      .then(b=>new Promise((ok,no)=>{const p=A.decodeAudioData(b,ok,no);if(p&&p.catch)p.catch(no)}))
+      .then(b=>{c.buf=b}).catch(fb);
+  }catch(e){fb()}
+  return c;
+}
+function prefetch(){
+  try{
+    const S=(CF.v&&CF.v.sounds)||{};if(S.enabled===false)return;
+    const M=(S.m&&S.m[dk])||{};
+    SNDK.forEach(k=>{if(isMus(k))return;[S.g&&S.g[k],M[k]].forEach(e=>{if(e&&e.u&&!e.off)load(e.u)})});
+  }catch(e){}
+}
+const LAST={},CDM={jump:60,brk:80,warn:120,rock:60,monShoot:80,gunShoot:70,hurt:150,bomb:100,bombDrop:100,click:30};
+function sfx(key){
+  try{
+    const now=performance.now();if(now-(LAST[key]||0)<(CDM[key]||40))return;LAST[key]=now;
+    const r=res(key);if(r.off||PV.s<=0)return;
+    const vol=r.vol*PV.s;if(vol<=0)return;
+    if(r.u){
+      const c=load(r.u);
+      if(c.buf&&AC){const s=AC.createBufferSource(),g=AC.createGain();s.buffer=c.buf;g.gain.value=Math.min(1,vol);s.connect(g);g.connect(AC.destination);s.start(0)}
+      else if(c.el){const e=c.el.cloneNode(true);e.volume=Math.min(1,vol);const p=e.play();if(p&&p.catch)p.catch(()=>{})}
+      return;
+    }
+    if(r.syn&&SYN[key]){ac();SYN[key](vol)}
+  }catch(e){}
+}
+
+// ---- Nhạc nền (1 thẻ audio duy nhất, đổi nguồn theo trạng thái) ----
+const MEL=new Audio();MEL.loop=true;MEL.preload='auto';
+let MKEY='',MURL='';
+function musicStop(){if(MURL){try{MEL.pause()}catch(e){}MEL.removeAttribute('src');MURL='';MKEY=''}}
+function want(){return st==='menu'?'musicMenu':(st==='play'||st==='pause'||st==='over'||st==='win')?'music':null}
+function musicTick(){
+  const a=want();
+  if(!a){musicStop();return}
+  const r=res(a);
+  if(r.off||!r.u){musicStop();return}
+  let ch=false;
+  if(MURL!==r.u){MEL.src=r.u;MURL=r.u;ch=true}
+  MKEY=a;
+  MEL.volume=Math.max(0,Math.min(1,r.vol*PV.m));
+  const hold=st==='pause'||st==='over'||st==='win'||document.hidden||PV.m<=0;
+  if(hold){if(!MEL.paused)MEL.pause()}
+  else if(ch||MEL.paused){const p=MEL.play();if(p&&p.catch)p.catch(()=>{})}
+}
+
+// ---- Nghe thử trong admin ----
+let PVA=null;
+function sndPreview(key,u,v){
+  try{
+    if(PVA){PVA.pause();PVA=null}
+    const vol=Math.max(0,Math.min(100,isFinite(+v)&&v!==''&&v!=null?+v:100))/100;
+    if(u){
+      const a=new Audio(u);a.volume=vol;PVA=a;
+      const p=a.play();if(p&&p.catch)p.catch(()=>alert('Không phát được file này (sai link / không hỗ trợ định dạng).'));
+      setTimeout(()=>{if(PVA===a){a.pause();PVA=null}},isMus(key)?15000:6000);
+    }else if(SYN[key]){acResume();SYN[key](vol||.7)}
+    else alert('Mục này chưa có file nên không có gì để nghe thử.');
+  }catch(e){}
+}
+
+// ---- Nhận biết sự kiện qua so sánh trạng thái trước/sau mỗi khung hình ----
+const AUS={o:null,pvy:0,prk:0};
+function auPre(){AUS.pvy=P?P.vy:0;AUS.prk=rk}
+function auPost(){
+  if(!P)return;
+  const fs=!!cfg.fs;
+  const cur={rocks:rocks.slice(),mons:mons.slice(),it:fsIt.slice(),bul:bul.length,pb:fsPb.length,bm:fsBm.length,wn:warns.length,
+    hits:hits,lives:lives,sp:sp,sh:shT,rk:rk,dead:fs?0:plats.reduce((n,p)=>n+(p.dead?1:0),0)};
+  const o=AUS.o;AUS.o=cur;if(!o)return;
+  if(P.vy<AUS.pvy-4&&rk<=0&&AUS.prk<=0)sfx('jump');
+  if(cur.bul>o.bul)sfx('monShoot');
+  if(fs&&cur.pb>o.pb)sfx('gunShoot');
+  if(cur.bm>o.bm)sfx('bombDrop');
+  if(cur.wn>o.wn)sfx('warn');
+  for(const r of o.rocks){if(cur.rocks.indexOf(r)<0&&(fs||r.y-camY<H+10)){sfx('rock');break}}
+  for(const m of o.mons){if(cur.mons.indexOf(m)<0&&(fs?m.hp<=0:(m.y-camY<H+40))){sfx('monDie');break}}
+  if(fs){
+    for(const it of o.it){if(cur.it.indexOf(it)<0&&!(it.land<0))sfx(it.type==='heart'?'life':it.type)}
+  }else{
+    if(cur.sp>o.sp+1)sfx('spring');
+    if(cur.sh>o.sh+1)sfx('shield');
+    if(cur.rk>0&&o.rk<=0)sfx('rocket');
+    if(cur.lives>o.lives)sfx('life');
+    if(cur.dead>o.dead)sfx('brk');
+  }
+  if(st==='play'&&cur.hits>o.hits)sfx('hurt');
+}
+const _au_u=update;update=function(){auPre();const r=_au_u.apply(this,arguments);try{auPost()}catch(e){}return r};
+const _au_f=updateFS;updateFS=function(){auPre();const r=_au_f.apply(this,arguments);try{auPost()}catch(e){}return r};
+const _au_r=reset;reset=function(){AUS.o=null;return _au_r.apply(this,arguments)};
+const _au_v=revive;revive=function(){AUS.o=null;sfx('revive');return _au_v.apply(this,arguments)};
+const _au_d=die;die=function(){sfx('die');return _au_d.apply(this,arguments)};
+const _au_w=winBox;winBox=function(){sfx('win');return _au_w.apply(this,arguments)};
+const _au_b=fsBlast;fsBlast=function(){sfx('bomb');return _au_b.apply(this,arguments)};
+const _au_h=fsHit;fsHit=function(){const bl=shT>0;const r=_au_h.apply(this,arguments);if(bl)sfx('block');return r};
+const _au_s=start;start=function(){try{if(MURL&&MKEY==='music')MEL.currentTime=0}catch(e){}return _au_s.apply(this,arguments)};
+
+// ---- Mở khóa âm thanh sau thao tác đầu tiên + vòng lặp nền ----
+['pointerdown','keydown','touchstart'].forEach(n=>addEventListener(n,()=>{ac();acResume();musicTick()},true));
+$('ui').addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('button');if(b&&!b.closest('#admin'))sfx('click')});
+setInterval(()=>{try{musicTick()}catch(e){}},300);
+setInterval(prefetch,2000);prefetch();
+
+// ---- Thanh trượt âm lượng của người chơi (Cài đặt) ----
+(function(){
+  const vm=$('vm'),vs=$('vs');if(!vm||!vs)return;
+  const paint=()=>{vm.value=Math.round(PV.m*100);vs.value=Math.round(PV.s*100);$('vmV').textContent=vm.value;$('vsV').textContent=vs.value};
+  const save=()=>{try{localStorage.setItem('skyhop_snd',JSON.stringify(PV))}catch(e){}};
+  vm.addEventListener('input',()=>{PV.m=+vm.value/100;paint();save();musicTick()});
+  vs.addEventListener('input',()=>{PV.s=+vs.value/100;paint();save()});
+  vs.addEventListener('change',()=>sfx('gun'));
+  paint();
+})();
+
+// ---- Admin: tab "Âm thanh" ----
+let sScope='_g',sDraft=null;
+function sndCopy(scope){
+  const S=(CF.v&&CF.v.sounds)||{};
+  const src=scope==='_g'?(S.g||{}):((S.m&&S.m[scope])||{});
+  return JSON.parse(JSON.stringify(src));
+}
+function sndTab(out){
+  const S=(CF.v&&CF.v.sounds)||{};
+  if(sScope!=='_g'&&!DIFF[sScope])sScope='_g';
+  if(!sDraft||sDraft.scope!==sScope)sDraft={scope:sScope,d:sndCopy(sScope),en:S.enabled!==false,sy:S.synth!==false};
+  const DD=sDraft.d,G=sScope==='_g',SG=S.g||{};
+  const sel=h('select',{className:'in'},
+    h('option',{value:'_g',textContent:'Chung (áp dụng mọi chế độ)',selected:G}),
+    ...Object.keys(DIFF).map(k=>h('option',{value:k,textContent:'Riêng: '+mnm(k),selected:k===sScope})));
+  sel.onchange=()=>{sScope=sel.value;sDraft=null;renderAdmin()};
+  out.push(h('p',{textContent:'Chọn phạm vi cấu hình. "Chung" áp dụng cho mọi chế độ; chọn một chế độ để ghi đè âm thanh riêng cho màn đó (ô để trống = dùng âm chung). File dán link/đường dẫn nhẹ hơn tải trực tiếp (tối đa '+Math.round(SND_MAX/1024)+' KB). Nên bỏ file vào thư mục game rồi nhập đường dẫn, ví dụ sounds/bgm.mp3.'}),sel);
+  if(G){
+    const en=h('input',{type:'checkbox',checked:sDraft.en,onchange:()=>{sDraft.en=en.checked}});
+    const sy=h('input',{type:'checkbox',checked:sDraft.sy,onchange:()=>{sDraft.sy=sy.checked}});
+    out.push(h('div',{className:'rw'},h('label',{textContent:'Bật âm thanh trong game'}),en),
+      h('div',{className:'rw'},h('label',{textContent:'Dùng âm tổng hợp mặc định khi chưa có file'}),sy));
+  }else{
+    const off=h('input',{type:'checkbox',checked:!!DD.__off,onchange:()=>{if(off.checked)DD.__off=true;else delete DD.__off}});
+    out.push(h('div',{className:'rw'},h('label',{textContent:'Tắt TOÀN BỘ âm thanh ở chế độ này'}),off));
+  }
+  SNDEV.forEach(([gn,list])=>{
+    out.push(h('h3',{className:'gh',textContent:gn}));
+    list.forEach(([k,label])=>{
+      if(k==='musicMenu'&&!G)return;
+      const e=DD[k]||(DD[k]={});
+      const gg=SG[k]||{};
+      const info=h('span',{className:'texs'});
+      const paint=()=>{info.textContent=e.u?(e.u.indexOf('data:')===0?'file '+Math.round(e.u.length*.75/1024)+' KB':'link'):(G?'mặc định':'theo âm chung')};
+      const url=h('input',{className:'in',placeholder:'Link hoặc đường dẫn (vd: sounds/bgm.mp3)',value:(e.u&&e.u.indexOf('data:')!==0)?e.u:'',
+        onchange:()=>{const v=url.value.trim();if(v&&!SNDOK.test(v)){alert('Chỉ nhận link http(s)://... hoặc đường dẫn file .mp3/.ogg/.wav/.m4a/.aac/.opus/.webm/.flac');url.value='';return}if(v)e.u=v;else delete e.u;paint()}});
+      const fi=h('input',{type:'file',accept:'audio/*',className:'in',onchange:()=>{
+        const f=fi.files&&fi.files[0];if(!f)return;
+        if(f.size>SND_MAX){alert('File quá nặng ('+Math.round(f.size/1024)+' KB). Tải trực tiếp tối đa '+Math.round(SND_MAX/1024)+' KB. Hãy nén nhỏ lại, hoặc đặt file vào thư mục game rồi dán đường dẫn.');fi.value='';return}
+        const rd=new FileReader();
+        rd.onerror=()=>alert('Không đọc được file.');
+        rd.onload=()=>{
+          let d=String(rd.result);
+          d=d.replace(/^data:[^;,]*/,'data:'+((f.type&&f.type.indexOf('audio')===0)?f.type:'audio/mpeg'));
+          e.u=d;url.value='';paint();
+        };
+        rd.readAsDataURL(f);
+      }});
+      const vol=h('input',{className:'in',type:'number',min:0,max:100,step:5,placeholder:'Âm lượng %',value:e.v!=null?e.v:'',
+        oninput:()=>{if(vol.value==='')delete e.v;else e.v=Math.max(0,Math.min(100,+vol.value||0))}});
+      const mu=h('input',{type:'checkbox',checked:!!e.off,onchange:()=>{if(mu.checked)e.off=true;else delete e.off}});
+      out.push(
+        h('div',{className:'rw'},h('label',{style:'flex:1 1 100%',textContent:label})),
+        h('div',{className:'rw'},url),
+        h('div',{className:'rw'},fi,info),
+        h('div',{className:'rw'},vol,h('label',{style:'flex:0 0 auto',textContent:'Tắt'}),mu,
+          btn('▶ Nghe thử',()=>sndPreview(k,e.u||(G?'':gg.u),e.v!=null?e.v:(G?100:gg.v)),'sm'),
+          btn('Xóa',()=>{delete DD[k];renderAdmin()},'sm')));
+      paint();
+    });
+  });
+  out.push(btn('Lưu âm thanh ('+(G?'chung':mnm(sScope))+')',sndSave,'btn good'));
+}
+function sndSave(){
+  const d=sDraft;if(!d)return;
+  const D2={};
+  for(const k of Object.keys(d.d)){
+    if(k==='__off'){if(d.d[k])D2.__off=true;continue}
+    if(SNDK.indexOf(k)<0)continue;
+    const e=d.d[k]||{},o={};
+    if(e.u){
+      if(!SNDOK.test(e.u)){alert('Link/đường dẫn không hợp lệ ở mục "'+k+'".');return}
+      o.u=e.u;
+    }
+    if(e.v!=null&&isFinite(+e.v))o.v=Math.round(+e.v);
+    if(e.off)o.off=true;
+    if(Object.keys(o).length)D2[k]=o;
+  }
+  const G=d.scope==='_g',sub=G?'g':'m/'+d.scope,path='config/sounds/'+sub,has=Object.keys(D2).length>0;
+  const reqs=[has?api('PUT',path,D2,1):api('DELETE',path,undefined,1)];
+  if(G)reqs.push(api('PATCH','config/sounds',{enabled:!!d.en,synth:!!d.sy},1));
+  Promise.all(reqs).then(()=>{
+    setAt(CF,'/sounds/'+sub,has?D2:null);
+    if(G){setAt(CF,'/sounds/enabled',!!d.en);setAt(CF,'/sounds/synth',!!d.sy)}
+    sDraft=null;prefetch();alert('Đã lưu âm thanh.');renderAdmin();
+  }).catch(err);
+}
+// =================== HẾT ÂM THANH ===================
 
 reset();$('pauseBtn').style.visibility='hidden';show('menu');
 if(myName&&bad(myName)){myName='';try{localStorage.removeItem('skyhop_name')}catch(e){}updNameBtn()}if(!myName){ret='menu';openName()}
