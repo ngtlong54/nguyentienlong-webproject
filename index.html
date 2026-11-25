@@ -226,7 +226,7 @@ html,body{margin:0;overflow:hidden;overscroll-behavior:none}
       <h1>Sky NoHope</h1>
       <p class="sub">Game càng chơi càng cay!</p>
       <p class="best" id="menuBest"></p>
-      <div class="mrow" id="musicRow"><button class="btn big-btn" data-a="pick">▶ Chơi</button><button class="mtg" id="mtMenu" type="button" aria-pressed="true" title="Nhạc sảnh" aria-label="Bật/tắt nhạc sảnh"></button><button class="mtg" id="mtGame" type="button" aria-pressed="true" title="Nhạc trong game" aria-label="Bật/tắt nhạc trong game"></button></div><div class="gt" id="gtype"><button data-g="classic"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><rect x="3" y="17" width="9" height="3" rx="1.5" fill="#4cb86f"/><rect x="12" y="10" width="9" height="3" rx="1.5" fill="#3b82d6"/><path d="M12 8V3m0 0L9.5 5.5M12 3l2.5 2.5" stroke="#f59e0b" stroke-width="2" fill="none" stroke-linecap="round"/></svg><span>Sky Jump</span></button><button data-g="sky"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><ellipse cx="12" cy="3.6" rx="4.2" ry="1.4" fill="none" stroke="#fbbf24" stroke-width="1.6"/><path d="M6 18a4 4 0 0 1 .5-8 5.5 5.5 0 0 1 10.6 1.5A3.4 3.4 0 0 1 17 18z" fill="#bae6fd" stroke="#0ea5e9" stroke-width="1.3" stroke-linejoin="round"/><circle cx="9" cy="21.2" r="1" fill="#fbbf24"/><circle cx="15" cy="21.2" r="1" fill="#fbbf24"/></svg><span>Falling sky</span></button></div><p class="hint" id="gtDesc"></p>
+      <div class="mrow" id="musicRow"><button class="btn big-btn" data-a="pick">▶ Chơi</button><button class="mtg" id="mtMusic" type="button" aria-pressed="true" title="Nhạc: đang bật" aria-label="Bật/tắt nhạc"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 18V5l11-2v13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="6.5" cy="18" r="2.6" fill="currentColor"/><circle cx="17.5" cy="16" r="2.6" fill="currentColor"/></svg><span>Nhạc</span></button></div><div class="gt" id="gtype"><button data-g="classic"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><rect x="3" y="17" width="9" height="3" rx="1.5" fill="#4cb86f"/><rect x="12" y="10" width="9" height="3" rx="1.5" fill="#3b82d6"/><path d="M12 8V3m0 0L9.5 5.5M12 3l2.5 2.5" stroke="#f59e0b" stroke-width="2" fill="none" stroke-linecap="round"/></svg><span>Sky Jump</span></button><button data-g="sky"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><ellipse cx="12" cy="3.6" rx="4.2" ry="1.4" fill="none" stroke="#fbbf24" stroke-width="1.6"/><path d="M6 18a4 4 0 0 1 .5-8 5.5 5.5 0 0 1 10.6 1.5A3.4 3.4 0 0 1 17 18z" fill="#bae6fd" stroke="#0ea5e9" stroke-width="1.3" stroke-linejoin="round"/><circle cx="9" cy="21.2" r="1" fill="#fbbf24"/><circle cx="15" cy="21.2" r="1" fill="#fbbf24"/></svg><span>Falling sky</span></button></div><p class="hint" id="gtDesc"></p>
       <div class="icons">
         <button class="ibtn" data-b="lb" title="Bảng xếp hạng" aria-label="Bảng xếp hạng">🏆</button>
         <button class="ibtn" data-a="help" title="Hướng dẫn" aria-label="Hướng dẫn">❓</button>
@@ -302,9 +302,9 @@ html,body{margin:0;overflow:hidden;overscroll-behavior:none}
       <h2>⚙️ Cài đặt</h2>
       <div class="row"><span>👆 Độ nhạy kéo</span><b id="sensV">1.4</b></div>
       <input type="range" id="sens" min="0.5" max="3" step="0.1" value="1.4">
-      <div class="row"><span>Âm lượng nhạc nền</span><b id="vmV">70</b></div>
+      <div class="row"><span class="vl"><button class="vt" id="vmT" type="button" aria-label="Bật/tắt nhạc nền"></button><span>Âm lượng nhạc nền</span></span><b id="vmV">70</b></div>
       <input type="range" id="vm" min="0" max="100" step="5" value="70">
-      <div class="row"><span>Âm lượng hiệu ứng</span><b id="vsV">80</b></div>
+      <div class="row"><span class="vl"><button class="vt" id="vsT" type="button" aria-label="Bật/tắt âm thanh hiệu ứng"></button><span>Âm lượng hiệu ứng</span></span><b id="vsV">80</b></div>
       <input type="range" id="vs" min="0" max="100" step="5" value="80">
       <div hidden>
         <div class="dgrid" id="diffs"></div>
@@ -1771,10 +1771,10 @@ const SNDEV=[
 ];
 const SNDK=[];SNDEV.forEach(g=>g[1].forEach(e=>SNDK.push(e[0])));
 const isMus=k=>k.indexOf('music')===0;
-let PV={m:.7,s:.8};
+let PV={m:.7,s:.8,on:true,se:true};
 try{const x=JSON.parse(localStorage.getItem('skyhop_snd')||'{}');
   if(x.m!=null&&isFinite(+x.m))PV.m=Math.max(0,Math.min(1,+x.m));
-  if(x.s!=null&&isFinite(+x.s))PV.s=Math.max(0,Math.min(1,+x.s))}catch(e){}
+  if(x.s!=null&&isFinite(+x.s))PV.s=Math.max(0,Math.min(1,+x.s));PV.on=x.on!==false;PV.se=x.se!==false}catch(e){}
 
 // ---- WebAudio ----
 let AC=null;
@@ -1852,7 +1852,7 @@ const LAST={},CDM={jump:60,brk:80,warn:120,rock:60,monShoot:80,gunShoot:70,hurt:
 function sfx(key){
   try{
     const now=performance.now();if(now-(LAST[key]||0)<(CDM[key]||40))return;LAST[key]=now;
-    const r=res(key);if(r.off||PV.s<=0)return;
+    const r=res(key);if(r.off||PV.s<=0||PV.se===false)return;
     const vol=r.vol*PV.s;if(vol<=0)return;
     if(r.u){
       const c=load(r.u);
@@ -1871,7 +1871,7 @@ function musicStop(){if(MURL){try{MEL.pause()}catch(e){}MEL.removeAttribute('src
 function want(){return st==='menu'?'musicMenu':(st==='play'||st==='pause'||st==='over'||st==='win')?'music':null}
 function musicTick(){
   const a=want();
-  if(!a){musicStop();return}
+  if(!a||PV.on===false){musicStop();return}
   const r=res(a);
   if(r.off||!r.u){musicStop();return}
   let ch=false;
@@ -2063,6 +2063,66 @@ function sndSave(){
   document.addEventListener('visibilitychange',wake);
   addEventListener('pageshow',wake);addEventListener('focus',wake);
 })();
+/*PATCH_MUSIC_V2*/
+(function(){
+  const g=id=>document.getElementById(id);
+  const save=()=>{try{localStorage.setItem('skyhop_snd',JSON.stringify(PV))}catch(e){}};
+  const NOTE='<path d="M9 18V5l11-2v13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="6.5" cy="18" r="2.6" fill="currentColor"/><circle cx="17.5" cy="16" r="2.6" fill="currentColor"/>';
+  const SPK='<path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" fill="currentColor" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/>';
+  const WAVE='<path d="M15.5 9a4.2 4.2 0 0 1 0 6M18 6.5a8 8 0 0 1 0 11" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>';
+  const SLASH='<path d="M3 3l18 18" stroke="#ef4444" stroke-width="2.6" stroke-linecap="round"/>';
+  const SVG=b=>'<svg viewBox="0 0 24 24" aria-hidden="true">'+b+'</svg>';
+
+  function paintMain(){
+    const b=g('mtMusic');if(!b)return;
+    const on=PV.on!==false;
+    b.classList.toggle('off',!on);
+    b.setAttribute('aria-pressed',on?'true':'false');
+    b.title='Nhạc: '+(on?'đang bật':'đang tắt');
+    b.innerHTML=SVG(NOTE+(on?'':SLASH))+'<span>Nhạc</span>';
+  }
+  function paintBtn(id,on,label){
+    const b=g(id);if(!b)return;
+    b.classList.toggle('off',!on);
+    b.setAttribute('aria-pressed',on?'true':'false');
+    b.title=label+(on?': đang bật':': đang tắt');
+    b.innerHTML=SVG(SPK+(on?WAVE:SLASH));
+  }
+  function paintAll(){
+    paintMain();
+    paintBtn('vmT',PV.on!==false,'Nhạc nền');
+    paintBtn('vsT',PV.se!==false,'Hiệu ứng');
+    const vm=g('vm'),vs=g('vs');
+    if(vm)vm.classList.toggle('vdim',PV.on===false);
+    if(vs)vs.classList.toggle('vdim',PV.se===false);
+  }
+  function syncSlider(id,valId,v){
+    const e=g(id),t=g(valId);if(!e)return;
+    e.value=Math.round(v*100);if(t)t.textContent=e.value;
+  }
+  function setMusic(on){
+    PV.on=!!on;
+    if(PV.on&&PV.m<=0){PV.m=.7;syncSlider('vm','vmV',PV.m)}   // đang kéo về 0 mà bật lại -> trả về 70
+    save();paintAll();try{musicTick()}catch(e){}
+  }
+  function setSfx(on){
+    PV.se=!!on;
+    if(PV.se&&PV.s<=0){PV.s=.8;syncSlider('vs','vsV',PV.s)}
+    save();paintAll();
+    if(PV.se){try{sfx('gun')}catch(e){}}
+  }
+
+  const bm=g('mtMusic');if(bm)bm.addEventListener('click',()=>setMusic(PV.on===false));
+  const tm=g('vmT');if(tm)tm.addEventListener('click',()=>setMusic(PV.on===false));
+  const ts=g('vsT');if(ts)ts.addEventListener('click',()=>setSfx(PV.se===false));
+
+  // kéo thanh trượt lên > 0 khi đang tắt -> tự bật lại
+  const vm=g('vm'),vs=g('vs');
+  if(vm)vm.addEventListener('input',()=>{if(PV.on===false&&+vm.value>0)setMusic(true);else paintAll()});
+  if(vs)vs.addEventListener('input',()=>{if(PV.se===false&&+vs.value>0){PV.se=true;save();paintAll()}else paintAll()});
+
+  paintAll();
+})();
 // =================== HẾT ÂM THANH ===================
 
 reset();$('pauseBtn').style.visibility='hidden';show('menu');
@@ -2234,44 +2294,20 @@ if('serviceWorker' in navigator&&/^https?:$/.test(location.protocol)){
 })();
 </script>
 
-<style>/*PATCH_MUSIC_TOGGLE_V1*/
+<style>/*PATCH_MUSIC_V2*/
 .mrow{display:flex;gap:8px;align-items:stretch;margin-top:10px}
 .mrow button.btn.big-btn{flex:1 1 auto;width:auto;min-width:0;margin-top:0}
-.mtg{flex:0 0 58px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;padding:4px 2px;border:2px solid transparent;border-radius:16px;background:var(--me,var(--soft));color:var(--ink);font-family:inherit;font-weight:800;font-size:11px;line-height:1.1;cursor:pointer;transition:transform .12s,opacity .15s,border-color .15s}
-.mtg svg{width:24px;height:24px;display:block}
+.mtg{flex:0 0 62px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;padding:4px 2px;border:2px solid var(--acc);border-radius:16px;background:var(--me,var(--soft));color:var(--ink);font-family:inherit;font-weight:800;font-size:11px;line-height:1.1;cursor:pointer;transition:transform .12s,opacity .15s,border-color .15s}
+.mtg svg{width:26px;height:26px;display:block}
 .mtg:active{transform:scale(.94)}
-.mtg.off{opacity:.5;background:var(--soft);border-color:transparent}
-.mtg:not(.off){border-color:var(--acc)}
+.mtg.off{opacity:.55;background:var(--soft);border-color:transparent}
+.vl{display:flex;align-items:center;gap:8px}
+.vt{flex:0 0 auto;width:36px;height:36px;padding:0;display:flex;align-items:center;justify-content:center;border:0;border-radius:12px;background:var(--soft);color:var(--ink);cursor:pointer;transition:transform .12s,opacity .15s}
+.vt svg{width:22px;height:22px;display:block}
+.vt:active{transform:scale(.92)}
+.vt.off{opacity:.55}
+input[type=range].vdim{opacity:.4}
+#settings .row{align-items:center;margin-top:10px}
 </style>
-<script>/*PATCH_MUSIC_TOGGLE_V1*/
-(function(){
-  if(typeof PV==='undefined'||typeof musicTick!=='function')return;
-  // nạp trạng thái đã lưu (mặc định: bật)
-  try{const x=JSON.parse(localStorage.getItem('skyhop_snd')||'{}');PV.mm=x.mm!==false;PV.mg=x.mg!==false}catch(e){PV.mm=true;PV.mg=true}
-  if(PV.mm===undefined)PV.mm=true;if(PV.mg===undefined)PV.mg=true;
-  const save=()=>{try{localStorage.setItem('skyhop_snd',JSON.stringify(PV))}catch(e){}};
-  const NOTE='<path d="M9 18V5l11-2v13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="6.5" cy="18" r="2.6" fill="currentColor"/><circle cx="17.5" cy="16" r="2.6" fill="currentColor"/>';
-  const SLASH='<path d="M3 3l18 18" stroke="#ef4444" stroke-width="2.6" stroke-linecap="round"/>';
-  function paint(b,on,label){
-    b.classList.toggle('off',!on);
-    b.setAttribute('aria-pressed',on?'true':'false');
-    b.title=label+(on?': đang bật':': đang tắt');
-    b.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true">'+NOTE+(on?'':SLASH)+'</svg><span>'+label.replace('Nhạc ','')+'</span>';
-  }
-  const bm=document.getElementById('mtMenu'),bg=document.getElementById('mtGame');
-  if(!bm||!bg)return;
-  const upd=()=>{paint(bm,PV.mm!==false,'Nhạc sảnh');paint(bg,PV.mg!==false,'Nhạc game')};
-  bm.addEventListener('click',()=>{PV.mm=!(PV.mm!==false);save();upd();try{musicTick()}catch(e){}});
-  bg.addEventListener('click',()=>{PV.mg=!(PV.mg!==false);save();upd();try{musicTick()}catch(e){}});
-  upd();
-  // chặn phát nhạc khi nút tương ứng đang tắt
-  const _mt=musicTick;
-  musicTick=function(){
-    const a=want();
-    if((a==='musicMenu'&&PV.mm===false)||(a==='music'&&PV.mg===false)){musicStop();return}
-    return _mt.apply(this,arguments);
-  };
-})();
-</script>
 </body>
 </html>
