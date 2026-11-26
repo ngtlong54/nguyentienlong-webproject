@@ -270,7 +270,7 @@ html,body{margin:0;overflow:hidden;overscroll-behavior:none}
         <div class="it"><span>🎮</span><p><b>Chế độ.</b> Mỗi chế độ có bộ luật riêng (số máu, số lần hồi sinh, độ dày đá, quái, bom và vật phẩm), nên các thông số có thể khác nhau.</p></div>
         <div class="it" data-pfix="helpF"><span>🎮</span><p><b>Thông số chế độ này.</b> Mục tiêu <b id="fG"></b> điểm · +<b id="fSc"></b> điểm/giây, +<b id="fKp"></b>/quái, +<b id="fIp"></b>/vật phẩm · Máu <b id="fHp"></b> · Hồi sinh <b id="fLv"></b> lần · Máu quái <b id="fMh"></b> · Bom nổ bán kính <b id="fBr"></b>px, mất <b id="fBd"></b> máu · Khiên <b id="fSh"></b> giây · Súng <b id="fGs"></b> giây, <b id="fGr"></b> phát/giây, <b id="fGd"></b> sát thương · Vật phẩm nằm đất <b id="fIl"></b> giây.</p></div>
       </div>
-      <button class="ver" id="verBtn" title="Quản trị">🔧 Phiên bản 2026.11.25-v4</button>
+      <button class="ver" id="verBtn" title="Quản trị">🔧 Phiên bản 2026.11.26-v5</button>
       <button class="btn alt" data-b="back">← Quay lại</button>
     </div>
 
@@ -739,8 +739,8 @@ function drawBg(){
 }
 
 // ---- Lọc tên bậy ----
-const STRONG=['ditme','ditcon','ditmay','dume','dumay','deomay','concac','caidit','cailon','caibuoi','vailon','vaicalon','loncon','chocon','fuck','shit','bitch','pussy','nigg','cunt','whore','slut','porn','hentai','nazi','hitler','admin','moderator','http','www'];
-const WORD=['dm','dmm','dcm','dkm','vcl','vl','lon','cac','cak','dit','buoi','sex','xxx','ass','fag','dick'];
+const STRONG=[];/*PATCH_NOAUTOBAN*/
+const WORD=[];
 const LEET={0:'o',1:'i',3:'e',4:'a',5:'s',7:'t',8:'b',9:'g','@':'a','$':'s','!':'i'};
 const norm=s=>s.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/đ/g,'d').replace(/[013457989@$!]/g,c=>LEET[c]||c);
 function bad(s){
@@ -1149,6 +1149,121 @@ function plTab(out){
     });
   });
 }
+/*PATCH_ACCOUNTS*/
+var mergeSrc=null;
+function idSave(){try{localStorage.setItem('skyhop_uid',me);localStorage.setItem('skyhop_name',myName)}catch(e){}}
+function idOrig(){try{return localStorage.getItem('skyhop_uid_orig')||''}catch(e){return ''}}
+// Chuyển thiết bị này sang chơi bằng tài khoản khác (điểm sẽ ghi vào tài khoản đó)
+function idSet(uid,name){
+  if(uid!==me){
+    try{if(!localStorage.getItem('skyhop_uid_orig')){localStorage.setItem('skyhop_uid_orig',me);localStorage.setItem('skyhop_name_orig',myName||'')}}catch(e){}
+  }
+  me=uid;myName=String(name||'').slice(0,14);idSave();updNameBtn();
+  try{onLB(1)}catch(e){}
+}
+function idRestore(){
+  let u='',n='';
+  try{u=localStorage.getItem('skyhop_uid_orig')||'';n=localStorage.getItem('skyhop_name_orig')||''}catch(e){}
+  if(!u)return;
+  me=u;myName=n;idSave();
+  try{localStorage.removeItem('skyhop_uid_orig');localStorage.removeItem('skyhop_name_orig')}catch(e){}
+  updNameBtn();try{onLB(1)}catch(e){}
+}
+function plBest(a,b){return a.score>b.score||(a.score===b.score&&(+a.time||0)<(+b.time||0))}
+// Gộp tài khoản src vào dst: mỗi chế độ giữ điểm tốt hơn, xóa src
+function plMerge(src,dst,sn,dnm){
+  if(!confirm('Gộp "'+sn+'" vào "'+dnm+'"?\nMỗi chế độ giữ kết quả tốt hơn. Tài khoản "'+sn+'" sẽ bị xóa khỏi mọi bảng.'))return;
+  const jobs=[];
+  Object.keys(DIFF).forEach(k=>{
+    const o=(LB.v&&LB.v[k])||{},a=o[src],b=o[dst];
+    if(!a)return;
+    if(!b||plBest(a,b)){
+      const body={name:String(dnm).slice(0,14),score:a.score,time:+a.time||0,ts:(b&&b.ts)||a.ts||Date.now()};
+      jobs.push(api('PUT','lb/'+k+'/'+dst,body,1).then(()=>setAt(LB,'/'+k+'/'+dst,body)));
+    }
+    jobs.push(api('DELETE','lb/'+k+'/'+src,undefined,1).then(()=>setAt(LB,'/'+k+'/'+src,null)));
+  });
+  Promise.all(jobs).then(()=>{
+    if(me===src){me=dst;myName=String(dnm).slice(0,14);idSave();updNameBtn()}
+    try{if(localStorage.getItem('skyhop_uid_orig')===src){localStorage.setItem('skyhop_uid_orig',dst);localStorage.setItem('skyhop_name_orig',String(dnm).slice(0,14))}}catch(e){}
+    mergeSrc=null;onLB(1);renderAdmin();alert('Đã gộp xong.');
+  }).catch(err);
+}
+function plTab(out){
+  const U={};
+  Object.keys(DIFF).forEach(m=>rows(m).forEach(r=>{
+    const u=U[r.id]||(U[r.id]={id:r.id,name:r.name,ms:[]});u.ms.push(m);u.name=r.name||u.name;
+  }));
+  const UQ=uniqNames(),all=Object.keys(DIFF);
+  out.push(h('p',{textContent:'Mỗi người chơi (theo thiết bị). Bấm "Điểm" để sửa/thêm điểm ở TẤT CẢ chế độ. "Dùng" = thiết bị này chơi bằng tài khoản đó. "Gộp" = nhập 2 tài khoản làm 1. Đổi tên / xóa áp dụng cho mọi chế độ.'}));
+  if(mergeSrc&&!U[mergeSrc])mergeSrc=null;
+  if(mergeSrc)out.push(
+    h('p',{style:'color:var(--acc);font-weight:700',textContent:'Đang gộp "'+U[mergeSrc].name+'" → chọn tài khoản nhận ở bên dưới (nút "Gộp vào đây").'}),
+    btn('Hủy gộp',()=>{mergeSrc=null;renderAdmin()},'btn alt'));
+  const L=Object.keys(U).map(k=>U[k]).sort((a,b)=>String(UQ[a.id]).localeCompare(String(UQ[b.id])));
+  if(!L.length)out.push(h('p',{textContent:'Chưa có ai.'}));
+  L.forEach(u=>{
+    const n=h('input',{className:'in',value:u.name,maxLength:14});
+    const row=[n,
+      btn(openPl[u.id]?'Thu gọn':'Điểm ('+u.ms.length+'/'+all.length+')',()=>{openPl[u.id]=!openPl[u.id];renderAdmin()},'sm'),
+      btn('Lưu tên',()=>{const v=n.value.trim().slice(0,14);if(!v)return;
+        Promise.all(u.ms.map(m=>api('PATCH','lb/'+m+'/'+u.id,{name:v},1).then(()=>setAt(LB,'/'+m+'/'+u.id+'/name',v)))).then(()=>{onLB(1);renderAdmin()}).catch(err)},'sm'),
+      btn('Xóa',()=>{if(confirm('Xóa '+u.name+' khỏi mọi bảng?'))
+        Promise.all(u.ms.map(m=>api('DELETE','lb/'+m+'/'+u.id,undefined,1).then(()=>setAt(LB,'/'+m+'/'+u.id,null)))).then(()=>{onLB(1);renderAdmin()}).catch(err)},'sm'),
+      btn(me===u.id?'✔ Đang dùng':'Dùng',()=>{
+        if(me===u.id)return;
+        idSet(u.id,u.name);renderAdmin();
+        alert('Thiết bị này đang chơi bằng tài khoản "'+u.name+'". Điểm sẽ ghi vào tài khoản đó.\nVào tab "Khác" để quay về tài khoản gốc.');
+      },'sm')];
+    if(mergeSrc){
+      if(mergeSrc===u.id)row.push(btn('Hủy gộp',()=>{mergeSrc=null;renderAdmin()},'sm'));
+      else row.push(btn('⬇ Gộp vào đây',()=>plMerge(mergeSrc,u.id,U[mergeSrc].name,u.name),'sm'));
+    }else row.push(btn('Gộp',()=>{mergeSrc=u.id;renderAdmin()},'sm'));
+    out.push(h('div',{className:'rw'},...row));
+    out.push(h('p',{style:'font-size:11.5px;margin:0 0 4px;word-break:break-all',textContent:'ID: '+u.id+(UQ[u.id]!==u.name?' · Hiển thị trên bảng: '+UQ[u.id]:'')+(me===u.id?' · (thiết bị này)':'')}));
+    if(!openPl[u.id])return;
+    all.forEach(k=>{
+      const e=LB.v&&LB.v[k]&&LB.v[k][u.id];
+      const s=h('input',{className:'in',type:'number',placeholder:'Điểm',value:e?e.score:''}),
+            t=h('input',{className:'in',type:'number',step:'.1',placeholder:'Giây',value:e?e.time:''});
+      out.push(h('div',{className:'rw'},
+        h('label',{style:'flex:1 1 100%',textContent:mnm(k)+(e?'':' (chưa chơi)')}),
+        s,t,
+        btn(e?'Lưu':'Thêm',()=>plSave(k,u.id,u.name,s.value,t.value===''?0:t.value,e&&e.ts),'sm'),
+        ...(e?[btn('Xóa',()=>{if(confirm('Xóa điểm '+u.name+' ở chế độ '+DIFF[k].name+'?'))
+          api('DELETE','lb/'+k+'/'+u.id,undefined,1).then(()=>{setAt(LB,'/'+k+'/'+u.id,null);onLB(1);renderAdmin()}).catch(err)},'sm')]:[])));
+    });
+  });
+}
+// Bảng "Tài khoản đang chơi" trong tab Khác
+function idPanel(){
+  const orig=idOrig();
+  const inp=h('input',{className:'in',placeholder:'Dán ID tài khoản muốn dùng'}),
+        nm=h('input',{className:'in',placeholder:'Tên hiển thị (để trống = lấy từ bảng xếp hạng)',maxLength:14});
+  const copyId=()=>{
+    const f=()=>prompt('ID tài khoản (sao chép thủ công):',me);
+    try{navigator.clipboard.writeText(me).then(()=>alert('Đã sao chép ID.')).catch(f)}catch(e){f()}
+  };
+  const useId=()=>{
+    const id=inp.value.trim();
+    if(!/^[A-Za-z0-9_\-]{3,60}$/.test(id)){alert('ID không hợp lệ (chỉ chữ, số, _ và -).');return}
+    let name=nm.value.trim();
+    if(!name){
+      for(const k of Object.keys(DIFF)){const r=LB.v&&LB.v[k]&&LB.v[k][id];if(r&&r.name){name=r.name;break}}
+    }
+    if(!name){alert('Không tìm thấy ID này trên bảng. Hãy nhập tên hiển thị.');return}
+    idSet(id,name);renderAdmin();alert('Đã chuyển sang tài khoản "'+name+'".');
+  };
+  return [
+    h('h3',{className:'gh',textContent:'Tài khoản đang chơi'}),
+    h('p',{style:'word-break:break-all',textContent:'Đang dùng: '+(myName||'(chưa đặt tên)')+' · ID: '+me+(orig?' · (đang dùng tài khoản mượn)':'')}),
+    h('div',{className:'rw'},btn('📋 Sao chép ID',copyId,'sm'),...(orig?[btn('↩ Về tài khoản gốc',()=>{idRestore();renderAdmin()},'sm')]:[])),
+    h('p',{textContent:'Dùng tài khoản khác để chơi (cho bản thân hoặc người khác). Điểm sẽ ghi vào tài khoản đó:'}),
+    h('div',{className:'rw'},inp),h('div',{className:'rw'},nm),
+    h('div',{className:'rw'},btn('Dùng ID này',useId,'sm'))
+  ];
+}
+
 function bgPack(f,max,lim){
   return new Promise((ok,no)=>{
     const rd=new FileReader();
@@ -1313,7 +1428,7 @@ function renderAdmin(){
     const ta=h('textarea',{className:'in',rows:4,value:(CF.v&&CF.v.badwords)||'',placeholder:'Từ cấm bổ sung, cách nhau bằng dấu phẩy'});
     out.push(h('p',{textContent:'Từ cấm bổ sung khi đặt tên (đã có sẵn danh sách mặc định):'}),ta,
       btn('Lưu từ cấm',()=>api('PUT','config/badwords',ta.value,1).then(()=>{setAt(CF,'/badwords',ta.value)}).catch(err),'btn good'),
-      btn('Quét & đổi tên vi phạm trên bảng',scanBad,'btn alt'),btn('Đăng xuất admin',()=>{ADM=null;renderAdmin()},'btn alt'));
+      btn('Quét & đổi tên vi phạm trên bảng',scanBad,'btn alt'),btn('Đăng xuất admin',()=>{ADM=null;renderAdmin()},'btn alt'));out.push(...idPanel());
   }
   B.replaceChildren(...out);
 }
@@ -1865,23 +1980,51 @@ function sfx(key){
 }
 
 // ---- Nhạc nền (1 thẻ audio duy nhất, đổi nguồn theo trạng thái) ----
-const MEL=new Audio();MEL.loop=true;MEL.preload='auto';
+const MEL=new Audio();MEL.loop=true;MEL.preload='auto';/*PATCH_FADE*/
 let MKEY='',MURL='';
-function musicStop(){if(MURL){try{MEL.pause()}catch(e){}MEL.removeAttribute('src');MURL='';MKEY=''}}
+const FADE_IN=1.5,FADE_OUT=1.5,FADE_SW=.6; // giây: vào đầu bài / cuối bài / chuyển nhạc
+let mG=0,mT=0,mBase=0,mPend=null,mClr=false,mLast=performance.now();
+function musicStop(){mT=0;mPend=null;mClr=true}
+function mSet(u,k){try{MEL.pause()}catch(e){}MEL.src=u;MURL=u;MKEY=k;mG=0;try{MEL.currentTime=0}catch(e){}}
 function want(){return st==='menu'?'musicMenu':(st==='play'||st==='pause'||st==='over'||st==='win')?'music':null}
 function musicTick(){
   const a=want();
   if(!a||PV.on===false){musicStop();return}
   const r=res(a);
   if(r.off||!r.u){musicStop();return}
-  let ch=false;
-  if(MURL!==r.u){MEL.src=r.u;MURL=r.u;ch=true}
-  MKEY=a;
-  MEL.volume=Math.max(0,Math.min(1,r.vol*PV.m));
+  mClr=false;
+  mBase=Math.max(0,Math.min(1,r.vol*PV.m));
   const hold=st==='pause'||st==='over'||st==='win'||document.hidden||PV.m<=0;
-  if(hold){if(!MEL.paused)MEL.pause()}
-  else if(ch||MEL.paused){const p=MEL.play();if(p&&p.catch)p.catch(()=>{})}
+  if(hold){
+    mPend=null;mT=0;
+    if(document.hidden||PV.m<=0){mG=0;if(!MEL.paused)MEL.pause()}
+    return;
+  }
+  if(MURL!==r.u){
+    if(!MURL||MEL.paused||mG<=.001){mPend=null;mSet(r.u,a)}
+    else{mPend={u:r.u,k:a};mT=0;return}
+  }
+  mPend=null;MKEY=a;mT=1;
+  if(MEL.paused){const p=MEL.play();if(p&&p.catch)p.catch(()=>{})}
 }
+// vòng cập nhật âm lượng mượt: fade theo trạng thái + fade ở đầu/cuối mỗi lượt phát
+function mFrame(){
+  const now=performance.now(),dt=Math.min(.25,Math.max(0,(now-mLast)/1000));mLast=now;
+  if(mT>mG)mG=Math.min(mT,mG+dt/FADE_IN);
+  else if(mT<mG)mG=Math.max(mT,mG-dt/(mPend?FADE_SW:FADE_OUT));
+  if(mT===0&&mG<=.001){
+    mG=0;
+    if(!MEL.paused)MEL.pause();
+    if(mClr&&MURL){MEL.removeAttribute('src');MURL='';MKEY=''}
+  }
+  let e=1;const d=MEL.duration;
+  if(isFinite(d)&&d>FADE_IN+FADE_OUT+1&&!MEL.paused){
+    const c=MEL.currentTime;
+    e=Math.max(0,Math.min(1,c/FADE_IN,(d-c)/FADE_OUT));
+  }
+  MEL.volume=Math.max(0,Math.min(1,mBase*mG*e));
+}
+setInterval(mFrame,40);
 
 // ---- Nghe thử trong admin ----
 let PVA=null;
