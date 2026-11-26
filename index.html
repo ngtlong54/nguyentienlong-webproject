@@ -3,7 +3,6 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<!--/*PWA_INSTALL*/-->
 <meta name="description" content="Game khó như tên =))">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Sky NoHope">
@@ -22,7 +21,6 @@
 <meta name="twitter:image" content="https://ngtlong54.github.io/nguyentienlong-webproject/thumbnail.png">
 <script>window.__dip=null;addEventListener("beforeinstallprompt",function(e){e.preventDefault();window.__dip=e;window.dispatchEvent(new Event("dip-ready"))});</script>
 
-<!--/*PWA_PATCH*/-->
 <link rel="manifest" href="manifest.json">
 <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
 <link rel="icon" type="image/png" sizes="512x512" href="icon-512.png">
@@ -35,7 +33,7 @@
 
 <title>Sky NoHope</title>
 <style>
-/* ui-v2 */
+
 :root{--bg:#e9f2fb;--ink:#13263a;--panel:#ffffff;--soft:#f0f5fa;--line:#dbe5ee;--acc:#2563eb;--acc-ink:#ffffff;--acc2:#16a34a;--good-ink:#ffffff;--mut:#64798c;--me:#e3eeff;
  box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0a1420;--ink:#e8f1f8;--panel:#142131;--soft:#1c2c3f;--line:#2a3d52;--acc:#4f8df7;--acc-ink:#06101d;--acc2:#34d399;--good-ink:#04241a;--mut:#94a9bc;--me:#1f3a5f}}
@@ -151,8 +149,8 @@ input,select,textarea{user-select:text;-webkit-user-select:text;touch-action:aut
 .rw label{flex:1 1 60%;font-weight:700;font-size:13px}
 @media (max-width:420px){#wrap{border-radius:0;box-shadow:none}}
 </style>
-<style>/*DEEPCFG-CSS*/.gh{margin:16px 0 2px;padding-top:10px;border-top:1px solid var(--line);font-size:14px;font-weight:800;color:var(--acc);text-align:left}.hp{margin:0 0 10px;font-size:11.5px;line-height:1.45;text-align:left;color:var(--mut)}body.nohp .hp{display:none}</style>
-<style>/*PATCH_LB_V2*/
+<style>.gh{margin:16px 0 2px;padding-top:10px;border-top:1px solid var(--line);font-size:14px;font-weight:800;color:var(--acc);text-align:left}.hp{margin:0 0 10px;font-size:11.5px;line-height:1.45;text-align:left;color:var(--mut)}body.nohp .hp{display:none}</style>
+<style>
 .lbw{overflow-x:auto!important;-webkit-overflow-scrolling:touch}
 #lb .lbw{max-height:62vh}
 .lbt{table-layout:fixed;min-width:100%}
@@ -173,7 +171,7 @@ input,select,textarea{user-select:text;-webkit-user-select:text;touch-action:aut
 .lbadd b{display:block;margin-bottom:6px;font-size:13px}
 .lbadd .rw{margin:4px 0}
 </style>
-<style>/*PATCH_FULL_V1-CSS*/
+<style>
 html,body{margin:0;overflow:hidden;overscroll-behavior:none}
 #wrap{border-radius:0!important;box-shadow:none!important;max-width:none;flex:none}
 #side{display:none!important}
@@ -182,7 +180,7 @@ html,body{margin:0;overflow:hidden;overscroll-behavior:none}
 #lb{max-width:min(96%,560px)}
 #lb .lbw{max-height:60dvh}
 </style>
-<style>/*PATCH_FULL_V2*/
+<style>
 html,body{margin:0;overflow:hidden;overscroll-behavior:none}
 #wrap{border-radius:0!important;box-shadow:none!important;max-width:none!important;aspect-ratio:auto!important;flex:none}
 #side{display:none!important}
@@ -192,7 +190,7 @@ html,body{margin:0;overflow:hidden;overscroll-behavior:none}
 #lb{max-width:min(96%,1100px)}
 #lb .lbw{max-height:70dvh}
 </style>
-<style>/*PATCH_LBSCROLL*/
+<style>
 /* tên: xuống dòng, không cắt */
 .lbt td.c2,.lbt td.c2 *{white-space:normal!important;overflow:visible!important;text-overflow:clip!important;word-break:break-word;overflow-wrap:anywhere;line-height:1.25}
 .lbt td.c2{text-align:left}
@@ -205,16 +203,48 @@ html,body{margin:0;overflow:hidden;overscroll-behavior:none}
 /* khung bảng co theo màn hình để panel không cuộn lồng */
 #lb .lbw{max-height:max(160px,calc(100dvh - 290px))!important}
 </style>
-<style>/*PATCH_FSKY-CSS*/
+<style>
 .gt{display:flex;gap:8px;margin-top:10px}
 .gt button{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;padding:9px 4px;border:2px solid transparent;border-radius:14px;background:var(--soft);color:var(--ink);font-family:inherit;font-weight:800;font-size:13px;cursor:pointer;transition:transform .12s,border-color .15s}
 .gt button:active{transform:scale(.96)}
 .gt button.sel{border-color:var(--acc);background:var(--me)}
 #gtDesc{margin:6px 0 2px;min-height:18px}
 </style>
-<style>/*PATCH_V2_FS*/#lbGt{margin:6px 0 8px}#lbGt button{padding:7px 4px;flex-direction:row;justify-content:center}</style>
-<style>/*PATCH_V3_HELP*/#helpM{margin:-6px 0 8px}</style>
-<style>/*PATCH_V4*/.icp{display:inline-block;width:30px;height:30px}.icp svg,.icp img{width:30px;height:30px;display:block;object-fit:contain}.texr{flex-wrap:nowrap}.texr label{flex:1 1 auto}.texp{width:34px;height:34px;object-fit:contain;border-radius:8px;background:var(--soft);flex:none}.texs{font-size:11px;color:var(--mut);min-width:54px;text-align:center}</style>
+<style>#lbGt{margin:6px 0 8px}#lbGt button{padding:7px 4px;flex-direction:row;justify-content:center}</style>
+<style>#helpM{margin:-6px 0 8px}</style>
+<style>.icp{display:inline-block;width:30px;height:30px}.icp svg,.icp img{width:30px;height:30px;display:block;object-fit:contain}.texr{flex-wrap:nowrap}.texr label{flex:1 1 auto}.texp{width:34px;height:34px;object-fit:contain;border-radius:8px;background:var(--soft);flex:none}.texs{font-size:11px;color:var(--mut);min-width:54px;text-align:center}</style>
+
+<style>
+@keyframes panelIn{from{opacity:0;transform:translateY(16px) scale(.95)}to{opacity:1;transform:none}}
+@keyframes floatY{0%,100%{transform:translateY(0)}50%{transform:translateY(-7px)}}
+@keyframes titleShift{0%,100%{background-position:0 0}50%{background-position:100% 0}}
+@keyframes sweep{0%,55%{left:-60%}100%{left:140%}}
+@keyframes scorePop{0%{transform:scale(1)}40%{transform:scale(1.28)}100%{transform:scale(1)}}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+#ui{background:radial-gradient(circle at 50% 28%,rgba(40,80,150,.32),rgba(6,16,32,.66));animation:fadeIn .25s ease both}
+.panel{background:linear-gradient(180deg,var(--panel),var(--soft));border:1px solid var(--line);box-shadow:0 28px 70px rgba(0,0,0,.35),inset 0 1px 0 rgba(255,255,255,.35)}
+.panel.on{animation:panelIn .34s cubic-bezier(.2,.9,.3,1.15) both}
+.logo{display:inline-block;animation:floatY 3.2s ease-in-out infinite;filter:drop-shadow(0 8px 10px rgba(37,99,235,.3))}
+h1{background:linear-gradient(90deg,var(--acc),#22c1c3,#a78bfa,var(--acc));background-size:300% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:titleShift 8s ease-in-out infinite}
+button.btn{position:relative;overflow:hidden;box-shadow:0 3px 0 rgba(0,0,0,.14),0 8px 18px rgba(0,0,0,.12)}
+button.btn:not(.alt){background-image:linear-gradient(180deg,rgba(255,255,255,.24),rgba(255,255,255,0) 60%)}
+button.btn:hover{transform:translateY(-1px)}
+button.btn:active{transform:translateY(1px) scale(.98);box-shadow:0 1px 0 rgba(0,0,0,.14)}
+button.btn.big-btn::after{content:'';position:absolute;top:0;left:-60%;width:40%;height:100%;background:linear-gradient(100deg,transparent,rgba(255,255,255,.4),transparent);transform:skewX(-20deg);animation:sweep 3.4s ease-in-out infinite;pointer-events:none}
+.ibtn{box-shadow:0 2px 0 rgba(0,0,0,.1)}
+.ibtn:hover{transform:translateY(-2px)}
+.mode{box-shadow:0 1px 0 var(--line)}
+.mode:hover{transform:translateX(3px)}
+.mode.cur{background:var(--me)}
+.mtg:hover{transform:translateY(-1px)}
+.lbt tbody tr:hover td{filter:brightness(1.04)}
+#hud .s{transform-origin:left center;font-variant-numeric:tabular-nums}
+#hud .s.pop{animation:scorePop .28s ease-out}
+#hud .b,#hud .sp{box-shadow:0 2px 10px rgba(0,0,0,.18)}
+#pauseBtn,#wrenchBtn,#dvDown{transition:transform .12s,background .15s}
+#pauseBtn:hover,#wrenchBtn:hover{background:rgba(10,25,45,.6);transform:scale(1.06)}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
 </head>
 <body>
 <div id="wrap">
@@ -330,7 +360,7 @@ html,body{margin:0;overflow:hidden;overscroll-behavior:none}
 let W=400,H=640;const GOAL=1000;
 const cv=document.getElementById('c'),ctx=cv.getContext('2d');
 const dpr=Math.min(window.devicePixelRatio||1,2);
-/*PATCH_FULL_V1*/
+
 function fit(){
   const wrap=document.getElementById('wrap');
   const vw=Math.max(200,document.body.clientWidth||innerWidth),
@@ -501,7 +531,7 @@ function draw(){
     for(let i=0;i<7;i++){const a=i/7*6.283,rad=r.r*(i%2?.85:1.05);ctx[i?'lineTo':'moveTo'](Math.cos(a)*rad,Math.sin(a)*rad)}
     ctx.closePath();ctx.fill();ctx.stroke();ctx.fillStyle='#a4a9b0';ctx.beginPath();ctx.arc(-r.r*.3,-r.r*.3,r.r*.25,0,7);ctx.fill();ctx.restore()}
   if(P&&!(inv>0&&Math.floor(inv/6)%2)){
-    const y=P.y-camY;const _pt=TX('player',P.x-4,y-6,P.w+8,P.h+10);if(_pt)ctx.globalAlpha=0;ctx.fillStyle='#ffb43d';ctx.strokeStyle='rgba(20,38,58,.55)';ctx.lineWidth=2;
+    const y=P.y-camY;const _pt=TX('player',P.x-4,y-6,P.w+8,P.h+10);if(_pt)ctx.globalAlpha=0;ctx.fillStyle=heroFill(y);ctx.strokeStyle='rgba(20,38,58,.55)';ctx.lineWidth=2;
     rr(P.x,y,P.w,P.h,12);ctx.fill();ctx.stroke();
     ctx.fillStyle='#fff';ctx.beginPath();ctx.arc(P.x+11,y+13,5,0,7);ctx.arc(P.x+24,y+13,5,0,7);ctx.fill();
     ctx.fillStyle='#16324a';const o=P.vx>.5?1.5:P.vx<-.5?-1.5:0;
@@ -534,7 +564,7 @@ function drawExtras(){
     ctx.fillStyle='#c1121f';ctx.beginPath();ctx.arc(m.x+12,y+20,2.5,0,7);ctx.arc(m.x+26,y+20,2.5,0,7);ctx.fill();
     ctx.fillStyle='#16324a';ctx.fillRect(m.x+12,y+30,14,3);ctx.restore()}
   for(const b of bul){if(TX('bul',b.x-9,b.y-camY-9,18,18))continue;ctx.fillStyle='#ff3b3b';ctx.strokeStyle='#fff';ctx.lineWidth=2;ctx.beginPath();ctx.arc(b.x,b.y-camY,6,0,7);ctx.fill();ctx.stroke()}
-  ctx.fillStyle='#ffd23f';for(const f of fx)ctx.fillRect(f.x-2,f.y-camY-2,4,4);
+  ctx.fillStyle='#ffd23f';for(const f of fx){ctx.globalAlpha=Math.max(0,Math.min(1,f.l/22));ctx.beginPath();ctx.arc(f.x,f.y-camY,1+3*Math.min(1,f.l/30),0,7);ctx.fill()}ctx.globalAlpha=1;
 }
 function fmtS(t){t=Math.max(0,+t||0);return Math.floor(t/60)+':'+String(Math.floor(t%60)).padStart(2,'0')+'.'+Math.floor(t*10%10)}
 function bestT(k){try{return +localStorage.getItem('skyhop_bt_'+k)||0}catch(e){return 0}}
@@ -583,7 +613,6 @@ $('sens').addEventListener('input',e=>{sens=+e.target.value;saveSet();paintSet()
 function openSet(){setFrom=st==='pause'?'pause':'menu';paintSet();show('settings')}
 function closeSet(){show(setFrom)}
 
-// ===== PATCH: BXH online + Admin =====
 const FB={db:'https://sky-nohope-default-rtdb.asia-southeast1.firebasedatabase.app',key:'AIzaSyA7DnOWgebkuOn19Ps9KLO80CzWqBY14E0',admin:'admin@skynohope.local'},FBOK=!!FB.db&&!/YOUR/.test(FB.db);
 const SKY=o=>D(Object.assign({fs:true,lives:3,hitMax:5,goal:1000},o));
 DIFF.fs_sd=SKY({name:'Siêu dễ',desc:'Không đá, quái, bom; vô hạn mạng. Chỉ việc nhặt vật phẩm.',obs:false,lives:Infinity,hitMax:10});
@@ -613,7 +642,7 @@ PF.push(
 ["fsItemLife","Vật phẩm nằm đất tối đa (giây)","n",0.5,1,60,"Sau khi rơi xuống đất, vật phẩm còn nằm bao lâu thì biến mất (nhấp nháy ở nhịp cuối).","6. Falling sky",6]
 );
 PF.push.apply(PF,[["fsBombEvery", "Bom rơi mỗi (giây, 0 = tắt)", "n", 0.5, 0, 120, "Cứ khoảng N giây (±25%) thả 1 đợt bom từ trời (số bom mỗi đợt: mục 7.7). Bom nổ khi chạm đất hoặc chạm người chơi, sát thương lan trong bán kính nổ. Bắn trúng bom làm nổ sớm. Khiên chặn sát thương bom. Cần bật 'Có chướng ngại'.", "6. Falling sky", 9], ["fsBombSpd", "Bom: tốc độ rơi (px/khung)", "n", 0.1, 0.5, 12, "Tốc độ rơi của bom, ngẫu nhiên ±10%.", "6. Falling sky", 2.6], ["fsBombR", "Bom: bán kính nổ (px)", "n", 5, 20, 300, "Người chơi trong vòng bán kính này quanh điểm nổ sẽ mất máu.", "6. Falling sky", 70], ["fsBombDmg", "Bom: sát thương (số máu mất)", "n", 1, 1, 50, "Số máu mất khi dính bom (không có khiên, không bất tử).", "6. Falling sky", 1], ["fsBombMark", "Bom: hiện vòng cảnh báo dưới đất", "b", null, null, null, "Bật: hiện vòng đỏ chỗ bom sắp rơi và tầm nổ.", "6. Falling sky", "Bật"], ["fsPSpd", "Tốc độ di chuyển nhân vật ×", "n", 0.05, 0.4, 2.5, "Nhân tốc độ chạy ngang của nhân vật (cả bàn phím và kéo).", "6. Falling sky", 1], ["fsScoreSec", "Điểm cộng mỗi giây sống sót", "n", 0.5, 0, 50, "Điểm tự tăng theo thời gian sống sót.", "6. Falling sky", 3], ["fsKillPts", "Điểm khi hạ 1 quái", "n", 1, 0, 1000, "Điểm thưởng khi hạ 1 quái.", "6. Falling sky", 10], ["fsItemPts", "Điểm khi nhặt 1 vật phẩm", "n", 1, 0, 1000, "Điểm thưởng khi nhặt tim/khiên/súng.", "6. Falling sky", 5], ["fsGunRate", "Súng: số phát/giây", "n", 0.25, 0.5, 20, "Tốc độ bắn của súng người chơi.", "6. Falling sky", 3.75], ["fsGunDmg", "Súng: sát thương mỗi phát", "n", 1, 1, 20, "Máu quái bị trừ mỗi phát trúng.", "6. Falling sky", 1], ["fsHeartW", "Tỉ lệ rơi: Tim (trọng số)", "n", 0.5, 0, 100, "Xác suất rơi tim = giá trị này ÷ tổng 3 trọng số (tim + khiên + súng).", "6. Falling sky", 1], ["fsShieldW", "Tỉ lệ rơi: Khiên (trọng số)", "n", 0.5, 0, 100, "Trọng số rơi khiên.", "6. Falling sky", 1], ["fsGunW", "Tỉ lệ rơi: Súng (trọng số)", "n", 0.5, 0, 100, "Trọng số rơi súng.", "6. Falling sky", 1], ["rockFrom", "Đá rơi: xuất hiện từ điểm", "n", 1, 0, 50000, "Thời điểm bắt đầu: chỉ xuất hiện khi điểm hiện tại >= giá trị này (1 điểm = 1 bậc ở Sky Jump; ở Falling sky điểm tăng theo thời gian/quái/vật phẩm). 0 = ngay từ đầu. Đá còn bị giới hạn bởi \"Đá rơi bắt đầu từ điểm\" ở mục 3: áp dụng giá trị lớn hơn.", "7.1 Đá rơi", 0], ["rockTo", "Đá rơi: ngừng xuất hiện sau điểm (0 = không)", "n", 1, 0, 50000, "Thời điểm kết thúc: khi điểm vượt giá trị này thì không xuất hiện thêm nữa. 0 = không giới hạn. Phải lớn hơn \"từ điểm\" mới có tác dụng.", "7.1 Đá rơi", 0], ["rockCond", "Đá rơi: điều kiện xuất hiện", "s", ["Luôn luôn", "Khi máu đầy (chưa bị trúng)", "Khi máu thấp (còn ≤ một nửa)", "Khi đang có khiên", "Khi không có khiên", "Khi đang có buff (lò xo/khiên/súng/rocket)"], 0, 5, "Chỉ xuất hiện khi điều kiện đúng ở thời điểm sinh. \"Máu\" = số đạn trúng so với \"Số đạn trúng thì thua\". Kết hợp được với khoảng điểm ở trên.", "7.1 Đá rơi", "Luôn luôn"], ["rockNum", "Đá rơi: số lượng mỗi lần", "n", 1, 1, 20, "Lượng mỗi lần xuất hiện: số viên đá mỗi đợt (nhân với số viên gốc của đợt).", "7.1 Đá rơi", 1], ["monFrom", "Yêu quái: xuất hiện từ điểm", "n", 1, 0, 50000, "Thời điểm bắt đầu: chỉ xuất hiện khi điểm hiện tại >= giá trị này (1 điểm = 1 bậc ở Sky Jump; ở Falling sky điểm tăng theo thời gian/quái/vật phẩm). 0 = ngay từ đầu.", "7.2 Yêu quái", 0], ["monTo", "Yêu quái: ngừng xuất hiện sau điểm (0 = không)", "n", 1, 0, 50000, "Thời điểm kết thúc: khi điểm vượt giá trị này thì không xuất hiện thêm nữa. 0 = không giới hạn. Phải lớn hơn \"từ điểm\" mới có tác dụng.", "7.2 Yêu quái", 0], ["monCond", "Yêu quái: điều kiện xuất hiện", "s", ["Luôn luôn", "Khi máu đầy (chưa bị trúng)", "Khi máu thấp (còn ≤ một nửa)", "Khi đang có khiên", "Khi không có khiên", "Khi đang có buff (lò xo/khiên/súng/rocket)"], 0, 5, "Chỉ xuất hiện khi điều kiện đúng ở thời điểm sinh. \"Máu\" = số đạn trúng so với \"Số đạn trúng thì thua\". Kết hợp được với khoảng điểm ở trên.", "7.2 Yêu quái", "Luôn luôn"], ["monNum", "Yêu quái: số lượng mỗi lần", "n", 1, 1, 20, "Lượng mỗi lần xuất hiện: số quái sinh ra mỗi lần tới mốc sinh (Sky Jump: tại mỗi mốc bậc; Falling sky: mỗi lần quái xuất hiện, vẫn bị giới hạn bởi số quái tối đa).", "7.2 Yêu quái", 1], ["springFrom", "Lò xo: xuất hiện từ điểm", "n", 1, 0, 50000, "Thời điểm bắt đầu: chỉ xuất hiện khi điểm hiện tại >= giá trị này (1 điểm = 1 bậc ở Sky Jump; ở Falling sky điểm tăng theo thời gian/quái/vật phẩm). 0 = ngay từ đầu.", "7.3 Lò xo (Sky Jump)", 0], ["springTo", "Lò xo: ngừng xuất hiện sau điểm (0 = không)", "n", 1, 0, 50000, "Thời điểm kết thúc: khi điểm vượt giá trị này thì không xuất hiện thêm nữa. 0 = không giới hạn. Phải lớn hơn \"từ điểm\" mới có tác dụng.", "7.3 Lò xo (Sky Jump)", 0], ["springCond", "Lò xo: điều kiện xuất hiện", "s", ["Luôn luôn", "Khi máu đầy (chưa bị trúng)", "Khi máu thấp (còn ≤ một nửa)", "Khi đang có khiên", "Khi không có khiên", "Khi đang có buff (lò xo/khiên/súng/rocket)"], 0, 5, "Chỉ xuất hiện khi điều kiện đúng ở thời điểm sinh. \"Máu\" = số đạn trúng so với \"Số đạn trúng thì thua\". Kết hợp được với khoảng điểm ở trên.", "7.3 Lò xo (Sky Jump)", "Luôn luôn"], ["springNum", "Lò xo: số lượng mỗi lần", "n", 1, 1, 20, "Lượng mỗi lần xuất hiện: số bậc LIÊN TIẾP cùng mang lò xo ở mỗi mốc.", "7.3 Lò xo (Sky Jump)", 1], ["shieldFrom", "Khiên: xuất hiện từ điểm", "n", 1, 0, 50000, "Thời điểm bắt đầu: chỉ xuất hiện khi điểm hiện tại >= giá trị này (1 điểm = 1 bậc ở Sky Jump; ở Falling sky điểm tăng theo thời gian/quái/vật phẩm). 0 = ngay từ đầu.", "7.4 Khiên (Sky Jump)", 0], ["shieldTo", "Khiên: ngừng xuất hiện sau điểm (0 = không)", "n", 1, 0, 50000, "Thời điểm kết thúc: khi điểm vượt giá trị này thì không xuất hiện thêm nữa. 0 = không giới hạn. Phải lớn hơn \"từ điểm\" mới có tác dụng.", "7.4 Khiên (Sky Jump)", 0], ["shieldCond", "Khiên: điều kiện xuất hiện", "s", ["Luôn luôn", "Khi máu đầy (chưa bị trúng)", "Khi máu thấp (còn ≤ một nửa)", "Khi đang có khiên", "Khi không có khiên", "Khi đang có buff (lò xo/khiên/súng/rocket)"], 0, 5, "Chỉ xuất hiện khi điều kiện đúng ở thời điểm sinh. \"Máu\" = số đạn trúng so với \"Số đạn trúng thì thua\". Kết hợp được với khoảng điểm ở trên.", "7.4 Khiên (Sky Jump)", "Luôn luôn"], ["shieldNum", "Khiên: số lượng mỗi lần", "n", 1, 1, 20, "Lượng mỗi lần xuất hiện: số bậc LIÊN TIẾP cùng mang khiên ở mỗi mốc.", "7.4 Khiên (Sky Jump)", 1], ["rocketFrom", "Rocket: xuất hiện từ điểm", "n", 1, 0, 50000, "Thời điểm bắt đầu: chỉ xuất hiện khi điểm hiện tại >= giá trị này (1 điểm = 1 bậc ở Sky Jump; ở Falling sky điểm tăng theo thời gian/quái/vật phẩm). 0 = ngay từ đầu.", "7.5 Rocket (Sky Jump)", 0], ["rocketTo", "Rocket: ngừng xuất hiện sau điểm (0 = không)", "n", 1, 0, 50000, "Thời điểm kết thúc: khi điểm vượt giá trị này thì không xuất hiện thêm nữa. 0 = không giới hạn. Phải lớn hơn \"từ điểm\" mới có tác dụng.", "7.5 Rocket (Sky Jump)", 0], ["rocketCond", "Rocket: điều kiện xuất hiện", "s", ["Luôn luôn", "Khi máu đầy (chưa bị trúng)", "Khi máu thấp (còn ≤ một nửa)", "Khi đang có khiên", "Khi không có khiên", "Khi đang có buff (lò xo/khiên/súng/rocket)"], 0, 5, "Chỉ xuất hiện khi điều kiện đúng ở thời điểm sinh. \"Máu\" = số đạn trúng so với \"Số đạn trúng thì thua\". Kết hợp được với khoảng điểm ở trên.", "7.5 Rocket (Sky Jump)", "Luôn luôn"], ["rocketNum", "Rocket: số lượng mỗi lần", "n", 1, 1, 20, "Lượng mỗi lần xuất hiện: số bậc LIÊN TIẾP cùng mang rocket ở mỗi mốc.", "7.5 Rocket (Sky Jump)", 1], ["lifeFrom", "Tim: xuất hiện từ điểm", "n", 1, 0, 50000, "Thời điểm bắt đầu: chỉ xuất hiện khi điểm hiện tại >= giá trị này (1 điểm = 1 bậc ở Sky Jump; ở Falling sky điểm tăng theo thời gian/quái/vật phẩm). 0 = ngay từ đầu.", "7.6 Tim (Sky Jump)", 0], ["lifeTo", "Tim: ngừng xuất hiện sau điểm (0 = không)", "n", 1, 0, 50000, "Thời điểm kết thúc: khi điểm vượt giá trị này thì không xuất hiện thêm nữa. 0 = không giới hạn. Phải lớn hơn \"từ điểm\" mới có tác dụng.", "7.6 Tim (Sky Jump)", 0], ["lifeCond", "Tim: điều kiện xuất hiện", "s", ["Luôn luôn", "Khi máu đầy (chưa bị trúng)", "Khi máu thấp (còn ≤ một nửa)", "Khi đang có khiên", "Khi không có khiên", "Khi đang có buff (lò xo/khiên/súng/rocket)"], 0, 5, "Chỉ xuất hiện khi điều kiện đúng ở thời điểm sinh. \"Máu\" = số đạn trúng so với \"Số đạn trúng thì thua\". Kết hợp được với khoảng điểm ở trên.", "7.6 Tim (Sky Jump)", "Luôn luôn"], ["lifeNum", "Tim: số lượng mỗi lần", "n", 1, 1, 20, "Lượng mỗi lần xuất hiện: số bậc LIÊN TIẾP cùng mang tim ở mỗi mốc.", "7.6 Tim (Sky Jump)", 1], ["bombFrom", "Bom: xuất hiện từ điểm", "n", 1, 0, 50000, "Thời điểm bắt đầu: chỉ xuất hiện khi điểm hiện tại >= giá trị này (1 điểm = 1 bậc ở Sky Jump; ở Falling sky điểm tăng theo thời gian/quái/vật phẩm). 0 = ngay từ đầu.", "7.7 Bom (Falling sky)", 0], ["bombTo", "Bom: ngừng xuất hiện sau điểm (0 = không)", "n", 1, 0, 50000, "Thời điểm kết thúc: khi điểm vượt giá trị này thì không xuất hiện thêm nữa. 0 = không giới hạn. Phải lớn hơn \"từ điểm\" mới có tác dụng.", "7.7 Bom (Falling sky)", 0], ["bombCond", "Bom: điều kiện xuất hiện", "s", ["Luôn luôn", "Khi máu đầy (chưa bị trúng)", "Khi máu thấp (còn ≤ một nửa)", "Khi đang có khiên", "Khi không có khiên", "Khi đang có buff (lò xo/khiên/súng/rocket)"], 0, 5, "Chỉ xuất hiện khi điều kiện đúng ở thời điểm sinh. \"Máu\" = số đạn trúng so với \"Số đạn trúng thì thua\". Kết hợp được với khoảng điểm ở trên.", "7.7 Bom (Falling sky)", "Luôn luôn"], ["bombNum", "Bom: số lượng mỗi lần", "n", 1, 1, 20, "Lượng mỗi lần xuất hiện: số bom thả mỗi đợt.", "7.7 Bom (Falling sky)", 1], ["itemFrom", "Vật phẩm rơi: xuất hiện từ điểm", "n", 1, 0, 50000, "Thời điểm bắt đầu: chỉ xuất hiện khi điểm hiện tại >= giá trị này (1 điểm = 1 bậc ở Sky Jump; ở Falling sky điểm tăng theo thời gian/quái/vật phẩm). 0 = ngay từ đầu.", "7.8 Vật phẩm rơi (Falling sky)", 0], ["itemTo", "Vật phẩm rơi: ngừng xuất hiện sau điểm (0 = không)", "n", 1, 0, 50000, "Thời điểm kết thúc: khi điểm vượt giá trị này thì không xuất hiện thêm nữa. 0 = không giới hạn. Phải lớn hơn \"từ điểm\" mới có tác dụng.", "7.8 Vật phẩm rơi (Falling sky)", 0], ["itemCond", "Vật phẩm rơi: điều kiện xuất hiện", "s", ["Luôn luôn", "Khi máu đầy (chưa bị trúng)", "Khi máu thấp (còn ≤ một nửa)", "Khi đang có khiên", "Khi không có khiên", "Khi đang có buff (lò xo/khiên/súng/rocket)"], 0, 5, "Chỉ xuất hiện khi điều kiện đúng ở thời điểm sinh. \"Máu\" = số đạn trúng so với \"Số đạn trúng thì thua\". Kết hợp được với khoảng điểm ở trên.", "7.8 Vật phẩm rơi (Falling sky)", "Luôn luôn"], ["itemNum", "Vật phẩm rơi: số lượng mỗi lần", "n", 1, 1, 20, "Lượng mỗi lần xuất hiện: số vật phẩm (tim/khiên/súng) rơi mỗi lần.", "7.8 Vật phẩm rơi (Falling sky)", 1]]);
-/*PATCH_V5*/
+
 PF.splice(PF.findIndex(function(r){return r[0]==='fsPSpd'})+1,0,
 ["fsJump","Cho phép nhảy","b",null,null,null,"Bật: nhân vật có thể nhảy lên (↑ / W / Space, hoặc chạm nhanh / vuốt lên trên điện thoại). Tắt: chỉ chạy ngang trên mặt đất như cũ.","6. Falling sky","Bật"],
 ["fsJumpPow","Lực nhảy (px/khung)","n",0.5,5,25,"Vận tốc bật lên khi nhảy. Độ cao đỉnh nhảy ≈ lực² ÷ trọng lực nhảy (gốc 11 ≈ 120 px). Chỉ có tác dụng khi bật 'Cho phép nhảy'.","6. Falling sky",11],
@@ -622,7 +651,7 @@ PF.splice(PF.findIndex(function(r){return r[0]==='fsPSpd'})+1,0,
 // ---- Firebase REST ----
 async function login(pw,em){
   const r=await fetch('https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key='+FB.key,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:em||FB.admin,password:pw,returnSecureToken:true})});
-  const j=await r.json();/*ADMDBG*/if(!r.ok)throw new Error((j&&j.error&&j.error.message)||'login');
+  const j=await r.json();if(!r.ok)throw new Error((j&&j.error&&j.error.message)||'login');
   ADM={id:j.idToken,rt:j.refreshToken,exp:Date.now()+(+j.expiresIn-60)*1000};
 }
 async function token(){
@@ -646,7 +675,7 @@ function setAt(s,path,val){
   let o=s.v;for(let i=0;i<p.length-1;i++){if(!o[p[i]]||typeof o[p[i]]!=='object')o[p[i]]={};o=o[p[i]]}
   if(val===null||val===undefined)delete o[p[p.length-1]];else o[p[p.length-1]]=val;
 }
-function stream(path,s,cb){/*LBLIVE*/
+function stream(path,s,cb){
   if(!FBOK)return function(){};
   const url=FB.db+'/'+path+'.json';
   let es=null,seen=Date.now(),busy=0,init=1;
@@ -689,7 +718,7 @@ function stream(path,s,cb){/*LBLIVE*/
 }
 
 // ---- Cấu hình chế độ (do admin chỉnh) ----
-function clampX(c){/*DEEPCFG*/
+function clampX(c){
   const cl=(v,a,b,d)=>Number.isFinite(+v)?Math.min(b,Math.max(a,+v)):d;
   c.monStart=Math.round(cl(c.monStart,0,5000,35));
   c.monChance=cl(c.monChance,0,1,1);
@@ -739,7 +768,7 @@ function drawBg(){
 }
 
 // ---- Lọc tên bậy ----
-const STRONG=[];/*PATCH_NOAUTOBAN*/
+const STRONG=[];
 const WORD=[];
 const LEET={0:'o',1:'i',3:'e',4:'a',5:'s',7:'t',8:'b',9:'g','@':'a','$':'s','!':'i'};
 const norm=s=>s.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/đ/g,'d').replace(/[013457989@$!]/g,c=>LEET[c]||c);
@@ -766,7 +795,7 @@ function rows(m){
 const RANKSVG=i=>{const C=[['#fbbf24','#b45309'],['#d1d5db','#4b5563'],['#e0925a','#7c3a14']][i];return '<svg viewBox="0 0 24 24" width="24" height="24" aria-label="Hạng '+(i+1)+'" style="display:block;margin:0 auto"><path d="M8 1.5l4 7.5 4-7.5z" fill="#ef4444"/><circle cx="12" cy="15" r="7.5" fill="'+C[0]+'" stroke="'+C[1]+'" stroke-width="1.6"/><text x="12" y="18.6" text-anchor="middle" font-size="10" font-weight="800" fill="'+C[1]+'" font-family="sans-serif">'+(i+1)+'</text></svg>'};
 const dn=s=>{s=(s==null?'':String(s));return bad(s)?'Tên đã bị ẩn':s};
 let lbSort=null,lbG=null;
-/*PATCH_PLAYERS_V1*/
+
 function uniqNames(){
   const P={};
   Object.keys(DIFF).forEach(m=>rows(m).forEach(r=>{
@@ -902,14 +931,13 @@ function onLB(force){
   renderSide();if(isOn('lb'))renderLB();
   if(isOn('admin')&&tab==='lb'&&(force||!$('admBody').contains(document.activeElement)))renderAdmin();
 }
-function ckName(){/*ADMPLUS*/if(myName&&bad(myName)){myName='';try{localStorage.removeItem('skyhop_name')}catch(e){}updNameBtn()}}
+function ckName(){if(myName&&bad(myName)){myName='';try{localStorage.removeItem('skyhop_name')}catch(e){}updNameBtn()}}
 function onCF(force){
   applyConfig();ckName();renderSide();
   if(isOn('lb')){fillModes();renderLB()}
   if(isOn('admin')&&(force||!$('admBody').contains(document.activeElement)))renderAdmin();
 }
 
-/*ADMPATCH2*/
 var TEST=null,DRAFT=null;
 function clampCfg(c){
   const cl=(v,a,b,d)=>Number.isFinite(+v)?Math.min(b,Math.max(a,+v)):d;
@@ -1149,7 +1177,7 @@ function plTab(out){
     });
   });
 }
-/*PATCH_ACCOUNTS*/
+
 var mergeSrc=null;
 function idSave(){try{localStorage.setItem('skyhop_uid',me);localStorage.setItem('skyhop_name',myName)}catch(e){}}
 function idOrig(){try{return localStorage.getItem('skyhop_uid_orig')||''}catch(e){return ''}}
@@ -1436,7 +1464,6 @@ function renderAdmin(){
 window.__lbFull=stream('lb',LB,onLB);stream('config',CF,onCF);
 updNameBtn();
 
-/*PATCH_FSKY*/
 var gtype='classic',gunT=0,fsIt=[],fsPb=[],fsSpawn=0,fsMonT=0,fsItT=0,fsFire=0,fsBonus=0,fsOK=false,fsBm=[],fsEx=[],fsBmT=0;
 try{gtype=localStorage.getItem('skyhop_gt')||'classic';if(!/^(sky|deep)$/.test(gtype))gtype='classic'}catch(e){}
 const fsv=(k,d)=>{const v=cfg&&cfg[k];return v!=null&&Number.isFinite(+v)?+v:d};
@@ -1829,7 +1856,7 @@ function drawFS(){
     {const sh=Math.max(0,Math.min(1,(H-64-P.y)/140));ctx.fillStyle='rgba(60,70,90,'+(.22*(1-sh*.6))+')';ctx.beginPath();ctx.ellipse(P.x+17,H-28,16*(1-sh*.4),4*(1-sh*.4),0,0,7);ctx.fill()}
     const y=P.y;const _pt=TX('player',P.x-4,y-12,P.w+8,P.h+16);if(_pt)ctx.globalAlpha=0;
     ctx.strokeStyle='#ffd23f';ctx.lineWidth=3;ctx.beginPath();ctx.ellipse(P.x+17,y-6,11,4,0,0,7);ctx.stroke();
-    ctx.fillStyle='#ffb43d';ctx.strokeStyle='rgba(20,38,58,.55)';ctx.lineWidth=2;
+    ctx.fillStyle=heroFill(y);ctx.strokeStyle='rgba(20,38,58,.55)';ctx.lineWidth=2;
     rr(P.x,y,P.w,P.h,12);ctx.fill();ctx.stroke();
     ctx.fillStyle='#fff';ctx.beginPath();ctx.arc(P.x+11,y+13,5,0,7);ctx.arc(P.x+24,y+13,5,0,7);ctx.fill();
     ctx.fillStyle='#16324a';const o=P.vx>.5?1.5:P.vx<-.5?-1.5:0;
@@ -1842,7 +1869,7 @@ function drawFS(){
     }
   }
   // hiệu ứng
-  ctx.fillStyle='#ffd23f';for(const f of fx)ctx.fillRect(f.x-2,f.y-2,4,4);
+  ctx.fillStyle='#ffd23f';for(const f of fx){ctx.globalAlpha=Math.max(0,Math.min(1,f.l/22));ctx.beginPath();ctx.arc(f.x,f.y,1+3*Math.min(1,f.l/30),0,7);ctx.fill()}ctx.globalAlpha=1;
   // máu
   const mx=Math.round(cfg.hitMax),left=Math.max(0,mx-hits);
   ctx.textAlign='center';
@@ -1856,10 +1883,8 @@ function drawFS(){
   }
 }
 
-
-/*PATCH_AUDIO_V1*/
 // ===================== ÂM THANH =====================
-/*PATCH_AUDIO_LINK_V1*/
+
 const SND_MAX=1024*1024;            // hiệu ứng: tối đa 1MB khi tải trực tiếp
 const SND_MAX_MUS=3*1024*1024;      // nhạc nền: tối đa 3MB khi tải trực tiếp
 function sndMax(k){return (k&&String(k).indexOf('music')===0)?SND_MAX_MUS:SND_MAX}
@@ -1894,7 +1919,7 @@ try{const x=JSON.parse(localStorage.getItem('skyhop_snd')||'{}');
 // ---- WebAudio ----
 let AC=null;
 function ac(){if(!AC){try{AC=new(window.AudioContext||window.webkitAudioContext)()}catch(e){}}return AC}
-function acResume(){const A=ac();if(A&&A.state!=='running'&&A.state!=='closed'){try{const p=A.resume();if(p&&p.catch)p.catch(()=>{})}catch(e){}}}/*PFIX-acr*/
+function acResume(){const A=ac();if(A&&A.state!=='running'&&A.state!=='closed'){try{const p=A.resume();if(p&&p.catch)p.catch(()=>{})}catch(e){}}}
 function tone(f,d,ty,v,f2,dl){const A=ac();if(!A)return;const t=A.currentTime+(dl||0),o=A.createOscillator(),g=A.createGain();
   o.type=ty||'sine';o.frequency.setValueAtTime(f,t);if(f2)o.frequency.exponentialRampToValueAtTime(Math.max(1,f2),t+d);
   g.gain.setValueAtTime(Math.max(.0001,v),t);g.gain.exponentialRampToValueAtTime(.0001,t+d);
@@ -1971,16 +1996,16 @@ function sfx(key){
     const vol=r.vol*PV.s;if(vol<=0)return;
     if(r.u){
       const c=load(r.u);
-      if(c.buf&&AC){acResume();/*PFIX-sfxbuf*/const s=AC.createBufferSource(),g=AC.createGain();s.buffer=c.buf;g.gain.value=Math.min(1,vol);s.connect(g);g.connect(AC.destination);s.start(0)}
+      if(c.buf&&AC){acResume();const s=AC.createBufferSource(),g=AC.createGain();s.buffer=c.buf;g.gain.value=Math.min(1,vol);s.connect(g);g.connect(AC.destination);s.start(0)}
       else if(c.el){const e=c.el.cloneNode(true);e.volume=Math.min(1,vol);const p=e.play();if(p&&p.catch)p.catch(()=>{})}
       return;
     }
-    if(r.syn&&SYN[key]){acResume();SYN[key](vol)}/*PFIX-sfx*/
+    if(r.syn&&SYN[key]){acResume();SYN[key](vol)}
   }catch(e){}
 }
 
 // ---- Nhạc nền (1 thẻ audio duy nhất, đổi nguồn theo trạng thái) ----
-const MEL=new Audio();MEL.loop=true;MEL.preload='auto';/*PATCH_FADE*/
+const MEL=new Audio();MEL.loop=true;MEL.preload='auto';
 let MKEY='',MURL='';
 const FADE_IN=1.5,FADE_OUT=1.5,FADE_SW=.6; // giây: vào đầu bài / cuối bài / chuyển nhạc
 let mG=0,mT=0,mBase=0,mPend=null,mClr=false,mLast=performance.now();
@@ -2184,7 +2209,6 @@ function sndSave(){
   }).catch(err);
 }
 
-/*PATCH_MOBILE_AUDIO*/
 // Điện thoại chỉ cho bật âm thanh trong sự kiện "kích hoạt thật" (touchend / pointerup / click),
 // KHÔNG tính pointerdown/touchstart bằng ngón tay. Mở khóa lại sau khi app bị ẩn/gián đoạn.
 (function(){
@@ -2206,7 +2230,7 @@ function sndSave(){
   document.addEventListener('visibilitychange',wake);
   addEventListener('pageshow',wake);addEventListener('focus',wake);
 })();
-/*PATCH_MUSIC_V2*/
+
 (function(){
   const g=id=>document.getElementById(id);
   const save=()=>{try{localStorage.setItem('skyhop_snd',JSON.stringify(PV))}catch(e){}};
@@ -2268,7 +2292,6 @@ function sndSave(){
 })();
 // =================== HẾT ÂM THANH ===================
 
-/*PATCH_DEEP*/
 function GTK(c){return c&&c.dv?'deep':c&&c.fs?'sky':'classic'}
 function ET(c){return c&&c.dv?'deep':c&&c.fs?'sky':'jump'}
 const DV=o=>D(Object.assign({dv:true,fs:false,lives:3,hitMax:5,goal:500,obs:true,
@@ -2434,7 +2457,7 @@ function updateDV(dt){
   for(let i=rocks.length-1;i>=0;i--){const r=rocks[i];r.x+=r.vx*dt;r.rot+=.1*Math.sign(r.vx)*dt;
     if(r.x<-60||r.x>W+60||r.y<camY-80){r.y=1e9;rocks.splice(i,1);continue}
     if(inv<=0){const cx=Math.max(P.x,Math.min(r.x,P.x+P.w)),cy=Math.max(P.y,Math.min(r.y,P.y+P.h));
-      if((cx-r.x)**2+(cy-r.y)**2<(r.r-2)**2){rocks.splice(i,1);if(dvHit(r.x,r.y))return}}}
+      if((cx-r.x)**2+(cy-r.y)**2<(r.r-2)**2){rocks.splice(i,1);if(P.vy>0&&prevB<=r.y-r.r*.3){boom(r.x,r.y);boom(r.x,r.y);P.vy=-dg('dvJumpPow',8,4,14)*1.1;dvOn=null}else if(dvHit(r.x,r.y))return}}}
   // quái
   for(let i=mons.length-1;i>=0;i--){const m=mons[i];m.x+=m.vx*dt;if(m.x<20||m.x>W-58)m.vx*=-1;
     const sy=m.y-camY;
@@ -2510,7 +2533,7 @@ function drawDV(){
   // nhân vật
   if(P&&!(inv>0&&Math.floor(inv/6)%2)){const y=P.y-camY;
     const _pt=TX('player',P.x-4,y-6,P.w+8,P.h+10);if(_pt)ctx.globalAlpha=0;
-    ctx.fillStyle='#ffb43d';ctx.strokeStyle='rgba(20,38,58,.55)';ctx.lineWidth=2;rr(P.x,y,P.w,P.h,12);ctx.fill();ctx.stroke();
+    ctx.fillStyle=heroFill(y);ctx.strokeStyle='rgba(20,38,58,.55)';ctx.lineWidth=2;rr(P.x,y,P.w,P.h,12);ctx.fill();ctx.stroke();
     ctx.fillStyle='#fff';ctx.beginPath();ctx.arc(P.x+11,y+15,5,0,7);ctx.arc(P.x+24,y+15,5,0,7);ctx.fill();
     ctx.fillStyle='#16324a';const o=P.vx>.5?1.5:P.vx<-.5?-1.5:0;
     ctx.beginPath();ctx.arc(P.x+11+o,y+17,2.3,0,7);ctx.arc(P.x+24+o,y+17,2.3,0,7);ctx.fill();
@@ -2547,12 +2570,11 @@ loop=function(ts){
   const raw=(ts-(last||ts))/16.667,dt=Math.min(2.5,raw)*speed;last=ts;RT=Math.min(raw,30)/60;
   if(st==='play'){if(cfg.dv){auPre();updateDV(dt);try{auPost()}catch(e){}}else(cfg.fs?updateFS:update)(dt)}
   tickTm();
-  (cfg.dv?drawDV:cfg.fs?drawFS:draw)();
+  (cfg.dv?drawDV:cfg.fs?drawFS:draw)();try{gfxPost()}catch(e){}
   const on=st==='play'&&!!cfg.dv;if(on!==dvBtnOn){dvBtnOn=on;dvBtn.style.display=on?'flex':'none'}
   requestAnimationFrame(loop);
 };
 
-/*PATCH_DEEP_V2*/
 var dvJumpReq=0,dvSlowT=0,dvWinChk=0;
 ICON.slow=' ';ICON.star=' ';
 
@@ -2736,15 +2758,67 @@ helpFor=function(){
   for(const k in TW){if(DIFF[k])Object.assign(DIFF[k],TW[k]);if(BASE[k])Object.assign(BASE[k],TW[k])}
 })();
 
-/*END_PATCH_DEEP*/
-
-
+function heroFill(y){var g=ctx.createLinearGradient(0,y,0,y+34);g.addColorStop(0,'#ffd978');g.addColorStop(1,'#ff9f1a');return g}
+var GFX={tr:[],v:null,vk:''};
+function gfxVig(){
+  var hot=/hell|_cd/.test(dk),k=W+'x'+H+(hot?'h':'');
+  if(GFX.vk!==k){
+    var c=document.createElement('canvas');c.width=Math.max(2,W>>1);c.height=Math.max(2,H>>1);
+    var x=c.getContext('2d'),m=Math.min(c.width,c.height),M=Math.max(c.width,c.height),
+        g=x.createRadialGradient(c.width/2,c.height/2,m*.35,c.width/2,c.height/2,M*.75);
+    g.addColorStop(0,'rgba(0,0,0,0)');g.addColorStop(1,hot?'rgba(60,0,0,.5)':'rgba(10,30,70,.28)');
+    x.fillStyle=g;x.fillRect(0,0,c.width,c.height);GFX.v=c;GFX.vk=k;
+  }
+  return GFX.v;
+}
+function gfxPost(){
+  var t=performance.now()/1000,hot=/hell|_cd/.test(dk),i,p,y;
+  ctx.save();
+  if(!cfg.fs&&plats&&!(cfg.tex&&(cfg.tex.plat||cfg.tex.platMove||cfg.tex.platBrk))){
+    for(i=0;i<plats.length;i++){
+      p=plats[i];if(p.dead||p.spike)continue;
+      y=p.y-(camY||0);if(y<-20||y>H+20)continue;
+      ctx.globalAlpha=.32;ctx.fillStyle='#fff';rr(p.x+3,y+1.5,Math.max(4,p.w-6),3.2,1.6);ctx.fill();
+      ctx.globalAlpha=.16;ctx.fillStyle='#000';rr(p.x+4,y+8,Math.max(4,p.w-8),3,1.5);ctx.fill();
+    }
+  }
+  for(i=0;i<16;i++){
+    var sd=i*37.7,mx=((sd*13+Math.sin(t*.4+sd)*18)%W+W)%W,my=H-((t*(10+i%5*4)+sd*29)%(H+20));
+    ctx.globalAlpha=Math.max(0,.18+.18*Math.sin(t*2+sd));
+    ctx.fillStyle=hot?'#ffb02e':'#ffffff';
+    ctx.beginPath();ctx.arc(mx,my,1+(i%3)*.7,0,7);ctx.fill();
+  }
+  if(P&&(st==='play'||st==='pause')){
+    var px=P.x+P.w/2,py=P.y-(camY||0)+P.h/2,L=GFX.tr,q=L[L.length-1],k;
+    if(st==='play'){
+      if(q&&Math.hypot(q.x-px,q.y-py)>160)L.length=0;
+      L.push({x:px,y:py});if(L.length>7)L.shift();
+    }
+    for(k=0;k<L.length-1;k++){
+      var f=(k+1)/L.length;
+      ctx.globalAlpha=.16*f;ctx.fillStyle=hot?'#ff8a3d':'#ffd36b';
+      ctx.beginPath();ctx.arc(L[k].x,L[k].y,P.w*.42*f,0,7);ctx.fill();
+    }
+    ctx.globalCompositeOperation='lighter';ctx.globalAlpha=1;
+    var gr=ctx.createRadialGradient(px,py,2,px,py,34);
+    gr.addColorStop(0,'rgba(255,200,90,.22)');gr.addColorStop(1,'rgba(255,200,90,0)');
+    ctx.fillStyle=gr;ctx.fillRect(px-36,py-36,72,72);
+    ctx.globalCompositeOperation='source-over';
+  }else GFX.tr.length=0;
+  ctx.globalAlpha=1;ctx.drawImage(gfxVig(),0,0,W,H);
+  ctx.restore();
+}
+(function(){
+  var e=document.getElementById('sc');if(!e||!window.MutationObserver)return;
+  new MutationObserver(function(){e.classList.remove('pop');void e.offsetWidth;e.classList.add('pop')})
+    .observe(e,{childList:true,characterData:true,subtree:true});
+})();
 reset();$('pauseBtn').style.visibility='hidden';show('menu');
 if(myName&&bad(myName)){myName='';try{localStorage.removeItem('skyhop_name')}catch(e){}updNameBtn()}if(!myName){ret='menu';openName()}
 requestAnimationFrame(loop);
 })();
 </script>
-<style>/*ICONFIX*/
+<style>
 .ei{display:inline-block;vertical-align:-.2em;flex:none}
 #pauseBtn svg{width:18px;height:18px;vertical-align:middle}
 #pauseBtn{display:flex;align-items:center;justify-content:center;padding:0}
@@ -2908,7 +2982,7 @@ if('serviceWorker' in navigator&&/^https?:$/.test(location.protocol)){
 })();
 </script>
 
-<style>/*PATCH_MUSIC_V2*/
+<style>
 .mrow{display:flex;gap:8px;align-items:stretch;margin-top:10px}
 .mrow button.btn.big-btn{flex:1 1 auto;width:auto;min-width:0;margin-top:0}
 .mtg{flex:0 0 62px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;padding:4px 2px;border:2px solid var(--acc);border-radius:16px;background:var(--me,var(--soft));color:var(--ink);font-family:inherit;font-weight:800;font-size:11px;line-height:1.1;cursor:pointer;transition:transform .12s,opacity .15s,border-color .15s}
@@ -2923,7 +2997,7 @@ if('serviceWorker' in navigator&&/^https?:$/.test(location.protocol)){
 input[type=range].vdim{opacity:.4}
 #settings .row{align-items:center;margin-top:10px}
 </style>
-<style>/*PATCH_DEEP-CSS*/
+<style>
 #dvDown{position:absolute;right:16px;bottom:calc(16px + env(safe-area-inset-bottom,0px));z-index:5;width:60px;height:60px;border-radius:50%;border:0;display:none;align-items:center;justify-content:center;background:rgba(10,25,45,.45);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);color:#fff;cursor:pointer;touch-action:none}
 #dvDown:active{transform:scale(.92);background:rgba(37,99,235,.6)}
 .gt button span{font-size:12px}
